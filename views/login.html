@@ -3,62 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .login-container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #error-message {
-            display: none;
-            background-color: #ff4444;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px auto;
-            width: 80%;
-            text-align: center;
-        }
-    </style>
+    <title>SORHA - Inicio de Sesión</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <div class="login-background">
+        <div class="login-overlay"></div>
+    </div>
+    
     <div class="login-container">
-        <h2>Iniciar Sesión</h2>
+        <div class="login-header">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <h1>Sistema <span>SORHA</span></h1>
+            <p>Sistema Operativo de Recusos Humanos Administrativo</p>
+        </div>
+        
         <div id="error-message"></div>
-        <form action="/login" method="POST">
-            <input type="text" name="usuario" placeholder="Usuario" required>
-            <input type="password" name="pass" placeholder="Contraseña" required>
-            <button type="submit">Ingresar</button>
+        
+        <form action="/login" method="POST" class="login-form">
+            <div class="input-group">
+                <i class="fas fa-user icon"></i>
+                <input type="text" name="usuario" placeholder="Usuario" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" name="pass" placeholder="Contraseña" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+            </div>
+            
+            <button type="submit" class="login-btn">
+                <span>Ingresar</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <div class="login-footer">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+                <div class="social-icons">
+                    <i class="fab fa-facebook-f"></i>
+                    <i class="fab fa-twitter"></i>
+                    <i class="fab fa-linkedin-in"></i>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -73,13 +60,38 @@
                 errorElement.textContent = decodeURIComponent(error.replace(/\+/g, ' '));
                 errorElement.style.display = 'block';
                 
-                // Ocultar después de 3 segundos
+                // Ocultar después de 5 segundos
                 setTimeout(() => {
                     errorElement.style.display = 'none';
                     // Limpiar el parámetro de error de la URL
                     history.replaceState(null, '', window.location.pathname);
                 }, 5000);
             }
+        });
+
+        // Función para mostrar/ocultar contraseña
+        function togglePassword() {
+            const passwordField = document.querySelector('input[name="pass"]');
+            const eyeIcon = document.querySelector('.toggle-password');
+            
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Efecto hover para el botón
+        const loginBtn = document.querySelector('.login-btn');
+        loginBtn.addEventListener('mouseover', function() {
+            this.querySelector('i').style.transform = 'translateX(5px)';
+        });
+        loginBtn.addEventListener('mouseout', function() {
+            this.querySelector('i').style.transform = 'translateX(0)';
         });
     </script>
 </body>

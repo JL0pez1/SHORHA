@@ -3,243 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración</title>
+    <title>SORHA - Panel de Administración</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #333;
-            margin: 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .actions {
-            display: flex;
-            gap: 5px;
-        }
-        button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        .btn-add {
-            background-color: #4CAF50;
-            color: white;
-            margin-bottom: 20px;
-        }
-        .btn-add:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .btn-edit {
-            background-color: #2196F3;
-            color: white;
-        }
-        .btn-edit:hover {
-            background-color: #0b7dda;
-        }
-        .btn-delete {
-            background-color: #f44336;
-            color: white;
-        }
-        .btn-delete:hover {
-            background-color: #d32f2f;
-        }
-        .btn-logout {
-            background-color: #ff9800;
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-logout:hover {
-            background-color: #e68a00;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 50%;
-            max-width: 500px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .modal-title {
-            margin: 0;
-            font-size: 20px;
-        }
-        .close {
-            color: #aaa;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover {
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn-save {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-        }
-        .btn-save:hover {
-            background-color: #45a049;
-        }
-        .btn-cancel {
-            background-color: #f44336;
-            color: white;
-            padding: 10px 20px;
-        }
-        .btn-cancel:hover {
-            background-color: #d32f2f;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            display: none;
-        }
-        .alert-success {
-            background-color: #dff0d8;
-            color: #3c763d;
-            border: 1px solid #d6e9c6;
-        }
-        .alert-error {
-            background-color: #f2dede;
-            color: #a94442;
-            border: 1px solid #ebccd1;
-        }
+        /* Estilos básicos para asegurar visibilidad de alertas y modal si el CSS no carga */
+        .alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        /* Estilo básico para la tabla si el CSS no carga */
+        #usersTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        #usersTable th, #usersTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #usersTable th { background-color: #f2f2f2; }
+        #usersTable tr:nth-child(even){ background-color: #f9f9f9; }
+        #usersTable tr:hover { background-color: #ddd; }
+        .actions button { margin-right: 5px; padding: 5px 10px; cursor: pointer; }
+        .btn-edit { background-color: #ffc107; color: white; border: none; }
+        .btn-delete { background-color: #dc3545; color: white; border: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Administración de Usuarios</h1>
-            <button class="btn-logout" onclick="logout()">
-                <span>🔒</span> Cerrar Sesión
-            </button>
-        </div>
-        
-        <button class="btn-add" onclick="openModal('create')">➕ Agregar Nuevo Usuario</button>
-        
-        <div id="alertSuccess" class="alert alert-success"></div>
-        <div id="alertError" class="alert alert-error"></div>
-        
-        <table id="usersTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+    <div class="admin-background">
+        <div class="admin-overlay"></div>
     </div>
 
-    <!-- Modal para agregar/editar usuarios -->
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <div class="header-titles">
+                <h1>Sistema <span>SORHA</span></h1>
+                <p>Panel de Administración</p>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-users-cog"></i> Administración de Usuarios</h2>
+                <button class="btn-add" onclick="openModal('create')">
+                    <i class="fas fa-plus"></i> Nuevo Usuario
+                </button>
+            </div>
+
+            <div id="alertSuccess" class="alert alert-success"></div>
+            <div id="alertError" class="alert alert-error"></div>
+
+            <div class="table-container">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-id-card"></i> ID</th>
+                            <th><i class="fas fa-user"></i> Usuario</th>
+                            <th><i class="fas fa-user-tag"></i> Rol</th>
+                            <th><i class="fas fa-power-off"></i> Estado</th>
+                            <th><i class="fas fa-cog"></i> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Nuevo Usuario</h2>
+                <h2 class="modal-title" id="modalTitle">
+                    <i class="fas fa-user-plus"></i> Nuevo Usuario
+                </h2>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             <form id="userForm">
                 <input type="hidden" id="userId">
                 <div class="form-group">
-                    <label for="username">Usuario:</label>
+                    <label for="username"><i class="fas fa-user"></i> Usuario:</label>
                     <input type="text" id="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" required>
+                    <label for="password"><i class="fas fa-lock"></i> Contraseña:</label>
+                    <input type="password" id="password">
+                     <small>Dejar en blanco para no cambiar la contraseña al editar.</small>
                 </div>
                 <div class="form-group">
-                    <label for="role">Rol:</label>
+                    <label for="role"><i class="fas fa-user-tag"></i> Rol:</label>
                     <select id="role" required>
                         <option value="admin">Administrador del Sistema</option>
                         <option value="administrativo">Personal Administrativo</option>
@@ -250,235 +105,375 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="active">Estado:</label>
+                    <label for="active"><i class="fas fa-power-off"></i> Estado:</label>
                     <select id="active" required>
                         <option value="1">Activo</option>
                         <option value="0">Inactivo</option>
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>
-                    <button type="button" class="btn-save" onclick="saveUser()">Guardar</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn-save" onclick="saveUser()">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Variables globales
-        let currentAction = 'create';
-        
-        // Cuando el DOM esté cargado
-        document.addEventListener('DOMContentLoaded', loadUsers);
+    // Variables globales
+    let currentAction = 'create';
 
-        // Cargar lista de usuarios
-        async function loadUsers() {
-            try {
-                showLoading(true);
-                const response = await fetch('/api/users');
-                
-                if (!response.ok) {
-                    throw new Error('Error al cargar usuarios');
+    // Cuando el DOM esté cargado
+    document.addEventListener('DOMContentLoaded', loadUsers);
+
+    // Cargar lista de usuarios
+    async function loadUsers() {
+        try {
+            showLoading(true);
+            // Asegúrate que la ruta a tu API sea correcta
+            const response = await fetch('/api/users');
+            if (!response.ok) {
+                // Intenta obtener más detalles del error si es posible
+                let errorMsg = `Error ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.message || errorMsg;
+                } catch(e) {
+                    // No se pudo parsear el JSON de error, usar el mensaje http
                 }
-                
-                const { success, data, message } = await response.json();
-                
-                if (success) {
-                    renderUsers(data);
-                } else {
-                    showAlert('error', message || 'Error al cargar usuarios');
-                }
-            } catch (error) {
-                showAlert('error', error.message);
-            } finally {
-                showLoading(false);
+                throw new Error(`Error al cargar usuarios: ${errorMsg}`);
             }
+            const result = await response.json(); // Guarda el resultado parseado
+             // Verifica la estructura esperada de la respuesta
+            if (typeof result.success === 'undefined') {
+                 console.warn("La respuesta de la API no tiene la propiedad 'success'. Asumiendo éxito si hay 'data'.", result);
+                 // Ajusta esta lógica si tu API devuelve datos de otra forma
+                 if (result.data) {
+                     renderUsers(result.data);
+                 } else if (Array.isArray(result)) {
+                      console.warn("La respuesta es un array directamente. Usándolo como datos.");
+                      renderUsers(result); // Asume que el array es la lista de usuarios
+                 } else {
+                     throw new Error('Formato de respuesta inesperado de la API.');
+                 }
+            } else if (result.success) {
+                 renderUsers(result.data || []); // Asegura que data sea un array
+             } else {
+                showAlert('error', result.message || 'Error desconocido al cargar usuarios desde la API');
+            }
+        } catch (error) {
+            console.error('Catch Error en loadUsers:', error);
+            showAlert('error', `No se pudieron cargar los usuarios. ${error.message}`);
+             // Opcional: Mostrar un mensaje en la tabla indicando el error
+             const tbody = document.querySelector('#usersTable tbody');
+             if(tbody) {
+                 tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar datos: ${error.message}</td></tr>`;
+             }
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Mostrar usuarios en la tabla
+    function renderUsers(users) {
+        const tbody = document.querySelector('#usersTable tbody');
+        if (!tbody) {
+            console.error('Elemento tbody de #usersTable no encontrado!');
+            showAlert('error', 'Error interno: No se encontró la tabla de usuarios.');
+            return;
+        }
+        tbody.innerHTML = ''; // Limpiar tabla antes de renderizar
+
+        if (!Array.isArray(users)) {
+            console.error('renderUsers recibió algo que no es un array:', users);
+            showAlert('error', 'Error interno: Los datos de usuarios no son válidos.');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error: Datos recibidos no válidos</td></tr>';
+            return;
         }
 
-        // Mostrar usuarios en la tabla
-        function renderUsers(users) {
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = '';
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados</td></tr>';
-                return;
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados</td></tr>';
+            return;
+        }
+
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            // Sanitizar datos antes de insertarlos si vinieran de fuentes no confiables
+            // Para este caso, asumimos que la API es confiable.
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.usuario || 'N/A'}</td>
+                <td>${formatRole(user.rol || 'desconocido')}</td>
+                <td>${user.activo ? 'Activo' : 'Inactivo'}</td>
+                <td class="actions">
+                     <button class="btn-edit" onclick="editUser(${user.id})"><i class="fas fa-edit"></i> Editar</button>
+                     <button class="btn-delete" onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                 </td>
+            `; // Se usan los iconos de FontAwesome en los botones
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Formatear el rol para mostrar
+    function formatRole(role) {
+        const roles = {
+            'admin': 'Administrador del Sistema',
+            'administrativo': 'Personal Administrativo',
+            'nominas': 'Nóminas',
+            'reportes': 'Reportes',
+            'recursos': 'Recursos',
+            'colaborador': 'Colaborador'
+        };
+        return roles[role] || role; // Devuelve el nombre mapeado o el rol original si no se encuentra
+    }
+
+    // Abrir modal para crear/editar
+    function openModal(action, userId = null) {
+        currentAction = action;
+        const modalTitleElement = document.getElementById('modalTitle');
+        const passwordInput = document.getElementById('password');
+        const passwordLabel = passwordInput.previousElementSibling; // Asume que el label está justo antes
+        const passwordHelpText = passwordInput.nextElementSibling; // Asume que el <small> está justo después
+
+        if (action === 'create') {
+            modalTitleElement.innerHTML = '<i class="fas fa-user-plus"></i> Nuevo Usuario';
+            document.getElementById('userForm').reset(); // Limpia el formulario
+            document.getElementById('userId').value = ''; // Asegura que no haya ID
+            passwordInput.required = true; // Contraseña es requerida al crear
+            if (passwordLabel) passwordLabel.innerHTML = '<i class="fas fa-lock"></i> Contraseña:';
+            if (passwordHelpText) passwordHelpText.style.display = 'none'; // Ocultar ayuda al crear
+        } else {
+            modalTitleElement.innerHTML = '<i class="fas fa-user-edit"></i> Editar Usuario';
+            document.getElementById('userId').value = userId; // Establece el ID para la edición
+             passwordInput.required = false; // Contraseña NO es requerida al editar
+             passwordInput.value = ''; // Limpia el campo contraseña siempre
+             passwordInput.placeholder = 'Dejar en blanco para no cambiar';
+             if (passwordLabel) passwordLabel.innerHTML = '<i class="fas fa-lock"></i> Nueva Contraseña (Opcional):';
+             if (passwordHelpText) passwordHelpText.style.display = 'block'; // Mostrar ayuda al editar
+            // Los datos del usuario se cargan en la función editUser
+        }
+
+        document.getElementById('userModal').style.display = 'block';
+    }
+
+
+    // Cerrar modal
+    function closeModal() {
+        document.getElementById('userModal').style.display = 'none';
+        document.getElementById('userForm').reset(); // Limpia el form al cerrar
+        // Restablecer el estado de 'required' y placeholder de la contraseña
+        const passwordInput = document.getElementById('password');
+        const passwordLabel = passwordInput.previousElementSibling;
+        const passwordHelpText = passwordInput.nextElementSibling;
+        passwordInput.required = true; // Volver al estado por defecto (requerido para 'Nuevo')
+        passwordInput.placeholder = '';
+        if (passwordLabel) passwordLabel.innerHTML = '<i class="fas fa-lock"></i> Contraseña:';
+        if (passwordHelpText) passwordHelpText.style.display = 'none';
+    }
+
+    // Cargar datos del usuario para editar
+    async function editUser(id) {
+        try {
+            showLoading(true);
+            // Asegúrate que la ruta a tu API sea correcta
+            const response = await fetch(`/api/users/${id}`);
+            if (!response.ok) {
+                 let errorMsg = `Error ${response.status}: ${response.statusText}`;
+                 try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch(e) {}
+                 throw new Error(`Error al cargar usuario: ${errorMsg}`);
             }
-            
-            users.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.usuario}</td>
-                    <td>${formatRole(user.rol)}</td>
-                    <td>${user.activo ? 'Activo' : 'Inactivo'}</td>
-                    <td class="actions">
-                        <button class="btn-edit" onclick="editUser(${user.id})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deleteUser(${user.id})">🗑️ Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            const result = await response.json();
+
+             // Verifica la estructura de la respuesta
+             if (typeof result.success === 'undefined') {
+                 console.warn("Respuesta de API sin 'success' al editar. Asumiendo éxito si hay 'data'.", result);
+                 if (result.data) {
+                    openModal('edit', result.data.id); // Abre modal en modo edición
+                     document.getElementById('username').value = result.data.usuario || '';
+                     document.getElementById('role').value = result.data.rol || '';
+                     document.getElementById('active').value = result.data.activo ? '1' : '0';
+                     // NO cargamos la contraseña por seguridad, el campo ya fue limpiado en openModal
+                 } else {
+                     throw new Error('Formato de respuesta inesperado al cargar usuario para editar.');
+                 }
+             } else if (result.success && result.data) {
+                 openModal('edit', result.data.id); // Abre modal en modo edición
+                 document.getElementById('username').value = result.data.usuario || '';
+                 document.getElementById('role').value = result.data.rol || '';
+                 document.getElementById('active').value = result.data.activo ? '1' : '0';
+                 // NO cargamos la contraseña por seguridad, el campo ya fue limpiado en openModal
+             } else {
+                 showAlert('error', result.message || 'No se pudo cargar la información del usuario.');
+             }
+        } catch (error) {
+             console.error('Catch Error en editUser:', error);
+            showAlert('error', `No se pudo cargar el usuario. ${error.message}`);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Guardar usuario (Crear o Actualizar)
+    async function saveUser() {
+        const id = document.getElementById('userId').value;
+        const userData = {
+            usuario: document.getElementById('username').value.trim(),
+            // Enviar contraseña solo si no es edición Y se ha escrito, o si es edición Y se ha escrito.
+             password: document.getElementById('password').value, // Enviar siempre, el backend decide si usarla
+            rol: document.getElementById('role').value,
+            activo: document.getElementById('active').value === '1' // Convertir a booleano para el backend si es necesario
+        };
+
+        // Validación básica frontend
+        if (!userData.usuario || !userData.rol) {
+            showAlert('error', 'Los campos Usuario y Rol son obligatorios.');
+            return;
+        }
+
+        // Si es CREACIÓN, la contraseña es obligatoria
+        if (currentAction === 'create' && !userData.password) {
+            showAlert('error', 'La contraseña es obligatoria al crear un nuevo usuario.');
+            return;
+        }
+         // Si es EDICIÓN, la contraseña es opcional. Si el campo está vacío, NO la enviaremos o enviaremos un valor que el backend ignore.
+         // Ajuste: Enviar la contraseña vacía si no se quiere cambiar. El backend debe ignorarla si está vacía en modo PUT/PATCH.
+         if (currentAction === 'edit' && userData.password === '') {
+             // No enviar el campo password o enviar un valor especial si el backend lo requiere
+             // Opción 1: Eliminar la propiedad si está vacía
+             delete userData.password;
+             // Opción 2: Dejarla vacía (requiere que el backend la ignore si está vacía en PUT)
+             // userData.password = ''; // Ya está así
+         }
+
+
+        try {
+            showLoading(true);
+            const url = currentAction === 'create' ? '/api/users' : `/api/users/${id}`;
+            const method = currentAction === 'create' ? 'POST' : 'PUT'; // O 'PATCH' si solo actualizas campos específicos
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Incluir otros headers si son necesarios (ej. token de autenticación)
+                    // 'Authorization': 'Bearer ' + tuTokenJWT
+                },
+                body: JSON.stringify(userData)
             });
+
+            // Intenta parsear JSON incluso si la respuesta no es ok, puede contener mensajes de error
+             const result = await response.json();
+
+            if (!response.ok) {
+                 // Usa el mensaje del JSON si existe, si no, el statusText
+                 throw new Error(result.message || `Error ${response.status}: ${response.statusText}`);
+             }
+
+
+             // Asumimos que una respuesta exitosa (2xx) implica éxito, incluso si no hay propiedad 'success'
+             // O si la API la devuelve, usarla: if (result.success) { ... }
+            showAlert('success', result.message || (currentAction === 'create' ? 'Usuario creado exitosamente' : 'Usuario actualizado correctamente'));
+            closeModal();
+            loadUsers(); // Recargar la lista de usuarios
+
+        } catch (error) {
+            console.error('Catch Error en saveUser:', error);
+            showAlert('error', `Error al guardar usuario: ${error.message}`);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+
+    // Eliminar usuario
+    async function deleteUser(id) {
+        if (!confirm(`¿Estás seguro de eliminar al usuario con ID ${id}? Esta acción no se puede deshacer.`)) {
+            return;
         }
 
-        // Formatear el rol para mostrar
-        function formatRole(role) {
-            const roles = {
-                'admin': 'Administrador del Sistema',
-                'administrativo': 'Personal Administrativo',
-                'nominas': 'Nóminas',
-                'reportes': 'Reportes',
-                'recursos': 'Recursos',
-                'colaborador': 'Colaborador'
-            };
-            return roles[role] || role;
-        }
-
-        // Abrir modal para crear/editar
-        function openModal(action, userId = null) {
-            currentAction = action;
-            document.getElementById('modalTitle').textContent = 
-                action === 'create' ? 'Nuevo Usuario' : 'Editar Usuario';
-            document.getElementById('userForm').reset();
-            document.getElementById('userId').value = userId || '';
-            document.getElementById('userModal').style.display = 'block';
-        }
-
-        // Cerrar modal
-        function closeModal() {
-            document.getElementById('userModal').style.display = 'none';
-        }
-
-        // Editar usuario
-        async function editUser(id) {
-            try {
-                showLoading(true);
-                const response = await fetch(`/api/users/${id}`);
-                
-                if (!response.ok) {
-                    throw new Error('Error al cargar usuario');
+        try {
+            showLoading(true);
+            // Asegúrate que la ruta a tu API sea correcta
+            const response = await fetch(`/api/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    // Incluir headers si son necesarios (ej. token de autenticación)
+                    // 'Authorization': 'Bearer ' + tuTokenJWT
                 }
-                
-                const { success, data, message } = await response.json();
-                
-                if (success) {
-                    openModal('edit', data.id);
-                    document.getElementById('username').value = data.usuario;
-                    document.getElementById('role').value = data.rol;
-                    document.getElementById('active').value = data.activo ? '1' : '0';
-                    // No cargamos la contraseña por seguridad
-                } else {
-                    showAlert('error', message || 'Error al cargar usuario');
-                }
-            } catch (error) {
-                showAlert('error', error.message);
-            } finally {
-                showLoading(false);
-            }
+            });
+
+             // Intenta parsear JSON incluso si la respuesta no es ok
+             const result = await response.json().catch(() => null); // Si no hay cuerpo JSON, result será null
+
+
+             if (!response.ok) {
+                 // Usa el mensaje del JSON si existe, si no, el statusText
+                 throw new Error(result?.message || `Error ${response.status}: ${response.statusText}`);
+             }
+
+
+             // Asumimos éxito si la respuesta es ok (2xx), o usar result.success si la API lo devuelve
+            showAlert('success', result?.message || 'Usuario eliminado correctamente');
+            loadUsers(); // Recargar la lista
+
+        } catch (error) {
+            console.error('Catch Error en deleteUser:', error);
+            showAlert('error', `Error al eliminar usuario: ${error.message}`);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Cerrar sesión
+    function logout() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+            // Asegúrate que la ruta de logout sea correcta
+            window.location.href = '/logout';
+        }
+    }
+
+    // Mostrar alerta
+    function showAlert(type, message) {
+        // Ocultar ambas alertas primero para evitar mostrar múltiples mensajes
+        const successAlert = document.getElementById('alertSuccess');
+        const errorAlert = document.getElementById('alertError');
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
+
+        const alertElement = type === 'success' ? successAlert : errorAlert;
+
+        if (!alertElement) {
+            console.error(`Elemento de alerta ${type === 'success' ? '#alertSuccess' : '#alertError'} no encontrado.`);
+            // Fallback: usar alert nativo si el div no existe
+             window.alert(`[${type.toUpperCase()}] ${message}`);
+            return;
         }
 
-        // Guardar usuario
-        async function saveUser() {
-            const userData = {
-                usuario: document.getElementById('username').value.trim(),
-                password: document.getElementById('password').value,
-                rol: document.getElementById('role').value,
-                activo: document.getElementById('active').value === '1'
-            };
+        alertElement.textContent = message;
+        alertElement.style.display = 'block'; // Mostrar la alerta correcta
 
-            // Validación básica
-            if (!userData.usuario || !userData.rol) {
-                showAlert('error', 'Usuario y rol son obligatorios');
-                return;
-            }
+        // Ocultar automáticamente después de 5 segundos
+        setTimeout(() => {
+            alertElement.style.display = 'none';
+        }, 5000);
+    }
 
-            if (currentAction === 'create' && !userData.password) {
-                showAlert('error', 'La contraseña es obligatoria');
-                return;
-            }
-
-            try {
-                showLoading(true);
-                const id = document.getElementById('userId').value;
-                const url = currentAction === 'create' ? '/api/users' : `/api/users/${id}`;
-                const method = currentAction === 'create' ? 'POST' : 'PUT';
-
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
-
-                const { success, message } = await response.json();
-
-                if (success) {
-                    showAlert('success', message || (currentAction === 'create' ? 
-                        'Usuario creado exitosamente' : 'Usuario actualizado correctamente'));
-                    closeModal();
-                    loadUsers();
-                } else {
-                    throw new Error(message || 'Error al guardar usuario');
-                }
-            } catch (error) {
-                showAlert('error', error.message);
-            } finally {
-                showLoading(false);
-            }
+    // Mostrar/ocultar indicador de carga (implementación básica)
+    function showLoading(show) {
+        // Aquí puedes implementar una lógica más visual, como mostrar/ocultar un spinner
+        // Por ahora, solo log en consola.
+        if (show) {
+            console.log('Cargando...');
+            // Ejemplo: document.getElementById('loadingSpinner').style.display = 'block';
+        } else {
+            console.log('Carga completada.');
+            // Ejemplo: document.getElementById('loadingSpinner').style.display = 'none';
         }
-
-        // Eliminar usuario
-        async function deleteUser(id) {
-            if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
-            
-            try {
-                showLoading(true);
-                const response = await fetch(`/api/users/${id}`, {
-                    method: 'DELETE'
-                });
-
-                const { success, message } = await response.json();
-
-                if (success) {
-                    showAlert('success', message || 'Usuario eliminado correctamente');
-                    loadUsers();
-                } else {
-                    throw new Error(message || 'Error al eliminar usuario');
-                }
-            } catch (error) {
-                showAlert('error', error.message);
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Cerrar sesión
-        function logout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                window.location.href = '/logout';
-            }
-        }
-
-        // Mostrar alerta
-        function showAlert(type, message) {
-            const alertElement = type === 'success' ? 
-                document.getElementById('alertSuccess') : 
-                document.getElementById('alertError');
-            
-            alertElement.textContent = message;
-            alertElement.style.display = 'block';
-            
-            setTimeout(() => {
-                alertElement.style.display = 'none';
-            }, 5000);
-        }
-
-        // Mostrar/ocultar carga
-        function showLoading(show) {
-            // Implementar lógica de carga si es necesario
-            console.log(show ? 'Cargando...' : 'Carga completada');
-        }
+    }
     </script>
-</body>
+    </body>
 </html>
