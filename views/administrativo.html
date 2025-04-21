@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORHA - Administración de colaboradores</title>
+    <link rel="stylesheet" href="css/administrativo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <style>
+        /* Basic styles as fallback if administrativo.css doesn't load */
+        /* These are minimal fallback styles based on your admin.html style block */
+        .alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        /* Basic table styles if CSS doesn't load */
+        #employeeTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        #employeeTable th, #employeeTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #employeeTable th { background-color: #f2f2f2; }
+        #employeeTable tr:nth-child(even){ background-color: #f9f9f9; }
+        #employeeTable tr:hover { background-color: #ddd; }
+        .actions button { margin-right: 5px; padding: 5px 10px; cursor: pointer; }
+        .btn-edit { background-color: #ffc107; color: white; border: none; }
+        .btn-delete { background-color: #dc3545; color: white; border: none; }
+         /* Add fallback styles for elements specific to this page if CSS fails */
+         .form-grid { display: block; }
+         .form-group { margin-bottom: 20px; }
+         .full-width { width: 100%; }
+         .required { color: red; }
+         .status { padding: 2px 5px; border-radius: 3px; font-size: 0.9em;}
+         .status-activo { background-color: #d4edda; color: #155724;}
+         .status-inactivo { background-color: #f8d7da; color: #721c24;}
+         .status-vacaciones { background-color: #fff3cd; color: #856404;}
+         .status-licencia { background-color: #e2e3e5; color: #383d41;}
+    </style>
+</head>
+<body>
+    <div class="admin-background">
+        <div class="admin-overlay"></div>
+    </div>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <div class="header-titles">
+                <h1>Sistema <span>SORHA</span></h1>
+                <p>Panel de Administración</p>
+            </div>
+        </div>
+         <nav>
+            <span id="usernameDisplay" class="username-display"></span>
+            <a href="#" class="btn-logout" onclick="logout()">
+                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+         </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+
+            <div class="section-header">
+                 <h2><i class="fas fa-users"></i> Administración de colaboradores</h2>
+                 <button id="addEmployeeBtn" class="btn-add">
+                     <i class="fas fa-plus"></i> Agregar Nuevo Empleado
+                 </button>
+            </div>
+
+            <div id="alertSuccess" class="alert alert-success" style="display: none;"></div>
+            <div id="alertError" class="alert alert-error" style="display: none;"></div>
+
+
+            <div id="employeeModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                         <h2 id="modalTitle" class="modal-title">Agregar Empleado</h2>
+                         <span class="close" id="closeEmployeeModalBtn">&times;</span>
+                    </div>
+
+                    <form id="employeeForm">
+                        <input type="hidden" id="id_empleado" name="id_empleado">
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="primer_nombre"><i class="fas fa-user"></i> Primer Nombre: <span class="required">*</span></label>
+                                <input type="text" id="primer_nombre" name="primer_nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="segundo_nombre"><i class="fas fa-user"></i> Segundo Nombre:</label>
+                                <input type="text" id="segundo_nombre" name="segundo_nombre">
+                            </div>
+                            <div class="form-group">
+                                <label for="primer_apellido"><i class="fas fa-user"></i> Primer Apellido: <span class="required">*</span></label>
+                                <input type="text" id="primer_apellido" name="primer_apellido" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="segundo_apellido"><i class="fas fa-user"></i> Segundo Apellido:</label>
+                                <input type="text" id="segundo_apellido" name="segundo_apellido">
+                            </div>
+                            <div class="form-group">
+                                <label for="usuario_empleado"><i class="fas fa-user-circle"></i> Usuario: <span class="required">*</span></label>
+                                <input type="text" id="usuario_empleado" name="usuario_empleado" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sexo"><i class="fas fa-venus-mars"></i> Sexo:</label>
+                                <select id="sexo" name="sexo">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edad"><i class="fas fa-birthday-cake"></i> Edad:</label>
+                                <input type="number" id="edad" name="edad" min="18">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_contrato"><i class="fas fa-file-contract"></i> ID Contrato:</label>
+                                <input type="text" id="id_contrato" name="id_contrato">
+                            </div>
+                            <div class="form-group">
+                                <label for="puesto"><i class="fas fa-briefcase"></i> Puesto:</label>
+                                <input type="text" id="puesto" name="puesto">
+                            </div>
+                            <div class="form-group">
+                                <label for="estado_civil"><i class="fas fa-ring"></i> Estado Civil:</label>
+                                <input type="text" id="estado_civil" name="estado_civil">
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_nacimiento"><i class="fas fa-calendar-alt"></i> Fecha Nacimiento:</label>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="ciudad_nacimiento"><i class="fas fa-city"></i> Ciudad Nacimiento:</label>
+                                <input type="text" id="ciudad_nacimiento" name="ciudad_nacimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="departamento"><i class="fas fa-building"></i> Departamento:</label>
+                                <input type="text" id="departamento" name="departamento">
+                            </div>
+                            <div class="form-group">
+                                <label for="email"><i class="fas fa-envelope"></i> Email Personal:</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="email_interno"><i class="fas fa-envelope-open-text"></i> Email Interno:</label>
+                                <input type="email" id="email_interno" name="email_interno">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono"><i class="fas fa-phone"></i> Teléfono:</label>
+                                <input type="tel" id="telefono" name="telefono">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección:</label>
+                                <input type="text" id="direccion" name="direccion">
+                            </div>
+                             <div class="form-group">
+                                <label for="status"><i class="fas fa-info-circle"></i> Status:</label>
+                                 <select id="status" name="status">
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                    <option value="Vacaciones">Vacaciones</option>
+                                    <option value="Licencia">Licencia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar</button>
+                            <button type="button" id="cancelEmployeeBtn" class="btn-cancel"><i class="fas fa-times"></i> Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr> <h2><i class="fas fa-list"></i> Lista de colaboradores</h2>
+            <div class="table-container">
+                <table id="employeeTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> ID</th>
+                            <th><i class="fas fa-user"></i> Nombre Completo</th>
+                            <th><i class="fas fa-user-circle"></i> Usuario</th>
+                            <th><i class="fas fa-briefcase"></i> Puesto</th>
+                            <th><i class="fas fa-envelope-open-text"></i> Email Interno</th>
+                            <th><i class="fas fa-phone"></i> Teléfono</th>
+                            <th><i class="fas fa-info-circle"></i> Status</th>
+                            <th><i class="fas fa-cogs"></i> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                        <tr><td colspan="8">Cargando colaboradores...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> </main> <script>
+        // Variables globales
+        let currentEmployeeAction = 'create'; // 'create' or 'edit'
+
+        // --- Element Selectors ---
+        const apiBaseUrl = '/api/colaboradores'; // Base URL for the employee API
+        const employeeTableBody = document.getElementById('employeeTableBody');
+        const employeeModal = document.getElementById('employeeModal'); // The modal div
+        const employeeForm = document.getElementById('employeeForm');
+        const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+        const cancelEmployeeBtn = document.getElementById('cancelEmployeeBtn');
+        const closeEmployeeModalBtn = document.getElementById('closeEmployeeModalBtn'); // Close button for the modal
+        const modalTitle = document.getElementById('modalTitle'); // Changed from formTitle
+        const hiddenEmployeeId = document.getElementById('id_empleado');
+        const alertSuccess = document.getElementById('alertSuccess'); // Using specific alert divs from admin.html
+        const alertError = document.getElementById('alertError'); // Using specific alert divs from admin.html
+        const usernameDisplay = document.getElementById('usernameDisplay');
+
+        // --- State ---
+        let currentEmployees = []; // Store fetched employees locally
+
+        // When the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial Load
+            fetchEmployees();
+
+            // Fetch and display logged-in user info
+            fetch('/api/session/user')
+                 .then(res => {
+                    if (!res.ok) {
+                        console.warn("Failed to get session info:", res.statusText);
+                        if (usernameDisplay) usernameDisplay.textContent = 'Usuario no identificado';
+                         if (res.status === 401) window.location.href = '/'; // Redirect if not authenticated
+                        return null;
+                    }
+                    return res.json();
+                 })
+                 .then(data => {
+                     if(data && data.success && data.user && usernameDisplay) {
+                        usernameDisplay.textContent = `Usuario: ${data.user.usuario} (${data.user.rol})`;
+                     } else if (usernameDisplay) {
+                         usernameDisplay.textContent = 'Usuario no identificado';
+                     }
+                 })
+                 .catch(err => {
+                    console.error("Error fetching user info:", err);
+                    if (usernameDisplay) usernameDisplay.textContent = 'Error cargando usuario';
+                 });
+        });
+
+
+        // --- Feedback Functions (Messages) ---
+        // Adopted from admin.html's showAlert pattern
+        function showAlert(type, message) {
+            // Hide both alerts first
+            alertSuccess.style.display = 'none';
+            alertError.style.display = 'none';
+
+            const alertElement = type === 'success' ? alertSuccess : alertError;
+
+            if (!alertElement) {
+                console.error(`Alert element ${type === 'success' ? '#alertSuccess' : '#alertError'} not found.`);
+                 window.alert(`[${type.toUpperCase()}] ${message}`); // Fallback
+                return;
+            }
+
+            alertElement.textContent = message;
+            alertElement.style.display = 'block'; // Show the correct alert
+
+            // Hide automatically after 5 seconds
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function clearAlerts() {
+            alertSuccess.style.display = 'none';
+            alertError.style.display = 'none';
+            alertSuccess.textContent = '';
+            alertError.textContent = '';
+        }
+
+
+        // --- Functions to handle the Modal ---
+        // Adopted from admin.html's openModal/closeModal pattern
+        function openEmployeeModal(action, employeeId = null) {
+            currentEmployeeAction = action;
+            clearAlerts(); // Clear alerts before opening modal
+            employeeForm.reset(); // Reset form fields
+
+            if (action === 'create') {
+                modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> Agregar Empleado';
+                hiddenEmployeeId.value = ''; // Ensure no ID is set for creation
+                // Set default status for creation if needed, e.g., document.getElementById('status').value = 'Activo';
+                 document.getElementById('status').value = 'Activo'; // Assuming 'Activo' is default for new employees
+            } else { // action === 'edit'
+                modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Editar Empleado';
+                hiddenEmployeeId.value = employeeId; // Set the ID for editing
+                // Employee data will be fetched and loaded into the form by the editEmployee function
+            }
+
+            // Show the modal - using the simple display toggle from admin.html
+            employeeModal.style.display = 'block';
+        }
+
+        function closeEmployeeModal() {
+            // Hide the modal - using the simple display toggle from admin.html
+            employeeModal.style.display = 'none';
+            employeeForm.reset(); // Clear form fields on close
+            hiddenEmployeeId.value = ''; // Clear ID on close
+            clearAlerts(); // Clear alerts on close
+        }
+
+
+        // --- CRUD Functions ---
+
+        // Fetch all employees
+        async function fetchEmployees() {
+            employeeTableBody.innerHTML = '<tr><td colspan="8">Cargando...</td></tr>';
+            clearAlerts(); // Clear alerts before loading
+
+            try {
+                const response = await fetch(apiBaseUrl); // GET /api/colaboradores
+                if (!response.ok) {
+                     let errorMsg = `Error ${response.status}: ${response.statusText}`;
+                     try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch(e) {}
+                    throw new Error(`Error al cargar colaboradores: ${errorMsg}`);
+                }
+                const employees = await response.json();
+
+                // Check response structure if your API sends {success: true, data: [...]}
+                 if (Array.isArray(employees)) { // Assuming your API returns an array directly
+                     currentEmployees = employees;
+                     renderTable(currentEmployees);
+                 } else if (employees && employees.success && Array.isArray(employees.data)) { // If API sends {success: true, data: [...]}
+                      currentEmployees = employees.data;
+                      renderTable(currentEmployees);
+                 }
+                 else {
+                     throw new Error('Formato de respuesta inesperado de la API.');
+                 }
+
+            } catch (error) {
+                console.error('Error al cargar colaboradores:', error);
+                employeeTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Error al cargar datos: ${error.message}. Intente recargar.</td></tr>`;
+                showAlert('error', `Error al cargar colaboradores: ${error.message}`);
+                 // Optional: redirect if auth error
+                 if (error.message.includes('401') || error.message.includes('403') || error.message.toLowerCase().includes('autenticado') || error.message.toLowerCase().includes('autorizado')) {
+                     // setTimeout(() => { window.location.href = '/'; }, 3000);
+                 }
+            }
+        }
+
+        // Render the employee table
+        function renderTable(employees) {
+             employeeTableBody.innerHTML = '';
+             if (!employees || employees.length === 0) {
+                 employeeTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No hay colaboradores registrados.</td></tr>';
+                 return;
+             }
+             employees.forEach(emp => {
+                const row = document.createElement('tr');
+                row.dataset.id = emp.id_empleado;
+                // Ensure names/surnames are strings before joining
+                const nombreCompleto = [emp.primer_nombre, emp.segundo_nombre, emp.primer_apellido, emp.segundo_apellido]
+                                        .filter(Boolean) // Remove null or empty
+                                        .join(' ');
+
+                // Determine status class based on the value
+                let statusClass = 'status-default';
+                if (emp.status) {
+                    statusClass = `status-${emp.status.toLowerCase().replace(/\s+/g, '-')}`;
+                }
+
+                row.innerHTML = `
+                    <td>${emp.id_empleado || 'N/A'}</td>
+                    <td>${nombreCompleto || 'N/A'}</td>
+                    <td>${emp.usuario_empleado || 'N/A'}</td>
+                    <td>${emp.puesto || 'N/A'}</td>
+                    <td>${emp.email_interno || 'N/A'}</td>
+                    <td>${emp.telefono || 'N/A'}</td>
+                    <td><span class="status ${statusClass}">${emp.status || 'N/A'}</span></td>
+                    <td class="actions">
+                        <button class="btn-edit" data-id="${emp.id_empleado}" title="Editar"><i class="fas fa-edit"></i> Editar</button>
+                        <button class="btn-delete" data-id="${emp.id_empleado}" title="Eliminar"><i class="fas fa-trash"></i> Eliminar</button>
+                    </td>
+                `;
+                employeeTableBody.appendChild(row);
+            });
+        }
+
+        // Handle Edit Button Click - Fetch employee data and open modal
+        async function editEmployee(employeeId) { // Renamed from handleEditClick to match admin pattern
+            clearAlerts();
+            try {
+                // Show loading indicator if you have one
+                // showLoading(true);
+                const response = await fetch(`${apiBaseUrl}/${employeeId}`); // GET /api/colaboradores/:id
+                 if (!response.ok) {
+                    let errorMsg = `Error ${response.status}: ${response.statusText}`;
+                     try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch(e) {}
+                    throw new Error(`Error al obtener datos de empleado: ${errorMsg}`);
+                }
+                const employeeData = await response.json();
+
+                 // Check response structure
+                 if (employeeData && (employeeData.success === undefined || employeeData.success === true) && employeeData.data) { // Assuming data is in a 'data' property or directly
+                      const dataToLoad = employeeData.data || employeeData; // Use 'data' property if it exists
+                      openEmployeeModal('edit', dataToLoad.id_empleado); // Open modal for editing
+                      // Load data into the form fields
+                      Object.keys(dataToLoad).forEach(key => {
+                           const input = employeeForm.elements[key];
+                           if (input) {
+                              if (input.type === 'date' && dataToLoad[key]) {
+                                  try { // Backend is expected to format asYYYY-MM-DD
+                                      input.value = dataToLoad[key];
+                                  } catch (e) { input.value = null; }
+                              } else {
+                                  input.value = dataToLoad[key] ?? '';
+                              }
+                           }
+                      });
+                 }
+                 else {
+                     throw new Error('Formato de respuesta inesperado al cargar empleado para editar.');
+                 }
+
+            } catch (error) {
+                console.error('Error al obtener empleado para editar:', error);
+                showAlert('error', `Error al cargar datos para editar: ${error.message}`);
+            } finally {
+                // Hide loading indicator
+                // showLoading(false);
+            }
+        }
+
+        // Handle Delete Button Click
+        async function deleteEmployee(employeeId) { // Renamed from handleDeleteClick
+            const employee = currentEmployees.find(e => e.id_empleado == employeeId);
+            const employeeName = employee ? `${employee.primer_nombre || ''} ${employee.primer_apellido || ''}`.trim() : `ID ${employeeId}`;
+
+            if (!confirm(`¿Está seguro de que desea eliminar al empleado "${employeeName}"? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+            clearAlerts();
+
+            try {
+                // showLoading(true);
+                const response = await fetch(`${apiBaseUrl}/${employeeId}`, { method: 'DELETE' });
+                // Attempt to parse JSON even on non-ok response
+                const result = await response.json().catch(() => null); // null if no JSON body
+
+                if (!response.ok) {
+                     // Use message from JSON if available, otherwise statusText
+                     throw new Error(result?.message || `Error ${response.status}: ${response.statusText}`);
+                 }
+
+                 // Assume success if response is ok (2xx), or use result.success if API returns it
+                showAlert('success', result?.message || 'Empleado eliminado correctamente');
+                fetchEmployees(); // Reload table
+
+            } catch (error) {
+                console.error('Error al eliminar empleado:', error);
+                showAlert('error', `Error al eliminar: ${error.message}`);
+            } finally {
+                // showLoading(false);
+            }
+        }
+
+        // Handle Form Submission (Create or Update)
+        async function saveEmployee(event) { // Renamed from handleFormSubmit, added event parameter
+            event.preventDefault(); // Prevent default form submission
+            clearAlerts();
+
+            const formData = new FormData(employeeForm);
+            const employeeData = Object.fromEntries(formData.entries());
+            const employeeId = hiddenEmployeeId.value;
+
+            const method = employeeId ? 'PUT' : 'POST';
+            const url = employeeId ? `${apiBaseUrl}/${employeeId}` : apiBaseUrl;
+
+             // Basic client-side validation for required fields
+             if (!employeeData.primer_nombre || !employeeData.primer_apellido || !employeeData.usuario_empleado) {
+                 showAlert("error", "Los campos Primer Nombre, Primer Apellido y Usuario son obligatorios.");
+                 return; // Stop submission
+             }
+
+            // Optional: Clean empty strings if your backend expects null or omits fields
+             Object.keys(employeeData).forEach(key => {
+                if (employeeData[key] === '') {
+                   // delete employeeData[key]; // Uncomment if you prefer not sending empty strings
+                }
+             });
+
+
+            try {
+                // showLoading(true);
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(employeeData),
+                });
+
+                // Attempt to parse JSON even on non-ok response
+                 const result = await response.json(); // Expecting JSON response
+
+                if (!response.ok) {
+                    // Use error message from backend if available, otherwise HTTP status
+                    const errorMessage = result.message || `Error HTTP: ${response.status} - ${response.statusText}`;
+                    throw new Error(errorMessage);
+                }
+
+                // Assume success if response is ok (2xx), or check result.success if API returns it
+                showAlert('success', result.message || `Empleado ${employeeId ? 'actualizado' : 'creado'} exitosamente.`);
+                closeEmployeeModal(); // Close modal on success
+                fetchEmployees(); // Reload table
+
+            } catch (error) {
+                console.error(`Error al ${employeeId ? 'actualizar' : 'crear'} empleado:`, error);
+                showAlert('error', `Error al guardar: ${error.message}`); // Use 'error' for red alerts
+            } finally {
+                // showLoading(false);
+            }
+        }
+
+        // Function to simulate loading indicator (optional)
+        function showLoading(show) {
+             // Implement a visual loading indicator here (e.g., a spinner)
+            if (show) {
+                console.log('Cargando...'); // Placeholder
+            } else {
+                console.log('Carga completada.'); // Placeholder
+            }
+        }
+
+        // Close session - Adopted from admin.html
+        function logout() {
+             if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                 // Ensure the logout route is correct
+                 window.location.href = '/logout';
+             }
+         }
+
+
+        // --- Event Listeners ---
+        addEmployeeBtn.addEventListener('click', () => openEmployeeModal('create')); // Open modal for adding
+        cancelEmployeeBtn.addEventListener('click', closeEmployeeModal); // Close modal on cancel
+        closeEmployeeModalBtn.addEventListener('click', closeEmployeeModal); // Close modal using the 'x' button
+
+        // Close modal if user clicks outside the modal content
+        window.addEventListener('click', (event) => {
+             if (event.target === employeeModal) { // Use the correct modal variable
+                closeEmployeeModal();
+             }
+        });
+
+        // Listen for form submission
+        employeeForm.addEventListener('submit', saveEmployee);
+
+
+        // Event delegation on the table body for edit and delete buttons
+        employeeTableBody.addEventListener('click', (event) => {
+             const editButton = event.target.closest('.btn-edit');
+             if (editButton) {
+                const employeeId = editButton.dataset.id;
+                editEmployee(employeeId); // Call editEmployee
+                return; // Prevent triggering delete if nested
+             }
+             const deleteButton = event.target.closest('.btn-delete');
+             if (deleteButton) {
+                const employeeId = deleteButton.dataset.id;
+                deleteEmployee(employeeId); // Call deleteEmployee
+             }
+        });
+
+
+        // Note: Initial load is handled by the DOMContentLoaded listener at the top
+    </script>
+</body>
+</html>
