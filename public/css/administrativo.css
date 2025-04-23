@@ -11,6 +11,8 @@ body {
     display: flex;
     flex-direction: column;
     background-color: #f5f5f5;
+    line-height: 1.6;
+    color: #333;
 }
 
 /* Fondo con efecto similar al login */
@@ -20,142 +22,254 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    /* Asegúrate de que la ruta a tu imagen de fondo sea correcta */
     background: url('/images/doctor-background.jpg') no-repeat center center;
     background-size: cover;
     z-index: -1;
-    filter: brightness(0.7);
+    filter: brightness(0.7); /* Oscurece la imagen de fondo */
 }
 
+/* Capa de superposición sobre el fondo */
 .admin-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    /* Gradiente azul, ajusta los colores si es necesario */
     background: linear-gradient(135deg, rgba(41, 128, 185, 0.7) 0%, rgba(109, 213, 250, 0.7) 100%);
 }
 
 /* Header estilo similar al login */
 .admin-header {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    z-index: 10; /* Asegura que esté por encima del contenido */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 15px; /* Espacio entre logo y títulos */
 }
 
 .logo {
     width: 50px;
     height: 50px;
-    object-fit: contain;
+    object-fit: contain; /* Ajusta el tamaño del logo */
 }
 
 .header-titles h1 {
-    color: #2c3e50;
+    color: #2c3e50; /* Color de título oscuro */
     font-size: 22px;
     line-height: 1.2;
+    margin: 0;
 }
 
 .header-titles h1 span {
-    color: #2980b9;
+    color: #2980b9; /* Color de acento para "SORHA" */
     font-weight: 700;
 }
 
 .header-titles p {
-    color: #7f8c8d;
+    color: #7f8c8d; /* Color gris para subtítulo */
     font-size: 13px;
+    margin: 0;
 }
+
+/* Username display in header */
+.admin-header nav {
+    display: flex;
+    align-items: center;
+    margin-top: 0; /* Reset margin-top */
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+     }
+}
+
+.username-display {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        margin-right: auto; /* Empuja el botón de logout a la derecha */
+        margin-left: 10px;
+     }
+}
+
 
 /* Contenido principal */
 .admin-main {
-    flex: 1;
+    flex: 1; /* Permite que ocupe el espacio restante */
     padding: 30px;
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Centra el contenedor horizontalmente */
+    width: 100%;
+    z-index: 1; /* Asegura que esté por encima del fondo */
 }
 
 .container {
     width: 100%;
     max-width: 1200px;
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 255, 255, 0.97); /* Fondo blanco casi opaco */
     border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
     padding: 25px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave al pasar el ratón */
+    margin-top: 20px; /* Espacio superior */
+    margin-bottom: 20px; /* Espacio inferior */
 }
 
 .container:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px); /* Pequeño levantamiento */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Sombra más grande */
 }
 
+/* Section headers within the container */
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee; /* Separador */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
 }
 
 .section-header h2 {
-    color: #2c3e50;
+    color: #2c3e50; /* Color de título */
     font-size: 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px; /* Espacio entre icono y texto */
+    margin: 0;
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        width: 100%;
+        justify-content: center;
+        font-size: 20px;
+     }
 }
 
-/* Tabla de usuarios (Aplicará a la tabla de colaboradores por el nombre de la clase) */
+/* Required field indicator */
+.required {
+    color: #e74c3c; /* Rojo para indicar campo obligatorio */
+    margin-left: 4px;
+}
+
+
+/* Tabla de colaboradores */
 .table-container {
-    overflow-x: auto;
+    overflow-x: auto; /* Permite scroll horizontal si la tabla es muy ancha */
     margin-top: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra para la tabla */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Elimina el espacio entre celdas */
     background: white;
+    min-width: 900px; /* Asegura que la tabla tenga un ancho mínimo */
 }
 
 th, td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eeeeee; /* Línea separadora entre filas */
 }
 
 th {
-    background-color: #2577ae;
+    background-color: #2577ae; /* Azul para los encabezados */
     color: white;
     font-weight: 500;
-    white-space: nowrap;
+    white-space: nowrap; /* Evita que el texto del encabezado se parta */
 }
 
 th i {
-    margin-right: 8px;
+    margin-right: 8px; /* Espacio entre icono y texto en encabezado */
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* Fondo gris claro para filas pares */
 }
 
 tr:hover {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1; /* Fondo un poco más oscuro al pasar el ratón */
 }
+
+/* Style for inactive rows */
+/* Esto se podría aplicar con JavaScript agregando la clase 'inactive-row' al TR */
+.inactive-row {
+    opacity: 0.6; /* Hace la fila un poco transparente */
+    filter: grayscale(70%); /* Aplica un filtro a blanco y negro parcial */
+    font-style: italic; /* Opcional: pone el texto en cursiva */
+    background-color: #f8f9fa !important; /* Fondo claro forzado */
+}
+
+/* Status badges */
+.status {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    display: inline-block;
+    text-transform: capitalize; /* Capitaliza la primera letra */
+}
+
+.status-activo {
+    background-color: #d5f5e3; /* Verde muy claro */
+    color: #27ae60; /* Verde */
+    border: 1px solid #a3e4d7;
+}
+
+.status-inactivo {
+    background-color: #fadbd8; /* Rojo muy claro */
+    color: #e74c3c; /* Rojo */
+    border: 1px solid #f5b7b1;
+}
+
+.status-vacaciones {
+    background-color: #fef9e7; /* Amarillo muy claro */
+    color: #f39c12; /* Naranja */
+    border: 1px solid #fae5d3;
+}
+
+.status-licencia {
+    background-color: #ebedef; /* Gris muy claro */
+    color: #7f8c8d; /* Gris */
+    border: 1px solid #d7dbdd;
+}
+.status-default { /* Estilo por defecto si no se reconoce el estado */
+     background-color: #eee;
+     color: #555;
+     border: 1px solid #ccc;
+}
+
+
+/* Table action buttons container */
+td.actions {
+    white-space: nowrap; /* Evita que los botones se envuelvan */
+    display: flex; /* Permite usar gap */
+    gap: 5px; /* Espacio entre botones */
+    align-items: center;
+}
+
 
 /* Botones */
 .btn-logout {
-    background: linear-gradient(90deg, #e74c3c, #f39c12);
+    background: linear-gradient(90deg, #e74c3c, #f39c12); /* Gradiente naranja-rojo */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -164,19 +278,19 @@ tr:hover {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    text-decoration: none;
+    gap: 8px; /* Espacio entre icono y texto */
+    transition: all 0.3s ease; /* Transición para hover */
+    text-decoration: none; /* Elimina el subrayado del enlace */
 }
 
 .btn-logout:hover {
-    background: linear-gradient(90deg, #c0392b, #d35400);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+    background: linear-gradient(90deg, #c0392b, #d35400); /* Gradiente más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Pequeño levantamiento */
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Sombra con color de acento */
 }
 
 .btn-add {
-    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    background: linear-gradient(90deg, #27ae60, #2ecc71); /* Gradiente verde */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -185,83 +299,106 @@ tr:hover {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
+    gap: 8px; /* Espacio entre icono y texto */
+    transition: all 0.3s ease; /* Transición para hover */
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        width: 100%;
+        justify-content: center;
+     }
 }
 
 .btn-add:hover {
-    background: linear-gradient(90deg, #219955, #27ae60);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+    background: linear-gradient(90deg, #219955, #27ae60); /* Gradiente más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Pequeño levantamiento */
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3); /* Sombra con color de acento */
 }
 
-.btn-edit, .btn-delete {
+/* Edit and Delete buttons */
+.btn-edit, .btn-delete, .btn-activate, .btn-deactivate { /* Added new button classes */
     padding: 8px 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
     transition: all 0.3s ease;
-    display: inline-flex;
+    display: inline-flex; /* Asegura que estén en línea y permite gap/align */
     align-items: center;
-    gap: 5px;
+    gap: 5px; /* Espacio entre icono y texto */
 }
 
 .btn-edit {
-    background-color: #3498db;
+    background-color: #3498db; /* Azul */
     color: white;
 }
 
 .btn-edit:hover {
-    background-color: #2980b9;
+    background-color: #2980b9; /* Azul oscuro */
     transform: translateY(-2px);
 }
 
 .btn-delete {
-    background-color: #e74c3c;
+    background-color: #e74c3c; /* Rojo */
     color: white;
 }
 
 .btn-delete:hover {
-    background-color: #c0392b;
+    background-color: #c0392b; /* Rojo oscuro */
     transform: translateY(-2px);
 }
 
+/* New styles for Activate and Deactivate buttons */
+.btn-activate {
+    background-color: #2ecc71; /* Verde */
+    color: white;
+}
+.btn-activate:hover {
+    background-color: #27ae60; /* Verde oscuro */
+    transform: translateY(-2px);
+}
+
+.btn-deactivate {
+    background-color: #f39c12; /* Naranja */
+    color: white;
+}
+.btn-deactivate:hover {
+    background-color: #d35400; /* Naranja oscuro */
+    transform: translateY(-2px);
+}
+
+
 /* Modal */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
+    /* display: none;  -- Esto lo maneja JS */
+    position: fixed; /* Fijo en la ventana */
+    z-index: 1000; /* Por encima de todo */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(3px);
-    /* Nota: Tu admin.css no tiene display: flex aquí, se maneja con display: block/none en JS.
-       Dejo como display: none para que JS lo controle. */
+    overflow: auto; /* Permite scroll si el contenido es muy grande */
+    background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(3px); /* Efecto de desenfoque */
+    display: flex; /* Centra el modal horizontal y verticalmente */
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px; /* Espacio superior para asegurar que no toque el borde */
 }
 
+/* Cuando JS set display: block, se sobrepone a display: none */
 .modal-content {
     background-color: #fff;
-    margin: 5% auto; /* Centering using margin as in your admin.css */
+    /* margin: 5% auto; -- Se reemplaza por flexbox centering */
     padding: 25px;
+    border: none; /* Quitamos el borde gris por defecto */
     border-radius: 10px;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    /* Tu admin.css usa animation, pero la animación se activa cuando display cambia a block.
-       Si quieres la animación, asegúrate de que el JS cambie display y quizás añada/quite una clase.
-       Por ahora, me baso en tu admin.css donde display: none/block es lo principal.
-       Elimino las propiedades de animation aquí para ser fiel a tu CSS. */
-    /* transform: translateY(-20px); */ /* Removido para coincidir con tu admin.css */
-    /* opacity: 0; */ /* Removido para coincidir con tu admin.css */
-    /* animation: modalOpen 0.4s forwards; */ /* Removido para coincidir con tu admin.css */
-     position: relative; /* Añadido para el botón de cerrar */
+    max-width: 500px; /* Ancho máximo del modal */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Sombra más pronunciada */
+    position: relative;
+    animation-name: animatetop; /* Aplica la animación */
+    animation-duration: 0.4s;
 }
-
-/* @keyframes modalOpen { ... } */ /* Removido para coincidir con tu admin.css */
-
 
 .modal-header {
     display: flex;
@@ -282,31 +419,32 @@ tr:hover {
 }
 
 .close {
-    color: #aaa;
+    color: #aaa; /* Color gris */
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s;
-     position: absolute; /* Añadido para posicionar la 'x' */
-     top: 15px; /* Ajustado para que quede dentro del header */
-     right: 20px; /* Ajustado */
-     float: none; /* Eliminar float ya que usamos absolute positioning */
+    position: absolute; /* Posiciona el botón de cerrar */
+    top: 15px;
+    right: 20px;
+    float: none; /* Asegura que no flote */
 }
 
 .close:hover {
-    color: #333;
+    color: #333; /* Color más oscuro al pasar el ratón */
 }
 
+/* Form Groups */
 .form-group {
     margin-bottom: 20px;
 }
 
 .form-group label {
-    display: block;
+    display: block; /* Cada label en su propia línea */
     margin-bottom: 8px;
     font-weight: 500;
     color: #2c3e50;
-    display: flex;
+    display: flex; /* Permite usar gap con icono */
     align-items: center;
     gap: 8px;
 }
@@ -317,34 +455,44 @@ tr:hover {
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
-    transition: all 0.3s;
+    transition: all 0.3s; /* Transición para focus */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); /* Sombra interna */
 }
 
 .form-group input:focus, .form-group select:focus {
-    border-color: #2980b9;
-    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
-    outline: none;
+    border-color: #2980b9; /* Color de borde azul al enfocar */
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2), inset 0 1px 3px rgba(0,0,0,0.08); /* Sombra exterior y interior */
+    outline: none; /* Elimina el outline por defecto del navegador */
 }
 
-/* Form grid layout (añadido porque la página de colaboradores usa grid) */
+/* Form grid layout */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Flexible columns */
-    gap: 20px; /* Space between grid items */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Columnas flexibles */
+    gap: 20px; /* Espacio entre elementos de la cuadrícula */
 }
 
 .form-group.full-width {
-    grid-column: 1 / -1; /* Span across all columns */
+    grid-column: 1 / -1; /* Ocupa todas las columnas */
 }
 
 
+/* Form Actions */
 .form-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    justify-content: flex-end; /* Alinea botones a la derecha */
+    gap: 10px; /* Espacio entre botones */
     margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 480px) {
+        flex-direction: column;
+        gap: 10px;
+     }
 }
 
+/* Save and Cancel buttons in form actions */
 .btn-cancel, .btn-save {
     padding: 10px 20px;
     border: none;
@@ -355,25 +503,30 @@ tr:hover {
     display: flex;
     align-items: center;
     gap: 8px;
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 480px) {
+        width: 100%;
+        justify-content: center;
+     }
 }
 
 .btn-cancel {
-    background-color: #e74c3c;
+    background-color: #e74c3c; /* Rojo */
     color: white;
 }
 
 .btn-cancel:hover {
-    background-color: #c0392b;
+    background-color: #c0392b; /* Rojo oscuro */
     transform: translateY(-2px);
 }
 
 .btn-save {
-    background-color: #2ecc71;
+    background-color: #2ecc71; /* Verde */
     color: white;
 }
 
 .btn-save:hover {
-    background-color: #27ae60;
+    background-color: #27ae60; /* Verde oscuro */
     transform: translateY(-2px);
 }
 
@@ -382,29 +535,41 @@ tr:hover {
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 6px;
-    display: none;
-    /* Tu admin.css usa animation, dejo la regla pero el JS maneja el display.
-       Si quieres animación, el JS debe añadir/quitar una clase que active la animación
-       después de cambiar el display a block. */
-    /* animation: fadeIn 0.5s; */ /* Removido para coincidir con tu admin.css */
+    display: none; /* Oculto por defecto, JS lo muestra */
+    opacity: 1;
+    transition: opacity 0.6s ease; /* Transición para ocultar/mostrar con animación */
 }
 
-/* @keyframes fadeIn { ... } */ /* Removido para coincidir con tu admin.css */
+.alert.hide {
+    opacity: 0; /* Clase para iniciar la animación de ocultar */
+}
 
 
 .alert-success {
-    background-color: #d5f5e3;
-    color: #27ae60;
+    background-color: #d5f5e3; /* Verde claro */
+    color: #27ae60; /* Verde */
     border: 1px solid #a3e4d7;
 }
 
 .alert-error {
-    background-color: #fadbd8;
-    color: #e74c3c;
+    background-color: #fadbd8; /* Rojo claro */
+    color: #e74c3c; /* Rojo */
     border: 1px solid #f5b7b1;
 }
 
+.alert i {
+    margin-right: 8px; /* Espacio entre icono y texto de la alerta */
+}
+
+
 /* Responsive */
+@media (max-width: 992px) { /* Adjusted breakpoint for wider table */
+     table {
+         min-width: 768px; /* Ensure table is still readable */
+     }
+}
+
+
 @media (max-width: 768px) {
     .admin-header {
         flex-direction: column;
@@ -413,25 +578,11 @@ tr:hover {
         align-items: flex-start;
     }
 
-     .admin-header nav { /* Añadido para manejar la nav en responsive */
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 15px;
-     }
-
-    .header-content { /* Añadido para centrar el logo y títulos en responsive */
+    .header-content {
         width: 100%;
         justify-content: center;
     }
-     /* Si tienes un username-display en el header */
-     .username-display {
-        margin-right: 0;
-        margin-bottom: 10px;
-        text-align: center;
-        width: 100%;
-     }
+
 
     .section-header {
         flex-direction: column;
@@ -439,7 +590,7 @@ tr:hover {
         gap: 15px;
     }
 
-    .section-header h2 { /* Añadido para centrar el h2 en responsive */
+    .section-header h2 {
         width: 100%;
         justify-content: center;
         font-size: 20px;
@@ -450,32 +601,37 @@ tr:hover {
         justify-content: center;
     }
 
-    .form-grid { /* Stack form groups on small screens */
+    .form-grid {
         grid-template-columns: 1fr;
     }
 
+    .form-group.full-width {
+         grid-column: 1 / 1; /* En una sola columna, full-width ya no ocupa 1 / -1 */
+     }
+
     .modal-content {
         width: 95%;
-        margin: 10% auto; /* Ajustado para coincidir con tu admin.css */
+        margin: 10% auto; /* Ajuste el margen superior */
+        max-width: none; /* Elimina el max-width */
     }
 
     th, td {
         padding: 10px;
     }
 
-    .btn-edit, .btn-delete {
+    .btn-edit, .btn-delete, .btn-activate, .btn-deactivate {
         padding: 6px 10px;
         font-size: 12px;
         gap: 3px;
     }
 
-     td.actions { /* Añadido para apilar botones de acción en responsive */
-        flex-direction: column;
+     td.actions {
+        flex-direction: column; /* Botones en columna */
         gap: 8px;
         align-items: flex-start;
      }
 
-     .status { /* Ajustado para el tamaño en responsive */
+     .status {
         font-size: 0.8em;
      }
 }

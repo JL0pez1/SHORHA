@@ -4,54 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SORHA - Administración de colaboradores</title>
-    <link rel="stylesheet" href="css/administrativo.css">
+    <link rel="stylesheet" href="/css/administrativo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
      <style>
-        /* Basic styles as fallback if administrativo.css doesn't load */
-        /* These are minimal fallback styles based on your admin.html style block */
-        .alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
+        /* Estilos básicos de fallback si administrativo.css no carga */
+        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; line-height: 1.6;}
+        .admin-header { background-color: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;} /* Added flex-wrap */
+        .admin-header .logo { height: 40px; margin-right: 15px; }
+        .header-content { display: flex; align-items: center; }
+        .header-titles h1 { margin: 0; font-size: 1.5em; }
+        .header-titles h1 span { color: #ffc107; } /* Color amarillo SORHA */
+        .header-titles p { margin: 0; font-size: 0.9em; color: #ccc; }
+        .admin-header nav { display: flex; align-items: center; margin-top: 5px;} /* Added margin-top for wrap */
+        .username-display { margin-right: 15px; font-size: 0.9em; }
+        .btn-logout { color: white; text-decoration: none; padding: 8px 12px; background-color: #dc3545; border-radius: 4px; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
+        .btn-logout:hover { background-color: #c82333;}
+        .btn-logout i { margin-right: 5px; }
+        .admin-main { padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; flex-wrap: wrap;} /* Added flex-wrap */
+        .section-header h2 { margin: 0; color: #333; font-size: 1.3em;}
+        .btn-add { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
+        .btn-add:hover { background-color: #218838;}
+        .btn-add i { margin-right: 5px; }
+        .alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; opacity: 1; transition: opacity 0.6s ease;}
+        .alert.hide { opacity: 0;}
         .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
         .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative; }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
-        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
-        /* Basic table styles if CSS doesn't load */
-        #employeeTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        #employeeTable th, #employeeTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        #employeeTable th { background-color: #f2f2f2; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px;} /* Added padding-top */
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 700px; border-radius: 5px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); animation-name: animatetop; animation-duration: 0.4s; }
+        .modal-header { padding: 10px 20px; background-color: #5cb85c; color: white; border-top-left-radius: 5px; border-top-right-radius: 5px; display: flex; justify-content: space-between; align-items: center;}
+        .modal-title { margin: 0; font-size: 1.2em; }
+        .close { color: white; font-size: 28px; font-weight: bold; opacity: 0.8; transition: opacity 0.3s ease;}
+        .close:hover, .close:focus { color: #000; text-decoration: none; cursor: pointer; opacity: 1;}
+        #employeeForm { padding: 20px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .form-group { margin-bottom: 10px; display: flex; flex-direction: column;}
+        .form-group label { margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #555; }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group input[type="password"], /* Aplicar estilo a contraseña */
+        .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;
+        }
+        .full-width { grid-column: 1 / -1; } /* Hacer que el elemento ocupe todas las columnas */
+        .required { color: red; margin-left: 3px;}
+        .form-actions { margin-top: 20px; text-align: right; padding-top: 15px; border-top: 1px solid #eee; }
+        .form-actions button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 1em; transition: background-color 0.3s ease;}
+        .btn-save { background-color: #5cb85c; color: white; }
+        .btn-save:hover { background-color: #4cae4c;}
+        .btn-cancel { background-color: #f0ad4e; color: white; }
+        .btn-cancel:hover { background-color: #ec971f;}
+        .table-container { overflow-x: auto; margin-top: 20px;} /* Permitir scroll horizontal en pantallas pequeñas */
+        #employeeTable { width: 100%; border-collapse: collapse; font-size: 0.9em;}
+        #employeeTable th, #employeeTable td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        #employeeTable th { background-color: #f2f2f2; font-weight: bold; color: #333; }
         #employeeTable tr:nth-child(even){ background-color: #f9f9f9; }
-        #employeeTable tr:hover { background-color: #ddd; }
-        .actions button { margin-right: 5px; padding: 5px 10px; cursor: pointer; }
-        .btn-edit { background-color: #ffc107; color: white; border: none; }
-        .btn-delete { background-color: #dc3545; color: white; border: none; }
-         /* Add fallback styles for elements specific to this page if CSS fails */
-         .form-grid { display: block; }
-         .form-group { margin-bottom: 20px; }
-         .full-width { width: 100%; }
-         .required { color: red; }
-         .status { padding: 2px 5px; border-radius: 3px; font-size: 0.9em;}
-         .status-activo { background-color: #d4edda; color: #155724;}
-         .status-inactivo { background-color: #f8d7da; color: #721c24;}
-         .status-vacaciones { background-color: #fff3cd; color: #856404;}
-         .status-licencia { background-color: #e2e3e5; color: #383d41;}
+        #employeeTable tr:hover { background-color: #f1f1f1; }
+        .actions button { margin-right: 5px; padding: 5px 8px; cursor: pointer; border: none; border-radius: 3px; color: white; font-size: 0.8em; transition: background-color 0.3s ease; }
+        /* Ajuste iconos dentro botones */
+        .actions button i { pointer-events: none; } /* Evita que el icono intercepte el clic */
+        .btn-edit { background-color: #ffc107; }
+        .btn-edit:hover { background-color: #e0a800;}
+        .btn-delete { background-color: #dc3545; }
+        .btn-delete:hover { background-color: #c82333;}
+        .status { padding: 3px 8px; border-radius: 10px; font-size: 0.85em; color: white; text-align: center; display: inline-block; min-width: 60px;}
+        .status-activo { background-color: #28a745;}
+        .status-inactivo { background-color: #6c757d;}
+        .status-vacaciones { background-color: #ffc107; color: #333;}
+        .status-licencia { background-color: #17a2b8;}
+        .status-default { background-color: #adb5bd; } /* Fallback */
+        small { font-size: 0.8em; color: #6c757d; margin-top: 3px; display: block;} /* Changed to block */
+
+        /* Animación para Modal */
+        @keyframes animatetop {
+          from {top: -300px; opacity: 0}
+          to {top: 5%; opacity: 1}
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+             .admin-header, .section-header { flex-direction: column; align-items: flex-start; }
+             .admin-header nav { margin-top: 10px; }
+             .form-grid { grid-template-columns: 1fr; }
+             .full-width { grid-column: 1 / 1; }
+             .form-actions { text-align: center; }
+             .form-actions button { margin: 5px; }
+        }
     </style>
 </head>
 <body>
-    <div class="admin-background">
-        <div class="admin-overlay"></div>
-    </div>
-
     <header class="admin-header">
         <div class="header-content">
-            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+             <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
             <div class="header-titles">
                 <h1>Sistema <span>SORHA</span></h1>
-                <p>Panel de Administración</p>
+                <p>Panel Administrativo</p>
             </div>
         </div>
          <nav>
-            <span id="usernameDisplay" class="username-display"></span>
+            <span id="usernameDisplay" class="username-display">Cargando usuario...</span>
             <a href="#" class="btn-logout" onclick="logout()">
                  <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
@@ -62,27 +117,25 @@
         <div class="container">
 
             <div class="section-header">
-                 <h2><i class="fas fa-users"></i> Administración de colaboradores</h2>
+                 <h2><i class="fas fa-users"></i> Administración de Colaboradores</h2>
                  <button id="addEmployeeBtn" class="btn-add">
-                     <i class="fas fa-plus"></i> Agregar Nuevo Empleado
+                     <i class="fas fa-plus"></i> Agregar Nuevo Colaborador
                  </button>
             </div>
 
-            <div id="alertSuccess" class="alert alert-success" style="display: none;"></div>
-            <div id="alertError" class="alert alert-error" style="display: none;"></div>
+            <div id="alertSuccess" class="alert alert-success"></div>
+            <div id="alertError" class="alert alert-error"></div>
 
-
-            <div id="employeeModal" class="modal" style="display: none;">
+            <div id="employeeModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                         <h2 id="modalTitle" class="modal-title">Agregar Empleado</h2>
+                         <h2 id="modalTitle" class="modal-title"></h2>
                          <span class="close" id="closeEmployeeModalBtn">&times;</span>
                     </div>
 
                     <form id="employeeForm">
                         <input type="hidden" id="id_empleado" name="id_empleado">
-
-                        <div class="form-grid">
+                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="primer_nombre"><i class="fas fa-user"></i> Primer Nombre: <span class="required">*</span></label>
                                 <input type="text" id="primer_nombre" name="primer_nombre" required>
@@ -100,8 +153,14 @@
                                 <input type="text" id="segundo_apellido" name="segundo_apellido">
                             </div>
                             <div class="form-group">
-                                <label for="usuario_empleado"><i class="fas fa-user-circle"></i> Usuario: <span class="required">*</span></label>
+                                <label for="usuario_empleado"><i class="fas fa-user-circle"></i> Usuario (Login): <span class="required">*</span></label>
                                 <input type="text" id="usuario_empleado" name="usuario_empleado" required>
+                                <small>Nombre de usuario para iniciar sesión (para el colaborador).</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="password"><i class="fas fa-key"></i> Contraseña (Login): <span class="required" id="passwordRequired">*</span></label>
+                                <input type="password" id="password" name="password" placeholder="Dejar vacío para no cambiar">
+                                <small id="passwordHelp">Obligatoria al crear nuevo. Ingresa solo si quieres cambiarla al editar.</small>
                             </div>
                             <div class="form-group">
                                 <label for="sexo"><i class="fas fa-venus-mars"></i> Sexo:</label>
@@ -119,6 +178,7 @@
                             <div class="form-group">
                                 <label for="id_contrato"><i class="fas fa-file-contract"></i> ID Contrato:</label>
                                 <input type="text" id="id_contrato" name="id_contrato">
+                                <small>ID del contrato asociado (si aplica y existe en la tabla `contratos`).</small>
                             </div>
                             <div class="form-group">
                                 <label for="puesto"><i class="fas fa-briefcase"></i> Puesto:</label>
@@ -126,7 +186,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="estado_civil"><i class="fas fa-ring"></i> Estado Civil:</label>
-                                <input type="text" id="estado_civil" name="estado_civil">
+                                <select id="estado_civil" name="estado_civil">
+                                     <option value="">Seleccionar...</option>
+                                     <option value="Soltero/a">Soltero/a</option>
+                                     <option value="Casado/a">Casado/a</option>
+                                     <option value="Divorciado/a">Divorciado/a</option>
+                                     <option value="Viudo/a">Viudo/a</option>
+                                     <option value="Unido/a">Unido/a</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="fecha_nacimiento"><i class="fas fa-calendar-alt"></i> Fecha Nacimiento:</label>
@@ -137,8 +204,7 @@
                                 <input type="text" id="ciudad_nacimiento" name="ciudad_nacimiento">
                             </div>
                             <div class="form-group">
-                                <label for="departamento"><i class="fas fa-building"></i> Departamento:</label>
-                                <input type="text" id="departamento" name="departamento">
+                                <label for="departamento"><i class="fas fa-map"></i> Departamento:</label> <input type="text" id="departamento" name="departamento">
                             </div>
                             <div class="form-group">
                                 <label for="email"><i class="fas fa-envelope"></i> Email Personal:</label>
@@ -152,426 +218,537 @@
                                 <label for="telefono"><i class="fas fa-phone"></i> Teléfono:</label>
                                 <input type="tel" id="telefono" name="telefono">
                             </div>
-                            <div class="form-group full-width">
-                                <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección:</label>
+                            <div class="form-group full-width"> <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección:</label>
                                 <input type="text" id="direccion" name="direccion">
                             </div>
                              <div class="form-group">
-                                <label for="status"><i class="fas fa-info-circle"></i> Status:</label>
-                                 <select id="status" name="status">
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                    <option value="Vacaciones">Vacaciones</option>
-                                    <option value="Licencia">Licencia</option>
-                                </select>
+                                <label for="status"><i class="fas fa-toggle-on"></i> Estado: <span class="required">*</span></label>
+                                 <select id="status" name="status" required>
+                                     <option value="Activo">Activo</option>
+                                     <option value="Inactivo">Inactivo</option>
+                                     <option value="Vacaciones">Vacaciones</option>
+                                     <option value="Licencia">Licencia</option>
+                                 </select>
                             </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar</button>
+                         </div>
+                         <div class="form-actions">
+                            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar Cambios</button>
                             <button type="button" id="cancelEmployeeBtn" class="btn-cancel"><i class="fas fa-times"></i> Cancelar</button>
                         </div>
                     </form>
                 </div>
+             </div>
+
+            <hr>
+
+            <div class="section-header">
+                 <h2><i class="fas fa-list"></i> Lista de Colaboradores</h2>
             </div>
 
-            <hr> <h2><i class="fas fa-list"></i> Lista de colaboradores</h2>
             <div class="table-container">
                 <table id="employeeTable">
                     <thead>
                         <tr>
-                            <th><i class="fas fa-hashtag"></i> ID</th>
                             <th><i class="fas fa-user"></i> Nombre Completo</th>
                             <th><i class="fas fa-user-circle"></i> Usuario</th>
                             <th><i class="fas fa-briefcase"></i> Puesto</th>
                             <th><i class="fas fa-envelope-open-text"></i> Email Interno</th>
                             <th><i class="fas fa-phone"></i> Teléfono</th>
-                            <th><i class="fas fa-info-circle"></i> Status</th>
+                            <th><i class="fas fa-toggle-on"></i> Estado</th>
                             <th><i class="fas fa-cogs"></i> Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="employeeTableBody">
-                        <tr><td colspan="8">Cargando colaboradores...</td></tr>
+                        <tr><td colspan="7" style="text-align: center;">Cargando colaboradores...</td></tr>
                     </tbody>
                 </table>
             </div>
-        </div> </main> <script>
-        // Variables globales
-        let currentEmployeeAction = 'create'; // 'create' or 'edit'
+         </div>
+    </main>
 
+    <script>
         // --- Element Selectors ---
-        const apiBaseUrl = '/api/colaboradores'; // Base URL for the employee API
+        const apiBaseUrl = '/api/colaboradores';
         const employeeTableBody = document.getElementById('employeeTableBody');
-        const employeeModal = document.getElementById('employeeModal'); // The modal div
+        const employeeModal = document.getElementById('employeeModal');
         const employeeForm = document.getElementById('employeeForm');
         const addEmployeeBtn = document.getElementById('addEmployeeBtn');
         const cancelEmployeeBtn = document.getElementById('cancelEmployeeBtn');
-        const closeEmployeeModalBtn = document.getElementById('closeEmployeeModalBtn'); // Close button for the modal
-        const modalTitle = document.getElementById('modalTitle'); // Changed from formTitle
-        const hiddenEmployeeId = document.getElementById('id_empleado');
-        const alertSuccess = document.getElementById('alertSuccess'); // Using specific alert divs from admin.html
-        const alertError = document.getElementById('alertError'); // Using specific alert divs from admin.html
+        const closeEmployeeModalBtn = document.getElementById('closeEmployeeModalBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const hiddenEmployeeId = document.getElementById('id_empleado'); // Input hidden para el ID
+        const alertSuccess = document.getElementById('alertSuccess');
+        const alertError = document.getElementById('alertError');
         const usernameDisplay = document.getElementById('usernameDisplay');
+        const passwordInput = document.getElementById('password'); // Input de contraseña
+        const passwordRequiredSpan = document.getElementById('passwordRequired'); // Span "*" para contraseña
+        const passwordHelpText = document.getElementById('passwordHelp'); // Texto de ayuda contraseña
+        // const idEmpleadoInput = document.getElementById('id_empleado_input'); // Si usas input visible para ID
+
 
         // --- State ---
-        let currentEmployees = []; // Store fetched employees locally
+        let currentEmployees = []; // Almacena colaboradores actuales
+        let currentEmployeeAction = 'create'; // 'create' or 'edit'
 
-        // When the DOM is loaded
+
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial Load
-            fetchEmployees();
+            fetchUserInfo(); // Obtener info del usuario logueado
+            fetchEmployees(); // Cargar la tabla de colaboradores
 
-            // Fetch and display logged-in user info
-            fetch('/api/session/user')
-                 .then(res => {
-                    if (!res.ok) {
-                        console.warn("Failed to get session info:", res.statusText);
-                        if (usernameDisplay) usernameDisplay.textContent = 'Usuario no identificado';
-                         if (res.status === 401) window.location.href = '/'; // Redirect if not authenticated
-                        return null;
-                    }
-                    return res.json();
-                 })
-                 .then(data => {
-                     if(data && data.success && data.user && usernameDisplay) {
-                        usernameDisplay.textContent = `Usuario: ${data.user.usuario} (${data.user.rol})`;
-                     } else if (usernameDisplay) {
-                         usernameDisplay.textContent = 'Usuario no identificado';
-                     }
-                 })
-                 .catch(err => {
-                    console.error("Error fetching user info:", err);
-                    if (usernameDisplay) usernameDisplay.textContent = 'Error cargando usuario';
-                 });
+            // --- Event Listeners ---
+            addEmployeeBtn.addEventListener('click', () => openEmployeeModal('create'));
+            closeEmployeeModalBtn.addEventListener('click', closeEmployeeModal);
+            cancelEmployeeBtn.addEventListener('click', closeEmployeeModal);
+            employeeForm.addEventListener('submit', saveEmployee); // Llama a saveEmployee al enviar
+
+            // Cerrar modal si se hace clic fuera del contenido
+            window.addEventListener('click', (event) => {
+                if (event.target == employeeModal) {
+                    closeEmployeeModal();
+                }
+            });
+
+            // Delegación de eventos para botones de Editar y Eliminar en la tabla
+            employeeTableBody.addEventListener('click', (event) => {
+                const button = event.target.closest('button'); // Busca el botón más cercano
+                if (!button) return; // No se hizo clic en un botón
+
+                // Si el botón tiene un atributo data-id, obtenemos el ID
+                const employeeId = button.dataset.id;
+                 if (!employeeId) {
+                      console.warn("Botón clickeado sin data-id.");
+                      return;
+                 }
+
+                if (button.classList.contains('btn-edit')) {
+                    editEmployee(employeeId);
+                } else if (button.classList.contains('btn-delete')) {
+                    deleteEmployee(employeeId);
+                }
+            });
         });
 
 
-        // --- Feedback Functions (Messages) ---
-        // Adopted from admin.html's showAlert pattern
-        function showAlert(type, message) {
-            // Hide both alerts first
-            alertSuccess.style.display = 'none';
-            alertError.style.display = 'none';
+        // --- User Session & Logout ---
+        async function fetchUserInfo() {
+            try {
+                const response = await fetch('/api/session/user');
+                if (!response.ok) {
+                    if (response.status === 401) { // No autenticado
+                        console.warn('Sesión no válida o expirada. Redirigiendo al login...');
+                        window.location.href = '/?error=Sesión+expirada'; // Redirigir al login
+                        return;
+                    }
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                if (data.success && data.user) {
+                    usernameDisplay.textContent = `Usuario: ${data.user.usuario} (${data.user.rol})`;
+                } else {
+                     usernameDisplay.textContent = 'Usuario no identificado';
+                     console.warn('No se pudo obtener la información del usuario desde la sesión.');
+                     // Considerar redirigir si no se obtiene usuario (depende de tu política de seguridad)
+                     // window.location.href = '/?error=Error+de+sesión';
+                }
+            } catch (error) {
+                console.error("Error fetching user info:", error);
+                usernameDisplay.textContent = 'Error cargando usuario';
+                 // Redirigir en caso de error grave de conexión, etc.
+                 // setTimeout(() => { window.location.href = '/?error=Error+de+conexión'; }, 3000);
+            }
+        }
 
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+
+        // --- Feedback Functions (Alerts) ---
+        function showAlert(type, message, duration = 5000) {
             const alertElement = type === 'success' ? alertSuccess : alertError;
+            const otherAlertElement = type === 'success' ? alertError : alertSuccess;
+
+            // Ocultar la otra alerta y limpiar su contenido
+            otherAlertElement.style.display = 'none';
+            otherAlertElement.innerHTML = '';
 
             if (!alertElement) {
-                console.error(`Alert element ${type === 'success' ? '#alertSuccess' : '#alertError'} not found.`);
-                 window.alert(`[${type.toUpperCase()}] ${message}`); // Fallback
+                console.error(`Alert element for type "${type}" not found.`);
+                window.alert(`[${type.toUpperCase()}] ${message}`); // Fallback
                 return;
             }
 
-            alertElement.textContent = message;
-            alertElement.style.display = 'block'; // Show the correct alert
+            alertElement.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${message}`; // Añadir icono
+            alertElement.classList.remove('hide'); // Asegurar que no esté oculta por animación
+            alertElement.style.display = 'block';
 
-            // Hide automatically after 5 seconds
-            setTimeout(() => {
-                alertElement.style.display = 'none';
-            }, 5000);
+            if (duration > 0) {
+                setTimeout(() => {
+                    alertElement.classList.add('hide'); // Iniciar animación de ocultar
+                    // Esperar a que termine la animación antes de ocultar completamente
+                    alertElement.addEventListener('transitionend', function handler() {
+                         alertElement.style.display = 'none';
+                         alertElement.classList.remove('hide'); // Limpiar clase para la próxima vez
+                         alertElement.removeEventListener('transitionend', handler); // Remover listener para evitar múltiples ejecuciones
+                    });
+                }, duration);
+            }
         }
 
         function clearAlerts() {
             alertSuccess.style.display = 'none';
             alertError.style.display = 'none';
-            alertSuccess.textContent = '';
-            alertError.textContent = '';
+            alertSuccess.innerHTML = '';
+            alertError.innerHTML = '';
+            alertSuccess.classList.remove('hide');
+            alertError.classList.remove('hide');
         }
 
 
-        // --- Functions to handle the Modal ---
-        // Adopted from admin.html's openModal/closeModal pattern
+        // --- Modal Handling ---
         function openEmployeeModal(action, employeeId = null) {
             currentEmployeeAction = action;
-            clearAlerts(); // Clear alerts before opening modal
-            employeeForm.reset(); // Reset form fields
+            clearAlerts();
+            employeeForm.reset(); // Limpiar campos antes de llenar o dejar vacíos
+            passwordInput.placeholder = "Dejar vacío para no cambiar"; // Placeholder por defecto al abrir
+
+             // Opcional: Controlar visibilidad/estado del campo ID si lo usas visible
+            // if (idEmpleadoInput) {
+            //     idEmpleadoInput.disabled = (action === 'edit');
+            //     if (action === 'create') idEmpleadoInput.focus(); // Poner foco si es creación
+            // } else {
+                 // Si no hay campo ID visible, poner foco en el primer nombre
+                 document.getElementById('primer_nombre').focus();
+            // }
+
 
             if (action === 'create') {
-                modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> Agregar Empleado';
-                hiddenEmployeeId.value = ''; // Ensure no ID is set for creation
-                // Set default status for creation if needed, e.g., document.getElementById('status').value = 'Activo';
-                 document.getElementById('status').value = 'Activo'; // Assuming 'Activo' is default for new employees
+                modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> Agregar Nuevo Colaborador';
+                hiddenEmployeeId.value = ''; // Asegurar que el ID oculto esté vacío
+                 // if (idEmpleadoInput) idEmpleadoInput.value = ''; // Limpiar ID visible si existe
+                document.getElementById('status').value = 'Activo'; // Status por defecto
+                passwordRequiredSpan.style.display = 'inline'; // Mostrar "*"
+                passwordHelpText.textContent = 'Obligatoria al crear nuevo.';
+                passwordInput.placeholder = "Ingresa contraseña";
+                passwordInput.required = true; // Hacer el campo de contraseña requerido en el HTML5 validation
+
             } else { // action === 'edit'
-                modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Editar Empleado';
-                hiddenEmployeeId.value = employeeId; // Set the ID for editing
-                // Employee data will be fetched and loaded into the form by the editEmployee function
+                modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Editar Colaborador';
+                hiddenEmployeeId.value = employeeId; // Establecer ID oculto
+                 // if (idEmpleadoInput) idEmpleadoInput.value = employeeId; // Poner ID en campo visible si existe
+                passwordRequiredSpan.style.display = 'none'; // Ocultar "*" para edición
+                passwordHelpText.textContent = 'Ingresa solo si quieres cambiarla.';
+                passwordInput.placeholder = "Dejar vacío para no cambiar"; // Restaurar placeholder
+                passwordInput.required = false; // La contraseña no es obligatoria al editar
+
+                // Los datos se cargarán asincrónicamente en editEmployee()
             }
 
-            // Show the modal - using the simple display toggle from admin.html
             employeeModal.style.display = 'block';
         }
 
         function closeEmployeeModal() {
-            // Hide the modal - using the simple display toggle from admin.html
             employeeModal.style.display = 'none';
-            employeeForm.reset(); // Clear form fields on close
-            hiddenEmployeeId.value = ''; // Clear ID on close
-            clearAlerts(); // Clear alerts on close
+            employeeForm.reset();
+            hiddenEmployeeId.value = ''; // Limpiar el ID oculto
+             // Opcional: Resetear campo ID visible
+             // if (idEmpleadoInput) { idEmpleadoInput.value = ''; idEmpleadoInput.disabled = false; }
+            clearAlerts();
+            // Restaurar estado de required y placeholder para la contraseña
+            passwordInput.required = false;
+            passwordRequiredSpan.style.display = 'inline';
+            passwordHelpText.textContent = 'Obligatoria al crear nuevo. Ingresa solo si quieres cambiarla al editar.';
+            passwordInput.placeholder = "Dejar vacío para no cambiar";
         }
 
 
-        // --- CRUD Functions ---
+        // --- CRUD Operations ---
 
-        // Fetch all employees
         async function fetchEmployees() {
-            employeeTableBody.innerHTML = '<tr><td colspan="8">Cargando...</td></tr>';
-            clearAlerts(); // Clear alerts before loading
+            // Ajustado colspan a 7 si quitaste la columna ID de la tabla
+            employeeTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Cargando colaboradores...</td></tr>';
+            clearAlerts();
 
             try {
                 const response = await fetch(apiBaseUrl); // GET /api/colaboradores
                 if (!response.ok) {
-                     let errorMsg = `Error ${response.status}: ${response.statusText}`;
-                     try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch(e) {}
-                    throw new Error(`Error al cargar colaboradores: ${errorMsg}`);
+                     const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` }));
+                    // Si el servidor devuelve 403 o 401, redirigir al login
+                    if (response.status === 401 || response.status === 403) {
+                         console.warn('Acceso no autorizado o sesión expirada al cargar colaboradores. Redirigiendo...');
+                         window.location.href = '/?error=Acceso+denegado+o+sesión+expirada';
+                         return; // Salir de la función
+                    }
+                    throw new Error(errorData.message || `Error HTTP ${response.status}`);
                 }
-                const employees = await response.json();
+                const result = await response.json();
 
-                // Check response structure if your API sends {success: true, data: [...]}
-                 if (Array.isArray(employees)) { // Assuming your API returns an array directly
-                     currentEmployees = employees;
-                     renderTable(currentEmployees);
-                 } else if (employees && employees.success && Array.isArray(employees.data)) { // If API sends {success: true, data: [...]}
-                      currentEmployees = employees.data;
+                if (result.success && Array.isArray(result.data)) {
+                      currentEmployees = result.data;
                       renderTable(currentEmployees);
-                 }
-                 else {
-                     throw new Error('Formato de respuesta inesperado de la API.');
+                 } else {
+                     // Si la API devuelve un array directamente sin {success: true, data: ...}
+                     if (Array.isArray(result)) {
+                          currentEmployees = result;
+                          renderTable(currentEmployees);
+                     } else {
+                          // Esto es un formato inesperado si success es false o data no es array
+                          throw new Error(result.message || 'Formato de respuesta inesperado del servidor al listar.');
+                     }
                  }
 
             } catch (error) {
                 console.error('Error al cargar colaboradores:', error);
-                employeeTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Error al cargar datos: ${error.message}. Intente recargar.</td></tr>`;
+                 // Ajustado colspan a 7
+                employeeTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;"><i class="fas fa-exclamation-triangle"></i> Error al cargar: ${error.message}. Intente recargar la página.</td></tr>`;
                 showAlert('error', `Error al cargar colaboradores: ${error.message}`);
-                 // Optional: redirect if auth error
-                 if (error.message.includes('401') || error.message.includes('403') || error.message.toLowerCase().includes('autenticado') || error.message.toLowerCase().includes('autorizado')) {
-                     // setTimeout(() => { window.location.href = '/'; }, 3000);
-                 }
             }
         }
 
-        // Render the employee table
         function renderTable(employees) {
              employeeTableBody.innerHTML = '';
              if (!employees || employees.length === 0) {
-                 employeeTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No hay colaboradores registrados.</td></tr>';
+                 // Ajustado colspan a 7
+                 employeeTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay colaboradores registrados.</td></tr>';
                  return;
              }
              employees.forEach(emp => {
                 const row = document.createElement('tr');
+                // Guardar ID en data attribute aunque no se muestre como columna
                 row.dataset.id = emp.id_empleado;
-                // Ensure names/surnames are strings before joining
-                const nombreCompleto = [emp.primer_nombre, emp.segundo_nombre, emp.primer_apellido, emp.segundo_apellido]
-                                        .filter(Boolean) // Remove null or empty
-                                        .join(' ');
 
-                // Determine status class based on the value
-                let statusClass = 'status-default';
-                if (emp.status) {
-                    statusClass = `status-${emp.status.toLowerCase().replace(/\s+/g, '-')}`;
-                }
+                const nombreCompleto = [emp.primer_nombre, emp.segundo_nombre, emp.primer_apellido, emp.segundo_apellido]
+                                        .filter(Boolean).join(' ');
+                const statusValue = emp.status ? emp.status.toLowerCase() : 'default';
+                const statusClass = `status status-${statusValue.replace(/\s+/g, '-')}`; // Añadido clase 'status' genérica
 
                 row.innerHTML = `
-                    <td>${emp.id_empleado || 'N/A'}</td>
                     <td>${nombreCompleto || 'N/A'}</td>
                     <td>${emp.usuario_empleado || 'N/A'}</td>
                     <td>${emp.puesto || 'N/A'}</td>
                     <td>${emp.email_interno || 'N/A'}</td>
                     <td>${emp.telefono || 'N/A'}</td>
-                    <td><span class="status ${statusClass}">${emp.status || 'N/A'}</span></td>
+                    <td><span class="${statusClass}">${emp.status || 'Desconocido'}</span></td>
                     <td class="actions">
-                        <button class="btn-edit" data-id="${emp.id_empleado}" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="btn-delete" data-id="${emp.id_empleado}" title="Eliminar"><i class="fas fa-trash"></i> Eliminar</button>
+                        <button class="btn-edit" data-id="${emp.id_empleado}" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button class="btn-delete" data-id="${emp.id_empleado}" title="Eliminar"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 employeeTableBody.appendChild(row);
             });
         }
 
-        // Handle Edit Button Click - Fetch employee data and open modal
-        async function editEmployee(employeeId) { // Renamed from handleEditClick to match admin pattern
+        async function editEmployee(employeeId) {
+             if (!employeeId) {
+                  console.error("editEmployee llamado sin ID.");
+                  return;
+             }
             clearAlerts();
+            openEmployeeModal('edit', employeeId); // Abrir modal primero (mostrará título "Editar...")
+            // Indicar carga dentro del modal quizás?
+             modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando datos...';
+
             try {
-                // Show loading indicator if you have one
-                // showLoading(true);
                 const response = await fetch(`${apiBaseUrl}/${employeeId}`); // GET /api/colaboradores/:id
                  if (!response.ok) {
-                    let errorMsg = `Error ${response.status}: ${response.statusText}`;
-                     try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch(e) {}
-                    throw new Error(`Error al obtener datos de empleado: ${errorMsg}`);
+                    const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` }));
+                     if (response.status === 401 || response.status === 403) {
+                         console.warn('Acceso no autorizado o sesión expirada al obtener colaborador para editar. Redirigiendo...');
+                         window.location.href = '/?error=Acceso+denegado+o+sesión+expirada';
+                         return;
+                    }
+                    throw new Error(errorData.message || `Error HTTP ${response.status}`);
                 }
-                const employeeData = await response.json();
+                const result = await response.json();
 
-                 // Check response structure
-                 if (employeeData && (employeeData.success === undefined || employeeData.success === true) && employeeData.data) { // Assuming data is in a 'data' property or directly
-                      const dataToLoad = employeeData.data || employeeData; // Use 'data' property if it exists
-                      openEmployeeModal('edit', dataToLoad.id_empleado); // Open modal for editing
-                      // Load data into the form fields
-                      Object.keys(dataToLoad).forEach(key => {
+                 // Verificar si la respuesta tiene el formato esperado {success: true, data: {...}}
+                 if (result.success && result.data) {
+                      const employeeData = result.data;
+                      // Restablecer título ahora que tenemos datos
+                      modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Editar Colaborador';
+
+                      // Cargar datos en el formulario
+                      Object.keys(employeeData).forEach(key => {
                            const input = employeeForm.elements[key];
                            if (input) {
-                              if (input.type === 'date' && dataToLoad[key]) {
-                                  try { // Backend is expected to format asYYYY-MM-DD
-                                      input.value = dataToLoad[key];
-                                  } catch (e) { input.value = null; }
+                              if (input.type === 'date' && employeeData[key]) {
+                                  try {
+                                       // Convertir la fecha de YYYY-MM-DD a formato DATE input (YYYY-MM-DD)
+                                       // Asegurarse de manejar posibles desfases de zona horaria si la fecha viene como UTC/ISO string
+                                       const dateValue = employeeData[key]; // Esperamos 'YYYY-MM-DD'
+                                       if (dateValue) {
+                                            // Simple asignación si ya viene en YYYY-MM-DD
+                                            input.value = dateValue;
+                                       } else {
+                                            input.value = ''; // Campo vacío si el valor es nulo o vacío
+                                       }
+
+                                  } catch (e) {
+                                       input.value = '';
+                                       console.error(`Error procesando fecha para ${key} (${employeeData[key]}):`, e);
+                                       showAlert('warning', `Problema al cargar la fecha de nacimiento para este colaborador.`);
+                                  }
                               } else {
-                                  input.value = dataToLoad[key] ?? '';
+                                   // Para otros tipos de campos, asignar el valor directamente (usa ?? '' para manejar null/undefined)
+                                   input.value = employeeData[key] ?? '';
                               }
                            }
+                           // Si tienes campo visible para ID, llénalo aquí también (ya está disabled)
+                           // if (key === 'id_empleado' && idEmpleadoInput) {
+                           //     idEmpleadoInput.value = employeeData[key] ?? '';
+                           // }
                       });
-                 }
-                 else {
-                     throw new Error('Formato de respuesta inesperado al cargar empleado para editar.');
+                      // Limpiar campo contraseña explícitamente al editar por seguridad
+                      passwordInput.value = '';
+
+                 } else {
+                      // Si la respuesta vino sin success: true o sin data
+                      throw new Error(result.message || 'La respuesta del servidor no contiene los datos esperados del colaborador.');
                  }
 
             } catch (error) {
                 console.error('Error al obtener empleado para editar:', error);
                 showAlert('error', `Error al cargar datos para editar: ${error.message}`);
-            } finally {
-                // Hide loading indicator
-                // showLoading(false);
+                // Restaurar título y cerrar modal si falla la carga
+                 modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Editar Colaborador'; // Resetear título
+                 setTimeout(closeEmployeeModal, 1500); // Cerrar modal después de un breve retraso
             }
         }
 
-        // Handle Delete Button Click
-        async function deleteEmployee(employeeId) { // Renamed from handleDeleteClick
-            const employee = currentEmployees.find(e => e.id_empleado == employeeId);
-            const employeeName = employee ? `${employee.primer_nombre || ''} ${employee.primer_apellido || ''}`.trim() : `ID ${employeeId}`;
 
-            if (!confirm(`¿Está seguro de que desea eliminar al empleado "${employeeName}"? Esta acción no se puede deshacer.`)) {
+        async function saveEmployee(event) {
+             event.preventDefault(); // Evitar el envío tradicional del formulario
+            clearAlerts();
+
+             // Validaciones básicas adicionales (la validación principal se hace en el backend)
+             const usuarioEmpleado = document.getElementById('usuario_empleado').value.trim();
+             const password = document.getElementById('password').value; // No trim aquí para permitir password con espacios iniciales/finales si es intencional (aunque no recomendado)
+             const primerNombre = document.getElementById('primer_nombre').value.trim();
+             const primerApellido = document.getElementById('primer_apellido').value.trim();
+             const status = document.getElementById('status').value;
+
+             if (!primerNombre || !primerApellido || !usuarioEmpleado || !status) {
+                  showAlert('error', 'Los campos Primer Nombre, Primer Apellido, Usuario (Login) y Estado son obligatorios.');
+                  return;
+             }
+
+             // Validar contraseña solo si es modo 'create' o si se ha ingresado algo en modo 'edit'
+             if (currentEmployeeAction === 'create' && password.trim() === '') {
+                 showAlert('error', 'La contraseña es obligatoria para un nuevo colaborador.');
+                 return;
+             }
+
+
+             // Recopilar datos del formulario
+             const formData = new FormData(employeeForm);
+             const data = Object.fromEntries(formData.entries());
+
+             // Convertir "on" checkbox values or handle specific types if needed
+             // data.activo = data.activo === 'on'; // Example if you had an 'activo' checkbox
+
+             // Asegurar que el ID no se envíe si es una creación
+             if (currentEmployeeAction === 'create') {
+                 delete data.id_empleado; // No enviar el ID en el body para la creación
+                 // La contraseña SÍ debe enviarse en el body para la creación
+             } else { // edit
+                 // Para la edición, el ID va en la URL. El password va en el body SOLO si se cambió.
+                 if (data.password === '') { // Si el campo de password está vacío, no lo enviamos para que el backend no lo cambie
+                      delete data.password;
+                 }
+                  // El ID del colaborador DEBE ir en la URL para la edición, NO en el body como 'id_empleado'
+                  // Ya lo tenemos en `hiddenEmployeeId.value`, que se usa en la URL en la llamada fetch.
+                  // Asegurarnos de que no se envíe 'id_empleado' en el body si el backend lo espera en la URL.
+                  // Si tu backend espera `id_empleado` en el body *además* de la URL, déjalo.
+                  // Según tu código server.js (PUT /api/colaboradores/:id), espera el ID en req.params.id,
+                  // y los datos a actualizar (incluido usuario_empleado, password, rol, activo) en req.body.
+                  // Así que enviamos el ID en la URL y el resto en el body. El hiddenEmployeeId.value NO necesita ir en el body.
+                  delete data.id_empleado; // Eliminar el ID del body, ya va en la URL
+             }
+
+
+             const employeeId = hiddenEmployeeId.value; // Obtener ID para la URL si es edición
+             const method = currentEmployeeAction === 'create' ? 'POST' : 'PUT';
+             const url = currentEmployeeAction === 'create' ? apiBaseUrl : `${apiBaseUrl}/${employeeId}`;
+
+             console.log(`${method} Data:`, data); // Log para depuración
+             console.log(`Sending to URL: ${url}`); // Log para depuración
+
+             try {
+                 const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data) // Enviar datos como JSON
+                 });
+
+                const result = await response.json();
+
+                if (response.ok) { // HTTP status 2xx
+                    // El backend puede devolver warning en result
+                     if (result.warning) {
+                          showAlert('success', result.message || 'Operación exitosa con advertencias.', 8000); // Mostrar advertencia como "éxito" pero con más tiempo
+                     } else {
+                          showAlert('success', result.message || 'Operación exitosa.');
+                     }
+
+                    closeEmployeeModal();
+                    fetchEmployees(); // Recargar la lista para mostrar los cambios
+                } else { // HTTP status other than 2xx (e.g., 400, 404, 500)
+                    // El backend ya devuelve { success: false, message: '...' } en caso de error
+                    showAlert('error', result.message || `Error ${response.status}: No se pudo completar la operación.`);
+                    console.error('Error response from API:', result); // Log del error del backend
+                }
+
+            } catch (error) {
+                console.error('Error sending employee data:', error);
+                showAlert('error', `Error de conexión: ${error.message}. No se pudo guardar el colaborador.`);
+            }
+        }
+
+        async function deleteEmployee(employeeId) {
+            if (!employeeId) {
+                console.error("deleteEmployee llamado sin ID.");
                 return;
             }
-            clearAlerts();
 
-            try {
-                // showLoading(true);
-                const response = await fetch(`${apiBaseUrl}/${employeeId}`, { method: 'DELETE' });
-                // Attempt to parse JSON even on non-ok response
-                const result = await response.json().catch(() => null); // null if no JSON body
-
-                if (!response.ok) {
-                     // Use message from JSON if available, otherwise statusText
-                     throw new Error(result?.message || `Error ${response.status}: ${response.statusText}`);
-                 }
-
-                 // Assume success if response is ok (2xx), or use result.success if API returns it
-                showAlert('success', result?.message || 'Empleado eliminado correctamente');
-                fetchEmployees(); // Reload table
-
-            } catch (error) {
-                console.error('Error al eliminar empleado:', error);
-                showAlert('error', `Error al eliminar: ${error.message}`);
-            } finally {
-                // showLoading(false);
+            // Confirmación visual antes de eliminar
+            const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar al colaborador con ID ${employeeId}? Esto también intentará eliminar su cuenta de usuario asociada.`);
+            if (!confirmDelete) {
+                return; // Usuario canceló la eliminación
             }
-        }
 
-        // Handle Form Submission (Create or Update)
-        async function saveEmployee(event) { // Renamed from handleFormSubmit, added event parameter
-            event.preventDefault(); // Prevent default form submission
             clearAlerts();
 
-            const formData = new FormData(employeeForm);
-            const employeeData = Object.fromEntries(formData.entries());
-            const employeeId = hiddenEmployeeId.value;
-
-            const method = employeeId ? 'PUT' : 'POST';
-            const url = employeeId ? `${apiBaseUrl}/${employeeId}` : apiBaseUrl;
-
-             // Basic client-side validation for required fields
-             if (!employeeData.primer_nombre || !employeeData.primer_apellido || !employeeData.usuario_empleado) {
-                 showAlert("error", "Los campos Primer Nombre, Primer Apellido y Usuario son obligatorios.");
-                 return; // Stop submission
-             }
-
-            // Optional: Clean empty strings if your backend expects null or omits fields
-             Object.keys(employeeData).forEach(key => {
-                if (employeeData[key] === '') {
-                   // delete employeeData[key]; // Uncomment if you prefer not sending empty strings
-                }
-             });
-
-
             try {
-                // showLoading(true);
-                const response = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(employeeData),
+                const response = await fetch(`${apiBaseUrl}/${employeeId}`, { // DELETE /api/colaboradores/:id
+                    method: 'DELETE',
                 });
 
-                // Attempt to parse JSON even on non-ok response
-                 const result = await response.json(); // Expecting JSON response
+                const result = await response.json();
 
-                if (!response.ok) {
-                    // Use error message from backend if available, otherwise HTTP status
-                    const errorMessage = result.message || `Error HTTP: ${response.status} - ${response.statusText}`;
-                    throw new Error(errorMessage);
-                }
+                 if (response.ok) { // HTTP status 2xx
+                    // El backend ya devuelve { success: true, message: '...' } y puede tener 'warning'
+                     if (result.warning) {
+                          showAlert('success', result.message, 8000); // Mostrar advertencia como "éxito" pero con más tiempo
+                     } else {
+                          showAlert('success', result.message || 'Colaborador eliminado exitosamente.');
+                     }
 
-                // Assume success if response is ok (2xx), or check result.success if API returns it
-                showAlert('success', result.message || `Empleado ${employeeId ? 'actualizado' : 'creado'} exitosamente.`);
-                closeEmployeeModal(); // Close modal on success
-                fetchEmployees(); // Reload table
+                    fetchEmployees(); // Recargar la lista
+                 } else { // HTTP status other than 2xx
+                     showAlert('error', result.message || `Error ${response.status}: No se pudo eliminar al colaborador.`);
+                     console.error('Error response from API:', result);
+                 }
 
             } catch (error) {
-                console.error(`Error al ${employeeId ? 'actualizar' : 'crear'} empleado:`, error);
-                showAlert('error', `Error al guardar: ${error.message}`); // Use 'error' for red alerts
-            } finally {
-                // showLoading(false);
+                console.error('Error deleting employee:', error);
+                showAlert('error', `Error de conexión: ${error.message}. No se pudo eliminar el colaborador.`);
             }
         }
 
-        // Function to simulate loading indicator (optional)
-        function showLoading(show) {
-             // Implement a visual loading indicator here (e.g., a spinner)
-            if (show) {
-                console.log('Cargando...'); // Placeholder
-            } else {
-                console.log('Carga completada.'); // Placeholder
-            }
-        }
 
-        // Close session - Adopted from admin.html
-        function logout() {
-             if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                 // Ensure the logout route is correct
-                 window.location.href = '/logout';
-             }
-         }
-
-
-        // --- Event Listeners ---
-        addEmployeeBtn.addEventListener('click', () => openEmployeeModal('create')); // Open modal for adding
-        cancelEmployeeBtn.addEventListener('click', closeEmployeeModal); // Close modal on cancel
-        closeEmployeeModalBtn.addEventListener('click', closeEmployeeModal); // Close modal using the 'x' button
-
-        // Close modal if user clicks outside the modal content
-        window.addEventListener('click', (event) => {
-             if (event.target === employeeModal) { // Use the correct modal variable
-                closeEmployeeModal();
-             }
-        });
-
-        // Listen for form submission
-        employeeForm.addEventListener('submit', saveEmployee);
-
-
-        // Event delegation on the table body for edit and delete buttons
-        employeeTableBody.addEventListener('click', (event) => {
-             const editButton = event.target.closest('.btn-edit');
-             if (editButton) {
-                const employeeId = editButton.dataset.id;
-                editEmployee(employeeId); // Call editEmployee
-                return; // Prevent triggering delete if nested
-             }
-             const deleteButton = event.target.closest('.btn-delete');
-             if (deleteButton) {
-                const employeeId = deleteButton.dataset.id;
-                deleteEmployee(employeeId); // Call deleteEmployee
-             }
-        });
-
-
-        // Note: Initial load is handled by the DOMContentLoaded listener at the top
     </script>
 </body>
 </html>
