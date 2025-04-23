@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil de Colaborador - SORHA</title>
-    <link rel="stylesheet" href="/css/styles.css"> <link rel="stylesheet" href="/css/colaborador.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css"> <link rel="stylesheet" href="/css/colaborador.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -74,7 +75,7 @@
                                     <th>Pago Horas Extra</th>
                                     <th>Bonificaciones</th>
                                     <th>Total Descuentos</th>
-                                    <th>IGSS</th> <th>ISR</th> <th>Total Pagado</th>
+                                     <th>Total Pagado</th>
                                 </tr>
                             </thead>
                             <tbody id="payments-table-body">
@@ -186,9 +187,8 @@
                         row.insertCell(5).textContent = parseFloat(payment.horas_extra || 0).toFixed(2); // Recordar: 'horas_extra' en nominas es el *pago*
                         row.insertCell(6).textContent = parseFloat(payment.bonificaciones || 0).toFixed(2);
                         row.insertCell(7).textContent = parseFloat(payment.descuentos || 0).toFixed(2); // <-- Total de Descuentos
-                        row.insertCell(8).textContent = parseFloat(payment.igss_descuento || 0).toFixed(2); // <-- IGSS (usando la nueva columna)
-                        row.insertCell(9).textContent = parseFloat(payment.isr_descuento || 0).toFixed(2); // <-- ISR (usando la nueva columna)
-                        row.insertCell(10).textContent = parseFloat(payment.total_pagado || 0).toFixed(2); // Total Pagado
+                        // ELIMINADA LA REFERENCIA A payment.igss_descuento y payment.isr_descuento
+                        row.insertCell(8).textContent = parseFloat(payment.total_pagado || 0).toFixed(2); // Total Pagado
                     });
                 } else {
                     // Si no hay pagos, ocultar la tabla y mostrar el mensaje
