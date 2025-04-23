@@ -1,0 +1,508 @@
+/* Archivo: public/css/colaborador.css */
+
+/* --- Estilos Generales (basados en tu ejemplo) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Fondo con efecto similar al login */
+.admin-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Asegúrate de que la ruta a tu imagen de fondo sea correcta */
+    background: url('/images/doctor-background.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+    filter: brightness(0.7); /* Oscurece la imagen de fondo */
+}
+
+/* Capa de superposición sobre el fondo */
+.admin-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradiente azul, ajusta los colores si es necesario */
+    background: linear-gradient(135deg, rgba(41, 128, 185, 0.7) 0%, rgba(109, 213, 250, 0.7) 100%);
+}
+
+/* Header estilo similar al login */
+.admin-header {
+    background: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    z-index: 10; /* Asegura que esté por encima del contenido */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacio entre logo y títulos */
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain; /* Ajusta el tamaño del logo */
+}
+
+.header-titles h1 {
+    color: #2c3e50; /* Color de título oscuro */
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.header-titles h1 span {
+    color: #2980b9; /* Color de acento para "SORHA" */
+    font-weight: 700;
+}
+
+.header-titles p {
+    color: #7f8c8d; /* Color gris para subtítulo */
+    font-size: 13px;
+    margin: 0;
+}
+
+/* Username display in header */
+.admin-header nav {
+    display: flex;
+    align-items: center;
+    margin-top: 0; /* Reset margin-top */
+}
+
+.username-display {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+
+/* Contenido principal */
+.admin-main {
+    flex: 1; /* Permite que ocupe el espacio restante */
+    padding: 30px;
+    display: flex;
+    justify-content: center; /* Centra el contenedor horizontalmente */
+    width: 100%;
+    z-index: 1; /* Asegura que esté por encima del fondo */
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.97); /* Fondo blanco casi opaco */
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave al pasar el ratón */
+    margin-top: 20px; /* Espacio superior */
+    margin-bottom: 20px; /* Espacio inferior */
+}
+
+.container:hover {
+    transform: translateY(-3px); /* Pequeño levantamiento */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Sombra más grande */
+}
+
+/* Section headers within the container */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Separador */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+}
+
+.section-header h2 {
+    color: #2c3e50; /* Color de título */
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre icono y texto */
+    margin: 0;
+}
+
+/* Botones */
+.btn-logout {
+    background: linear-gradient(90deg, #e74c3c, #f39c12); /* Gradiente naranja-rojo */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre icono y texto */
+    transition: all 0.3s ease; /* Transición para hover */
+    text-decoration: none; /* Elimina el subrayado del enlace */
+}
+
+.btn-logout:hover {
+    background: linear-gradient(90deg, #c0392b, #d35400); /* Gradiente más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Pequeño levantamiento */
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Sombra con color de acento */
+}
+
+/* Alertas */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    /* display: none;  -- Esto lo maneja JS para ocultar/mostrar */
+    opacity: 1;
+    transition: opacity 0.6s ease; /* Transición para ocultar/mostrar con animación */
+    font-weight: bold; /* Puedes ajustar si quieres que el texto sea negrita */
+    display: flex; /* Alinea icono y texto */
+    align-items: center;
+    gap: 10px;
+}
+
+.alert.hide {
+    opacity: 0; /* Clase para iniciar la animación de ocultar */
+}
+
+.alert-info {
+    background-color: #cfe2ff; /* Azul claro */
+    color: #074a92; /* Azul oscuro */
+    border: 1px solid #a0c3ff;
+}
+
+.alert-success {
+    background-color: #d5f5e3; /* Verde claro */
+    color: #27ae60; /* Verde */
+    border: 1px solid #a3e4d7;
+}
+
+.alert-error {
+    background-color: #fadbd8; /* Rojo claro */
+    color: #e74c3c; /* Rojo */
+    border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+    background-color: #fff3cd; /* Amarillo claro */
+    color: #856404; /* Amarillo oscuro */
+    border: 1px solid #ffeeba;
+}
+
+.alert i {
+    margin-right: 8px; /* Espacio entre icono y texto de la alerta */
+}
+
+
+/* Status badges (usados para el status del colaborador) */
+.status {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    display: inline-block;
+    text-transform: capitalize; /* Capitaliza la primera letra */
+}
+
+.status-activo {
+    background-color: #d5f5e3; /* Verde muy claro */
+    color: #27ae60; /* Verde */
+    border: 1px solid #a3e4d7;
+}
+
+.status-inactivo {
+    background-color: #fadbd8; /* Rojo muy claro */
+    color: #e74c3c; /* Rojo */
+    border: 1px solid #f5b7b1;
+}
+
+.status-vacaciones {
+    background-color: #fef9e7; /* Amarillo muy claro */
+    color: #f39c12; /* Naranja */
+    border: 1px solid #fae5d3;
+}
+
+.status-licencia {
+    background-color: #ebedef; /* Gris muy claro */
+    color: #7f8c8d; /* Gris */
+    border: 1px solid #d7dbdd;
+}
+.status-default { /* Estilo por defecto si no se reconoce el estado */
+     background-color: #eee;
+     color: #555;
+     border: 1px solid #ccc;
+}
+
+/* --- Estilos Específicos para Colaborador.html --- */
+
+/* Contenedor de la información personal */
+#personal-info {
+    margin-bottom: 30px;
+    padding: 20px; /* Aumenta un poco el padding interno */
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: inset 0 1px 5px rgba(0,0,0,0.05); /* Sombra interna ligera */
+}
+
+/* Grid para organizar los datos personales en columnas */
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas flexibles, mínimo 280px */
+    gap: 15px 30px; /* Espacio entre filas (15px) y columnas (30px) */
+}
+
+.data-grid p {
+    margin: 0; /* Elimina el margen por defecto de los párrafos */
+    padding: 5px 0; /* Espacio vertical dentro de cada item de la grid */
+    border-bottom: 1px dotted #ddd; /* Línea punteada sutil entre items */
+    word-wrap: break-word; /* Permite que el texto largo se divida */
+}
+.data-grid p:last-child { /* Elimina la línea punteada en el último elemento */
+    border-bottom: none;
+}
+
+
+.data-grid strong {
+     display: inline-block;
+     width: 160px; /* Ajusta este ancho para alinear las etiquetas */
+     margin-right: 10px;
+     color: #555;
+     font-weight: 600; /* Un poco más de grosor para la etiqueta */
+}
+
+/* Contenedor de la tabla de historial de pagos */
+#payment-history {
+    margin-top: 30px;
+}
+
+.table-container {
+    overflow-x: auto; /* Permite scroll horizontal en la tabla si es muy ancha */
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra para la tabla */
+}
+
+#payment-history table {
+    width: 100%;
+    border-collapse: collapse; /* Elimina el espacio entre celdas */
+    background: white;
+    min-width: 900px; /* Asegura que la tabla tenga un ancho mínimo para pantallas grandes/medianas */
+}
+
+#payment-history th,
+#payment-history td {
+    padding: 12px 15px; /* Espacio interno en celdas */
+    text-align: left;
+    border-bottom: 1px solid #eeeeee; /* Línea separadora entre filas */
+}
+
+#payment-history th {
+    background-color: #2577ae; /* Azul para los encabezados */
+    color: white;
+    font-weight: 500;
+    white-space: nowrap; /* Evita que el texto del encabezado se parta */
+    text-transform: uppercase;
+    font-size: 0.9em; /* Fuente un poco más pequeña en encabezados */
+}
+
+#payment-history th i {
+    margin-right: 8px; /* Espacio entre icono y texto en encabezado */
+}
+
+#payment-history tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fondo gris claro para filas pares */
+}
+
+#payment-history tbody tr:hover {
+    background-color: #f1f1f1; /* Fondo un poco más oscuro al pasar el ratón */
+}
+
+#payment-history td {
+    font-size: 0.9em; /* Fuente un poco más pequeña en celdas de datos */
+    white-space: nowrap; /* Evita que los datos numéricos o cortos se partan */
+}
+
+/* Mensajes dentro de la sección de historial de pagos */
+#payment-history #no-payments-message {
+    text-align: center;
+    margin-top: 20px;
+    /* Los estilos de .alert-warning le darán el fondo y color */
+}
+
+
+/* --- Responsive Adjustments --- */
+
+@media (max-width: 992px) {
+    /* Ajustes para el grid de datos personales */
+    .data-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Reduce el min-width en columnas */
+        gap: 15px 20px; /* Reduce el espacio entre columnas */
+    }
+     .data-grid strong {
+         width: 140px; /* Ajusta el ancho de la etiqueta */
+     }
+
+    /* Ajustes para la tabla de pagos */
+    #payment-history table {
+        min-width: 768px; /* Asegura que la tabla es legible */
+    }
+     #payment-history th,
+     #payment-history td {
+         padding: 10px 12px; /* Reduce el padding en celdas */
+         font-size: 0.85em; /* Reduce el tamaño de fuente */
+     }
+}
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    .header-content {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .username-display {
+        width: 100%;
+        text-align: center;
+        margin-right: 0;
+        margin-bottom: 10px; /* Espacio antes del botón de salir */
+    }
+
+    .admin-header nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    .section-header {
+        flex-direction: column;
+        align-items: center; /* Centra el header de sección */
+        gap: 15px;
+    }
+
+    .section-header h2 {
+        width: 100%;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .admin-main {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    /* Ajustes para el grid de datos personales */
+    .data-grid {
+        grid-template-columns: 1fr; /* Una sola columna */
+        gap: 10px; /* Reduce el espacio */
+    }
+    .data-grid strong {
+        display: inline; /* Vuelve a inline en móvil */
+        width: auto; /* Elimina el ancho fijo */
+        margin-right: 5px;
+    }
+     .data-grid p {
+         padding: 8px 0; /* Ajusta padding */
+     }
+
+
+    /* La tabla de pagos sigue con overflow-x auto, no necesita apilar celdas */
+    #payment-history table {
+        min-width: 600px; /* Ajusta el mínimo para móviles */
+    }
+    #payment-history th,
+    #payment-history td {
+         padding: 8px 10px;
+         font-size: 0.8em;
+    }
+
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .admin-header {
+        padding: 10px 15px;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-titles h1 {
+        font-size: 18px;
+    }
+
+    .header-titles p {
+        font-size: 12px;
+    }
+
+    .username-display {
+        font-size: 13px;
+    }
+
+    .btn-logout {
+        padding: 8px 15px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .admin-main {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .section-header {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+
+    .section-header h2 {
+         font-size: 18px;
+         gap: 5px;
+    }
+
+    /* Ajustes en tabla para pantallas muy pequeñas */
+    #payment-history table {
+         min-width: 500px; /* Ajusta el mínimo */
+    }
+    #payment-history th,
+    #payment-history td {
+         padding: 6px 8px;
+         font-size: 0.75em;
+    }
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil de Colaborador - SORHA</title>
+    <link rel="stylesheet" href="/css/styles.css"> <link rel="stylesheet" href="/css/colaborador.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="admin-background"></div>
+    <div class="admin-overlay"></div>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/logo.png" alt="Logo SORHA" class="logo">
+            <div class="header-titles">
+                <h1>Sistemas de Recursos Humanos y Administración <span>SORHA</span></h1>
+                <p>Perfil del Colaborador</p>
+            </div>
+        </div>
+        <nav>
+            <span class="username-display">Usuario: <strong id="loggedInUsername">Cargando...</strong> (<span id="loggedInUserRole"></span>)</span>
+            <a href="/logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-user-circle"></i> Datos Personales</h2>
+            </div>
+
+            <div id="loading-message" class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Cargando información...</div>
+            <div id="error-message" class="alert alert-error" style="display: none;"><i class="fas fa-times-circle"></i></div>
+
+            <div id="collaborator-data" style="display: none;">
+                <div id="personal-info" class="data-section">
+                    <div class="data-grid">
+                        <p><strong>ID Empleado:</strong> <span id="empleado_id"></span></p>
+                        <p><strong>Nombre Completo:</strong> <span id="nombre_completo"></span></p>
+                        <p><strong>Usuario (Login):</strong> <span id="usuario_empleado_display"></span></p>
+                        <p><strong>Sexo:</strong> <span id="sexo"></span></p>
+                        <p><strong>Edad:</strong> <span id="edad"></span></p>
+                        <p><strong>ID Contrato:</strong> <span id="id_contrato_display"></span></p>
+                        <p><strong>Puesto:</strong> <span id="puesto"></span></p>
+                        <p><strong>Estado Civil:</strong> <span id="estado_civil"></span></p>
+                        <p><strong>Fecha Nacimiento:</strong> <span id="fecha_nacimiento"></span></p>
+                        <p><strong>Ciudad Nacimiento:</strong> <span id="ciudad_nacimiento"></span></p>
+                        <p><strong>Departamento:</strong> <span id="departamento"></span></p>
+                        <p><strong>Email:</strong> <span id="email"></span></p>
+                        <p><strong>Email Interno:</strong> <span id="email_interno"></span></p>
+                        <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
+                        <p><strong>Dirección:</strong> <span id="direccion"></span></p>
+                        <p><strong>Status:</strong> <span id="status"></span></p>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Historial de Pagos</h2>
+                </div>
+
+                <div id="payment-history" class="data-section">
+                    <p id="no-payments-message" class="alert alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i> No se encontró historial de pagos.</p>
+                    <div class="table-container">
+                         <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Nómina</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Tipo Pago</th>
+                                    <th>Sueldo Base</th>
+                                    <th>Pago Horas Extra</th>
+                                    <th>Bonificaciones</th>
+                                    <th>Total Descuentos</th>
+                                    <th>IGSS</th> <th>ISR</th> <th>Total Pagado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Función para cargar los datos del colaborador y pagos
+        async function loadCollaboratorData() {
+            const loadingMessage = document.getElementById('loading-message');
+            const errorMessage = document.getElementById('error-message');
+            const collaboratorDataSection = document.getElementById('collaborator-data');
+            const paymentsTableBody = document.getElementById('payments-table-body');
+            const noPaymentsMessage = document.getElementById('no-payments-message');
+             const loggedInUsernameSpan = document.getElementById('loggedInUsername');
+             const loggedInUserRoleSpan = document.getElementById('loggedInUserRole');
+
+            // Mostrar mensaje de carga y ocultar el resto
+            loadingMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            collaboratorDataSection.style.display = 'none';
+            noPaymentsMessage.style.display = 'none';
+             loggedInUsernameSpan.textContent = 'Cargando...';
+             loggedInUserRoleSpan.textContent = '';
+
+
+            try {
+                // --- Petición al Backend para obtener datos ---
+                // Llama a la ruta API que creamos en server.js
+                const response = await fetch('/api/colaborador/data');
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error HTTP! Estado: ${response.status} ${response.statusText}. Mensaje: ${errorText.substring(0, 200)}...`);
+                }
+
+                const data = await response.json();
+
+                // Verificar si la respuesta JSON indica éxito y tiene los datos esperados
+                if (!data || !data.success || !data.personalInfo) {
+                    const serverMessage = data && data.message ? data.message : 'Respuesta del servidor inesperada.';
+                     throw new Error(`Error en la respuesta de la API: ${serverMessage}`);
+                }
+
+                 // --- Llenar info del usuario logueado en el header ---
+                 if (data.user && data.user.usuario) {
+                      loggedInUsernameSpan.textContent = data.user.usuario;
+                      loggedInUserRoleSpan.textContent = data.user.rol || '';
+                 } else {
+                      loggedInUsernameSpan.textContent = 'Desconocido';
+                      loggedInUserRoleSpan.textContent = 'N/A';
+                 }
+
+
+                // --- Llenar la Información Personal ---
+                const collaborator = data.personalInfo;
+                document.getElementById('empleado_id').textContent = collaborator.id_empleado;
+                document.getElementById('nombre_completo').textContent = `${collaborator.primer_nombre} ${collaborator.segundo_nombre ? collaborator.segundo_nombre + ' ' : ''}${collaborator.primer_apellido}${collaborator.segundo_apellido ? ' ' + collaborator.segundo_apellido : ''}`;
+                document.getElementById('usuario_empleado_display').textContent = collaborator.usuario_empleado;
+                document.getElementById('sexo').textContent = collaborator.sexo || 'N/A'; // Mostrar N/A si es nulo
+                document.getElementById('edad').textContent = collaborator.edad || 'N/A';
+                document.getElementById('id_contrato_display').textContent = collaborator.id_contrato || 'N/A';
+                document.getElementById('puesto').textContent = collaborator.puesto || 'N/A';
+                document.getElementById('estado_civil').textContent = collaborator.estado_civil || 'N/A';
+                // Formatear fechas si es necesario (AAAA-MM-DD)
+                document.getElementById('fecha_nacimiento').textContent = collaborator.fecha_nacimiento ? new Date(collaborator.fecha_nacimiento + 'T00:00:00').toLocaleDateString() : 'N/A'; // Añadir T00:00:00 para evitar problemas de zona horaria
+                document.getElementById('ciudad_nacimiento').textContent = collaborator.ciudad_nacimiento || 'N/A';
+                document.getElementById('departamento').textContent = collaborator.departamento || 'N/A';
+                document.getElementById('email').textContent = collaborator.email || 'N/A';
+                document.getElementById('email_interno').textContent = collaborator.email_interno || 'N/A';
+                document.getElementById('telefono').textContent = collaborator.telefono || 'N/A';
+                document.getElementById('direccion').textContent = collaborator.direccion || 'N/A';
+                document.getElementById('status').textContent = collaborator.status || 'N/A';
+                 // Añadir clase de estilo según el status si tienes CSS para eso
+                 const statusSpan = document.getElementById('status');
+                  if (statusSpan.textContent && statusSpan.textContent !== 'N/A') {
+                       statusSpan.classList.add('status');
+                       statusSpan.classList.add('status-' + statusSpan.textContent.toLowerCase()); // Ej: status-activo
+                       // Si no tienes clases específicas, puedes añadir una por defecto
+                       if (!statusSpan.classList.contains('status-activo') && !statusSpan.classList.contains('status-inactivo') /* etc */) {
+                            statusSpan.classList.add('status-default');
+                       }
+                  }
+
+
+                // --- Llenar el Historial de Pagos ---
+                const payments = data.payments || []; // Asegurarse de que 'payments' es un array
+
+                paymentsTableBody.innerHTML = ''; // Limpiar filas existentes
+
+                if (payments.length > 0) {
+                    noPaymentsMessage.style.display = 'none'; // Ocultar mensaje de "sin pagos"
+                    // Mostrar la tabla si hay datos (el contenedor table-container)
+                    paymentsTableBody.parentElement.parentElement.style.display = 'block';
+                    payments.forEach(payment => {
+                        const row = paymentsTableBody.insertRow();
+                        row.insertCell(0).textContent = payment.id_nomina;
+                        // Formatear fechas de pago
+                        row.insertCell(1).textContent = payment.fecha_inicio ? new Date(payment.fecha_inicio + 'T00:00:00').toLocaleDateString() : '';
+                        row.insertCell(2).textContent = payment.fecha_fin ? new Date(payment.fecha_fin + 'T00:00:00').toLocaleDateString() : '';
+                        row.insertCell(3).textContent = payment.tipo_pago;
+                        // Formatear los números a 2 decimales
+                        row.insertCell(4).textContent = parseFloat(payment.sueldo_base || 0).toFixed(2);
+                        row.insertCell(5).textContent = parseFloat(payment.horas_extra || 0).toFixed(2); // Recordar: 'horas_extra' en nominas es el *pago*
+                        row.insertCell(6).textContent = parseFloat(payment.bonificaciones || 0).toFixed(2);
+                        row.insertCell(7).textContent = parseFloat(payment.descuentos || 0).toFixed(2); // <-- Total de Descuentos
+                        row.insertCell(8).textContent = parseFloat(payment.igss_descuento || 0).toFixed(2); // <-- IGSS (usando la nueva columna)
+                        row.insertCell(9).textContent = parseFloat(payment.isr_descuento || 0).toFixed(2); // <-- ISR (usando la nueva columna)
+                        row.insertCell(10).textContent = parseFloat(payment.total_pagado || 0).toFixed(2); // Total Pagado
+                    });
+                } else {
+                    // Si no hay pagos, ocultar la tabla y mostrar el mensaje
+                    paymentsTableBody.parentElement.parentElement.style.display = 'none'; // Ocultar el contenedor de la tabla
+                    noPaymentsMessage.style.display = 'block';
+                }
+
+
+            } catch (error) {
+                console.error("Error al cargar datos del colaborador:", error);
+                errorMessage.textContent = 'Error al cargar la información del colaborador: ' + error.message;
+                errorMessage.style.display = 'block'; // Mostrar mensaje de error
+
+                // Ocultar datos y mostrar solo el error/mensaje sin pagos
+                 document.getElementById('personal-info').style.display = 'none'; // Ocultar info personal
+                 document.getElementById('payment-history').style.display = 'block'; // Mostrar sección historial para mostrar mensaje
+                 paymentsTableBody.parentElement.parentElement.style.display = 'none'; // Ocultar la tabla de pagos
+                 noPaymentsMessage.textContent = 'No se pudo cargar el historial de pagos.'; // Mensaje de error para pagos
+                 noPaymentsMessage.style.display = 'block'; // Mostrar mensaje de "sin pagos" (que ahora es mensaje de error)
+
+
+            } finally {
+                loadingMessage.style.display = 'none'; // Ocultar mensaje de carga
+                collaboratorDataSection.style.display = 'block'; // Asegurar que la sección principal esté visible (contendrá datos o error)
+            }
+        }
+
+         // Función para obtener y mostrar el nombre de usuario logueado en el header
+         async function displayLoggedInUser() {
+             try {
+                  const response = await fetch('/api/session/user'); // Ruta API para datos de sesión
+                  if (!response.ok) {
+                       console.error('Error al obtener datos de sesión:', response.status, response.statusText);
+                       // Podrías redirigir al login si falla
+                       // window.location.href = '/';
+                       return;
+                  }
+                  const data = await response.json();
+                  if (data.success && data.user) {
+                       document.getElementById('loggedInUsername').textContent = data.user.usuario;
+                       document.getElementById('loggedInUserRole').textContent = data.user.rol || '';
+                  } else {
+                        console.warn('No se obtuvo info del usuario logueado.');
+                       document.getElementById('loggedInUsername').textContent = 'Desconocido';
+                       document.getElementById('loggedInUserRole').textContent = '';
+                       // Si no hay usuario, quizás redirigir al login
+                       // window.location.href = '/';
+                  }
+             } catch (error) {
+                  console.error('Error en la petición de sesión:', error);
+                  document.getElementById('loggedInUsername').textContent = 'Error';
+                  document.getElementById('loggedInUserRole').textContent = '';
+                  // Si falla la petición, quizás redirigir al login
+                  // window.location.href = '/';
+             }
+         }
+
+
+        // Llamar a las funciones cuando la página se cargue completamente
+        window.addEventListener('load', () => {
+             displayLoggedInUser(); // Cargar info del usuario en el header
+             loadCollaboratorData(); // Cargar datos del colaborador y pagos
+        });
+
+    </script>
+</body>
+</html>
