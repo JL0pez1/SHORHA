@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Métricas de Empleado - SORHA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/reportes.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-background"></div>
+    <div class="admin-overlay"></div>
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <div class="header-titles">
+                <h1>Reporte de Métricas de <span>Empleados</span></h1>
+                <p>Sistema de Organización de Recursos Humanos y Administración</p>
+            </div>
+        </div>
+        <nav>
+             <span class="username-display">Bienvenido(a), [Nombre del Usuario]</span>
+            <a href="/logout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+    <main class="admin-main">
+        <div class="container">
+            <div class="section">
+                <div class="section-header">
+                     <h2><i class="fas fa-chart-bar"></i> Opciones del Reporte</h2>
+                </div>
+                <div class="report-options">
+                    <div class="form-group">
+                        <label for="id_colaborador_filtro"><i class="fas fa-user-tag"></i> ID del Colaborador (Opcional):</label>
+                        <input type="number" id="id_colaborador_filtro" placeholder="Ingrese el ID del colaborador">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_registro_filtro"><i class="fas fa-calendar-alt"></i> Fecha de Inicio (para rango de 30 días):</label>
+                        <input type="date" id="fecha_registro_filtro">
+                    </div>
+                    <button id="btnGenerarReporte" class="btn-primary"><i class="fas fa-file-alt"></i> Generar Reporte</button>
+                </div>
+
+                <div id="reporteTablaArea" class="table-container" style="margin-top: 20px;">
+                     <h3>Resultados del Reporte</h3>
+                    <table id="tablaReporte">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-id-card"></i> ID Colaborador</th>
+                                <th><i class="fas fa-user"></i> Nombre Colaborador</th>
+                                <th><i class="fas fa-calendar-alt"></i> Fecha Registro</th>
+                                <th><i class="fas fa-chart-line"></i> Métrica</th>
+                                <th><i class="fas fa-calculator"></i> Valor Medido</th>
+                                <th><i class="fas fa-balance-scale"></i> Unidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6">Ingrese filtros y haga clic en Generar Reporte.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="graficasArea" style="margin-top: 30px; display: none;">
+                     <div class="section-header">
+                         <h2><i class="fas fa-chart-pie"></i> Visualización Gráfica</h2>
+                     </div>
+                    <canvas id="metricChart"></canvas>
+                    </div>
+
+                <div id="exportOptionsArea" style="margin-top: 30px;">
+                     <div class="section-header">
+                         <h2><i class="fas fa-download"></i> Opciones de Exportación</h2>
+                     </div>
+                    <button id="btnExportarPdf" class="btn-primary"><i class="fas fa-file-pdf"></i> Exportar a PDF</button>
+                     <p style="margin-top: 10px; color: #777;">La funcionalidad de exportación a PDF usa el backend y los filtros actuales.</p>
+                 </div>
+
+            </div>
+
+            <div id="mensajeArea" style="margin-top: 20px;">
+                </div>
+        </div>
+    </main>
+
+    <script>
+        const idColaboradorFiltroInput = document.getElementById('id_colaborador_filtro');
+        const fechaRegistroFiltroInput = document.getElementById('fecha_registro_filtro'); // Este es el campo de Fecha de INICIO
+        const btnGenerarReporte = document.getElementById('btnGenerarReporte');
+        const reporteTablaAreaDiv = document.getElementById('reporteTablaArea');
+        const tablaReporteBody = document.getElementById('tablaReporte').querySelector('tbody');
+        const mensajeArea = document.getElementById('mensajeArea');
+        const graficasAreaDiv = document.getElementById('graficasArea');
+        const exportOptionsAreaDiv = document.getElementById('exportOptionsArea');
+        const btnExportarPdf = document.getElementById('btnExportarPdf');
+
+        // Variable global para la instancia de la gráfica, para poder destruirla antes de crear una nueva
+        let myMetricChartInstance = null;
+
+        // --- FUNCTION TO DISPLAY MESSAGES ---
+        function mostrarMensaje(texto, tipo = 'error') {
+            let alertClass = 'alert-error';
+            if (tipo === 'exito') {
+                alertClass = 'alert-success';
+            } else if (tipo === 'info') {
+                 alertClass = 'alert-info';
+            }
+            mensajeArea.innerHTML = `<div class="alert ${alertClass}">${texto}</div>`;
+            setTimeout(() => {
+                const alertElement = mensajeArea.querySelector('.alert');
+                if (alertElement) {
+                   alertElement.classList.add('hide');
+                    setTimeout(() => { mensajeArea.innerHTML = ''; }, 600);
+                } else {
+                     mensajeArea.innerHTML = '';
+                }
+            }, 5000);
+        }
+
+        // --- GENERAR REPORTE BUTTON CLICK EVENT ---
+        btnGenerarReporte.addEventListener('click', async () => {
+            const idColaborador = idColaboradorFiltroInput.value.trim();
+            const fechaInicio = fechaRegistroFiltroInput.value; // Obtiene el valor del campo de fecha única como Fecha de Inicio
+
+            // Si no se selecciona fecha de inicio, no podemos generar un reporte de rango
+             if (!fechaInicio && idColaborador) {
+                 mostrarMensaje('Por favor, seleccione una Fecha de Inicio si especifica un Colaborador para el reporte de rango.', 'info');
+                 // O podrías permitir reporte sin fecha de inicio para obtener todos los registros del colaborador
+                 // Pero si no hay filtros, la consulta puede ser muy grande.
+                 // Vamos a requerir al menos un filtro o la fecha de inicio si hay colaborador
+                 if (!idColaborador && !fechaInicio) {
+                     mostrarMensaje('Por favor, ingrese al menos un filtro (ID Colaborador o Fecha de Inicio).', 'info');
+                     return;
+                 }
+             } else if (!fechaInicio && !idColaborador) {
+                  mostrarMensaje('Por favor, ingrese al menos un filtro (ID Colaborador o Fecha de Inicio).', 'info');
+                  return;
+             }
+
+
+            if (idColaborador && (isNaN(idColaborador) || parseInt(idColaborador) <= 0)) {
+                 mostrarMensaje('Por favor, ingrese un ID de colaborador válido (mayor a 0) o déjelo vacío.', 'error');
+                 return;
+            }
+
+            tablaReporteBody.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
+            mensajeArea.innerHTML = '';
+            graficasAreaDiv.style.display = 'none'; // Ocultar gráficas al cargar nuevo reporte
+
+            // Destruir gráfica anterior si existe
+            if (myMetricChartInstance) {
+                myMetricChartInstance.destroy();
+                myMetricChartInstance = null;
+            }
+
+
+            try {
+                const queryParams = new URLSearchParams();
+                if (idColaborador) {
+                    queryParams.append('idColaborador', idColaborador);
+                }
+                // Enviamos el valor del campo de fecha única como 'fechaRegistro', el backend lo interpretará como fecha de inicio del rango de 30 días
+                if (fechaInicio) {
+                    queryParams.append('fechaRegistro', fechaInicio);
+                }
+
+
+                const apiUrl = `/api/reportes/metricas?${queryParams.toString()}`;
+
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    mostrarMensaje(data.message || `Error ${res.status} al obtener el reporte.`, 'error');
+                    tablaReporteBody.innerHTML = '<tr><td colspan="6">Error al cargar datos.</td></tr>';
+                    exportOptionsAreaDiv.style.display = 'none';
+                    return;
+                }
+
+                // Populate the report table
+                if (data.registros && data.registros.length > 0) {
+                    tablaReporteBody.innerHTML = '';
+                    data.registros.forEach(reg => {
+                        const fila = `<tr>
+                            <td>${reg.id_colaborador}</td>
+                            <td>${reg.primer_nombre || ''} ${reg.primer_apellido || ''}</td>
+                            <td>${reg.fecha_registro ? new Date(reg.fecha_registro).toLocaleDateString() : ''}</td>
+                            <td>${reg.nombre_metrica || 'N/A'}</td>
+                            <td>${reg.valor_medido}</td>
+                            <td>${reg.unidad_medida || ''}</td>
+                        </tr>`;
+                        tablaReporteBody.innerHTML += fila;
+                    });
+
+                    mostrarMensaje(`Reporte generado con ${data.registros.length} registros.`, 'exito');
+
+                    // --- Lógica para mostrar y dibujar Gráficas ---
+                    graficasAreaDiv.style.display = 'block'; // Mostrar el área de gráficas
+                    drawMetricsChart(data.registros); // Llama a la función para dibujar la gráfica
+
+                    // --- Lógica para mostrar opciones de exportación ---
+                    exportOptionsAreaDiv.style.display = 'block'; // Mostrar opciones de exportación
+
+
+                } else {
+                     tablaReporteBody.innerHTML = '<tr><td colspan="6">No se encontraron registros de métricas con los filtros seleccionados.</td></tr>';
+                     mostrarMensaje('No se encontraron registros para el reporte.', 'info');
+                     graficasAreaAreaDiv.style.display = 'none'; // Corregido el ID aquí
+                     exportOptionsAreaDiv.style.display = 'none';
+
+                     // Destruir gráfica si no hay datos para mostrar
+                     if (myMetricChartInstance) {
+                        myMetricChartInstance.destroy();
+                        myMetricChartInstance = null;
+                     }
+                }
+
+            } catch (error) {
+                console.error('Error general al generar reporte:', error);
+                mostrarMensaje(`Error general al generar reporte: ${error.message}`, 'error');
+                 tablaReporteBody.innerHTML = '<tr><td colspan="6">Error de conexión.</td></tr>';
+                 graficasAreaDiv.style.display = 'none';
+                 exportOptionsAreaDiv.style.display = 'none';
+            }
+        });
+
+        // --- FUNCTION TO DRAW METRICS CHART ---
+        function drawMetricsChart(registros) {
+             if (!registros || registros.length === 0) {
+                 if (myMetricChartInstance) {
+                    myMetricChartInstance.destroy();
+                    myMetricChartInstance = null;
+                 }
+                 graficasAreaDiv.style.display = 'none';
+                 return;
+             }
+
+            // Prepara los datos para la gráfica
+            // Agruparemos por fecha y por métrica para una gráfica de líneas
+            const dates = [...new Set(registros.map(reg => reg.fecha_registro))].sort(); // Fechas únicas ordenadas
+            // Map para obtener métricas únicas, usando id como clave para evitar duplicados
+            const metricsMap = new Map();
+            registros.forEach(reg => {
+                 if (!metricsMap.has(reg.id_metrica)) {
+                     metricsMap.set(reg.id_metrica, { id: reg.id_metrica, nombre: reg.nombre_metrica, unidad: reg.unidad_medida });
+                 }
+            });
+            const metrics = Array.from(metricsMap.values()); // Array de métricas únicas
+
+            const datasets = metrics.map(metric => {
+                const metricData = dates.map(date => {
+                    // Buscar el valor de esta métrica en esta fecha
+                    const registro = registros.find(reg => reg.fecha_registro === date && reg.id_metrica === metric.id);
+                    // Si no hay dato para esa métrica en esa fecha, usa null para crear un hueco en la línea
+                    return registro ? registro.valor_medido : null;
+                });
+
+                // Generar un color semi-transparente aleatorio para cada dataset
+                const randomColor = `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, 0.8)`; // Usar 0.8 para más opacidad en la línea
+
+                return {
+                    label: `${metric.nombre} ${metric.unidad ? '(' + metric.unidad + ')' : ''}`,
+                    data: metricData,
+                    borderColor: randomColor,
+                    backgroundColor: randomColor.replace('0.8', '0.3'), // Fondo más transparente si fill es true
+                    tension: 0.1, // Curva de la línea
+                    fill: false // No rellenar bajo la línea
+                };
+            });
+
+            const ctx = document.getElementById('metricChart').getContext('2d');
+
+            // Destruir gráfica anterior si existe
+            if (myMetricChartInstance) {
+                myMetricChartInstance.destroy();
+            }
+
+            // Crear la nueva instancia de la gráfica
+            myMetricChartInstance = new Chart(ctx, {
+                type: 'line', // Gráfica de líneas es buena para mostrar tendencias en el tiempo
+                data: {
+                    labels: dates, // Fechas en el eje X
+                    datasets: datasets // Datos de cada métrica como datasets separados
+                },
+                options: {
+                    responsive: true, // Hacer la gráfica responsive
+                    maintainAspectRatio: false, // Permitir controlar el tamaño del canvas con CSS
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Fecha de Registro'
+                            },
+                             type: 'category' // Usar tipo 'category' para fechas como etiquetas discretas
+                        },
+                        y: {
+                             title: {
+                                display: true,
+                                text: 'Valor Medido'
+                            },
+                            beginAtZero: true // Opcional: empezar el eje Y en cero
+                        }
+                    },
+                     plugins: {
+                        legend: {
+                            display: datasets.length > 0,
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Valores de Métricas por Fecha (Rango de 30 días)' // Título de la gráfica actualizado
+                        },
+                         tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                         }
+                    },
+                     hover: {
+                        mode: 'nearest',
+                        intersect: true
+                     },
+                }
+            });
+        }
+
+
+        // --- Lógica para Exportar PDF ---
+        btnExportarPdf.addEventListener('click', () => {
+
+             const idColaborador = idColaboradorFiltroInput.value.trim();
+             const fechaInicio = fechaRegistroFiltroInput.value; // Usamos este como fecha de inicio
+
+             // Opcional: Validar si hay suficientes filtros para generar un PDF útil
+             if (!idColaborador && !fechaInicio) {
+                 mostrarMensaje('Por favor, ingrese al menos un filtro (ID Colaborador o Fecha de Inicio) para exportar.', 'info');
+                 return;
+             }
+
+             const queryParams = new URLSearchParams();
+             if (idColaborador) {
+                 queryParams.append('idColaborador', idColaborador);
+             }
+             // Enviamos la fecha de inicio al backend para que genere el PDF del mismo rango
+             if (fechaInicio) {
+                 queryParams.append('fechaRegistro', fechaInicio); // Backend lo espera como fechaRegistro
+             }
+
+             // Llama a la nueva ruta API de backend para generar PDF
+             const pdfExportUrl = `/api/reportes/metricas/export/pdf?${queryParams.toString()}`;
+
+             // Abre la URL en una nueva ventana/pestaña para iniciar la descarga
+             window.open(pdfExportUrl, '_blank');
+
+             // Opcional: Mostrar un mensaje al usuario
+             mostrarMensaje('Generando PDF... la descarga debería comenzar pronto.', 'info');
+
+        });
+
+
+        // Optional: Function to display the username in the header after login
+         // You would call this after your login process or on page load
+         function displayUsername() {
+             const usernameSpan = document.querySelector('.username-display');
+             if (window.loggedInUser && window.loggedInUser.nombre) {
+                 usernameSpan.textContent = `Bienvenido(a), ${window.loggedInUser.nombre}`;
+             } else {
+                 usernameSpan.textContent = `Bienvenido(a), Usuario`; // Default fallback
+             }
+         }
+         // Call displayUsername on page load (assuming user is already authenticated)
+         // displayUsername();
+
+    </script>
+</body>
+</html>
