@@ -6,96 +6,7 @@
     <title>SORHA - Administración de colaboradores</title>
     <link rel="stylesheet" href="/css/administrativo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-     <style>
-        /* Estilos básicos de fallback si administrativo.css no carga */
-        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; line-height: 1.6;}
-        .admin-header { background-color: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;} /* Added flex-wrap */
-        .admin-header .logo { height: 40px; margin-right: 15px; }
-        .header-content { display: flex; align-items: center; }
-        .header-titles h1 { margin: 0; font-size: 1.5em; }
-        .header-titles h1 span { color: #ffc107; } /* Color amarillo SORHA */
-        .header-titles p { margin: 0; font-size: 0.9em; color: #ccc; }
-        .admin-header nav { display: flex; align-items: center; margin-top: 5px;} /* Added margin-top for wrap */
-        .username-display { margin-right: 15px; font-size: 0.9em; }
-        .btn-logout { color: white; text-decoration: none; padding: 8px 12px; background-color: #dc3545; border-radius: 4px; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
-        .btn-logout:hover { background-color: #c82333;}
-        .btn-logout i { margin-right: 5px; }
-        .admin-main { padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; flex-wrap: wrap;} /* Added flex-wrap */
-        .section-header h2 { margin: 0; color: #333; font-size: 1.3em;}
-        .btn-add { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
-        .btn-add:hover { background-color: #218838;}
-        .btn-add i { margin-right: 5px; }
-        .alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; opacity: 1; transition: opacity 0.6s ease;}
-        .alert.hide { opacity: 0;}
-        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
-        .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px;} /* Added padding-top */
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 700px; border-radius: 5px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); animation-name: animatetop; animation-duration: 0.4s; }
-        .modal-header { padding: 10px 20px; background-color: #5cb85c; color: white; border-top-left-radius: 5px; border-top-right-radius: 5px; display: flex; justify-content: space-between; align-items: center;}
-        .modal-title { margin: 0; font-size: 1.2em; }
-        .close { color: white; font-size: 28px; font-weight: bold; opacity: 0.8; transition: opacity 0.3s ease;}
-        .close:hover, .close:focus { color: #000; text-decoration: none; cursor: pointer; opacity: 1;}
-        #employeeForm { padding: 20px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        .form-group { margin-bottom: 10px; display: flex; flex-direction: column;}
-        .form-group label { margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #555; }
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group input[type="date"],
-        .form-group input[type="password"], /* Aplicar estilo a contraseña */
-        .form-group select {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;
-        }
-        .full-width { grid-column: 1 / -1; } /* Hacer que el elemento ocupe todas las columnas */
-        .required { color: red; margin-left: 3px;}
-        .form-actions { margin-top: 20px; text-align: right; padding-top: 15px; border-top: 1px solid #eee; }
-        .form-actions button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 1em; transition: background-color 0.3s ease;}
-        .btn-save { background-color: #5cb85c; color: white; }
-        .btn-save:hover { background-color: #4cae4c;}
-        .btn-cancel { background-color: #f0ad4e; color: white; }
-        .btn-cancel:hover { background-color: #ec971f;}
-        .table-container { overflow-x: auto; margin-top: 20px;} /* Permitir scroll horizontal en pantallas pequeñas */
-        #employeeTable { width: 100%; border-collapse: collapse; font-size: 0.9em;}
-        #employeeTable th, #employeeTable td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        #employeeTable th { background-color: #f2f2f2; font-weight: bold; color: #333; }
-        #employeeTable tr:nth-child(even){ background-color: #f9f9f9; }
-        #employeeTable tr:hover { background-color: #f1f1f1; }
-        .actions button { margin-right: 5px; padding: 5px 8px; cursor: pointer; border: none; border-radius: 3px; color: white; font-size: 0.8em; transition: background-color 0.3s ease; }
-        /* Ajuste iconos dentro botones */
-        .actions button i { pointer-events: none; } /* Evita que el icono intercepte el clic */
-        .btn-edit { background-color: #ffc107; }
-        .btn-edit:hover { background-color: #e0a800;}
-        .btn-delete { background-color: #dc3545; }
-        .btn-delete:hover { background-color: #c82333;}
-        .status { padding: 3px 8px; border-radius: 10px; font-size: 0.85em; color: white; text-align: center; display: inline-block; min-width: 60px;}
-        .status-activo { background-color: #28a745;}
-        .status-inactivo { background-color: #6c757d;}
-        .status-vacaciones { background-color: #ffc107; color: #333;}
-        .status-licencia { background-color: #17a2b8;}
-        .status-default { background-color: #adb5bd; } /* Fallback */
-        small { font-size: 0.8em; color: #6c757d; margin-top: 3px; display: block;} /* Changed to block */
-
-        /* Animación para Modal */
-        @keyframes animatetop {
-          from {top: -300px; opacity: 0}
-          to {top: 5%; opacity: 1}
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-             .admin-header, .section-header { flex-direction: column; align-items: flex-start; }
-             .admin-header nav { margin-top: 10px; }
-             .form-grid { grid-template-columns: 1fr; }
-             .full-width { grid-column: 1 / 1; }
-             .form-actions { text-align: center; }
-             .form-actions button { margin: 5px; }
-        }
-    </style>
-</head>
+    </head>
 <body>
     <header class="admin-header">
         <div class="header-content">
@@ -115,7 +26,6 @@
 
     <main class="admin-main">
         <div class="container">
-
             <div class="section-header">
                  <h2><i class="fas fa-users"></i> Administración de Colaboradores</h2>
                  <button id="addEmployeeBtn" class="btn-add">
@@ -268,7 +178,8 @@
 
     <script>
         // --- Element Selectors ---
-        const apiBaseUrl = '/api/colaboradores';
+        // Corregida la URL base para obtener la lista de colaboradores
+        const apiBaseUrl = '/api/';
         const employeeTableBody = document.getElementById('employeeTableBody');
         const employeeModal = document.getElementById('employeeModal');
         const employeeForm = document.getElementById('employeeForm');
@@ -300,7 +211,8 @@
             addEmployeeBtn.addEventListener('click', () => openEmployeeModal('create'));
             closeEmployeeModalBtn.addEventListener('click', closeEmployeeModal);
             cancelEmployeeBtn.addEventListener('click', closeEmployeeModal);
-            employeeForm.addEventListener('submit', saveEmployee); // Llama a saveEmployee al enviar
+            // Corregido: Asociar saveEmployee al submit del formulario
+            employeeForm.addEventListener('submit', saveEmployee);
 
             // Cerrar modal si se hace clic fuera del contenido
             window.addEventListener('click', (event) => {
@@ -456,10 +368,10 @@
              // if (idEmpleadoInput) { idEmpleadoInput.value = ''; idEmpleadoInput.disabled = false; }
             clearAlerts();
             // Restaurar estado de required y placeholder para la contraseña
-            passwordInput.required = false;
-            passwordRequiredSpan.style.display = 'inline';
-            passwordHelpText.textContent = 'Obligatoria al crear nuevo. Ingresa solo si quieres cambiarla al editar.';
-            passwordInput.placeholder = "Dejar vacío para no cambiar";
+            passwordInput.required = false; // Restaurar a false por defecto si la lógica de openModal maneja required=true para create
+            passwordRequiredSpan.style.display = 'inline'; // Restaurar visibilidad del *
+            passwordHelpText.textContent = 'Obligatoria al crear nuevo. Ingresa solo si quieres cambiarla al editar.'; // Restaurar texto de ayuda
+            passwordInput.placeholder = "Dejar vacío para no cambiar"; // Restaurar placeholder por defecto al cerrar
         }
 
 
@@ -471,7 +383,9 @@
             clearAlerts();
 
             try {
-                const response = await fetch(apiBaseUrl); // GET /api/colaboradores
+                // Corregida la URL de la petición a /api/ para obtener la lista
+                const response = await fetch(apiBaseUrl); // GET /api/
+
                 if (!response.ok) {
                      const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` }));
                     // Si el servidor devuelve 403 o 401, redirigir al login
@@ -546,20 +460,24 @@
              }
             clearAlerts();
             openEmployeeModal('edit', employeeId); // Abrir modal primero (mostrará título "Editar...")
+
             // Indicar carga dentro del modal quizás?
-             modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando datos...';
+            modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando datos...';
 
             try {
-                const response = await fetch(`${apiBaseUrl}/${employeeId}`); // GET /api/colaboradores/:id
+                // Corregida la URL: apiBaseUrl ya es /api/
+                const response = await fetch(`${apiBaseUrl}${employeeId}`); // GET /api/:id
+
                  if (!response.ok) {
                     const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` }));
-                     if (response.status === 401 || response.status === 403) {
+                    if (response.status === 401 || response.status === 403) {
                          console.warn('Acceso no autorizado o sesión expirada al obtener colaborador para editar. Redirigiendo...');
                          window.location.href = '/?error=Acceso+denegado+o+sesión+expirada';
                          return;
                     }
                     throw new Error(errorData.message || `Error HTTP ${response.status}`);
-                }
+                 }
+
                 const result = await response.json();
 
                  // Verificar si la respuesta tiene el formato esperado {success: true, data: {...}}
@@ -572,9 +490,10 @@
                       Object.keys(employeeData).forEach(key => {
                            const input = employeeForm.elements[key];
                            if (input) {
-                              if (input.type === 'date' && employeeData[key]) {
+                               // Manejar específicamente los inputs de tipo date
+                               if (input.type === 'date' && employeeData[key]) {
                                   try {
-                                       // Convertir la fecha de YYYY-MM-DD a formato DATE input (YYYY-MM-DD)
+                                       // Convertir la fecha de AAAA-MM-DD a formato DATE input (YYYY-MM-DD)
                                        // Asegurarse de manejar posibles desfases de zona horaria si la fecha viene como UTC/ISO string
                                        const dateValue = employeeData[key]; // Esperamos 'YYYY-MM-DD'
                                        if (dateValue) {
@@ -583,12 +502,11 @@
                                        } else {
                                             input.value = ''; // Campo vacío si el valor es nulo o vacío
                                        }
-
-                                  } catch (e) {
+                                   } catch (e) {
                                        input.value = '';
                                        console.error(`Error procesando fecha para ${key} (${employeeData[key]}):`, e);
                                        showAlert('warning', `Problema al cargar la fecha de nacimiento para este colaborador.`);
-                                  }
+                                   }
                               } else {
                                    // Para otros tipos de campos, asignar el valor directamente (usa ?? '' para manejar null/undefined)
                                    input.value = employeeData[key] ?? '';
@@ -607,6 +525,7 @@
                       throw new Error(result.message || 'La respuesta del servidor no contiene los datos esperados del colaborador.');
                  }
 
+
             } catch (error) {
                 console.error('Error al obtener empleado para editar:', error);
                 showAlert('error', `Error al cargar datos para editar: ${error.message}`);
@@ -617,11 +536,12 @@
         }
 
 
+        // Corregida: Función saveEmployee ahora recibe el evento y lo previene
         async function saveEmployee(event) {
-             event.preventDefault(); // Evitar el envío tradicional del formulario
+             event.preventDefault(); // <-- ¡CORREGIDO! Evitar el envío tradicional del formulario
             clearAlerts();
 
-             // Validaciones básicas adicionales (la validación principal se hace en el backend)
+            // Validaciones básicas adicionales (la validación principal se hace en el backend)
              const usuarioEmpleado = document.getElementById('usuario_empleado').value.trim();
              const password = document.getElementById('password').value; // No trim aquí para permitir password con espacios iniciales/finales si es intencional (aunque no recomendado)
              const primerNombre = document.getElementById('primer_nombre').value.trim();
@@ -639,7 +559,6 @@
                  return;
              }
 
-
              // Recopilar datos del formulario
              const formData = new FormData(employeeForm);
              const data = Object.fromEntries(formData.entries());
@@ -647,10 +566,12 @@
              // Convertir "on" checkbox values or handle specific types if needed
              // data.activo = data.activo === 'on'; // Example if you had an 'activo' checkbox
 
+
              // Asegurar que el ID no se envíe si es una creación
              if (currentEmployeeAction === 'create') {
                  delete data.id_empleado; // No enviar el ID en el body para la creación
                  // La contraseña SÍ debe enviarse en el body para la creación
+
              } else { // edit
                  // Para la edición, el ID va en la URL. El password va en el body SOLO si se cambió.
                  if (data.password === '') { // Si el campo de password está vacío, no lo enviamos para que el backend no lo cambie
@@ -662,14 +583,16 @@
                   // Si tu backend espera `id_empleado` en el body *además* de la URL, déjalo.
                   // Según tu código server.js (PUT /api/colaboradores/:id), espera el ID en req.params.id,
                   // y los datos a actualizar (incluido usuario_empleado, password, rol, activo) en req.body.
-                  // Así que enviamos el ID en la URL y el resto en el body. El hiddenEmployeeId.value NO necesita ir en el body.
-                  delete data.id_empleado; // Eliminar el ID del body, ya va en la URL
+                  // Así que enviamos el ID en la URL y el resto en el body.
+                 // El hiddenEmployeeId.value NO necesita ir en el body.
+                 delete data.id_empleado; // Eliminar el ID del body, ya va en la URL
+
              }
 
 
              const employeeId = hiddenEmployeeId.value; // Obtener ID para la URL si es edición
-             const method = currentEmployeeAction === 'create' ? 'POST' : 'PUT';
-             const url = currentEmployeeAction === 'create' ? apiBaseUrl : `${apiBaseUrl}/${employeeId}`;
+             const method = currentEmployeeAction === 'create' ? 'POST' : 'PUT'; // O 'PATCH' si solo actualizas campos específicos
+             const url = currentEmployeeAction === 'create' ? apiBaseUrl : `${apiBaseUrl}${employeeId}`; // Corregida la URL para edición
 
              console.log(`${method} Data:`, data); // Log para depuración
              console.log(`Sending to URL: ${url}`); // Log para depuración
@@ -683,7 +606,8 @@
                     body: JSON.stringify(data) // Enviar datos como JSON
                  });
 
-                const result = await response.json();
+                 const result = await response.json();
+
 
                 if (response.ok) { // HTTP status 2xx
                     // El backend puede devolver warning en result
@@ -692,9 +616,9 @@
                      } else {
                           showAlert('success', result.message || 'Operación exitosa.');
                      }
-
                     closeEmployeeModal();
                     fetchEmployees(); // Recargar la lista para mostrar los cambios
+
                 } else { // HTTP status other than 2xx (e.g., 400, 404, 500)
                     // El backend ya devuelve { success: false, message: '...' } en caso de error
                     showAlert('error', result.message || `Error ${response.status}: No se pudo completar la operación.`);
@@ -707,6 +631,7 @@
             }
         }
 
+
         async function deleteEmployee(employeeId) {
             if (!employeeId) {
                 console.error("deleteEmployee llamado sin ID.");
@@ -714,7 +639,7 @@
             }
 
             // Confirmación visual antes de eliminar
-            const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar al colaborador con ID ${employeeId}? Esto también intentará eliminar su cuenta de usuario asociada.`);
+            const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar al colaborador con ID ${employeeId}? Esta acción también intentará eliminar su cuenta de usuario asociada.`);
             if (!confirmDelete) {
                 return; // Usuario canceló la eliminación
             }
@@ -722,11 +647,13 @@
             clearAlerts();
 
             try {
-                const response = await fetch(`${apiBaseUrl}/${employeeId}`, { // DELETE /api/colaboradores/:id
+                // Corregida la URL: apiBaseUrl ya es /api/
+                const response = await fetch(`${apiBaseUrl}${employeeId}`, { // DELETE /api/:id
                     method: 'DELETE',
                 });
 
                 const result = await response.json();
+
 
                  if (response.ok) { // HTTP status 2xx
                     // El backend ya devuelve { success: true, message: '...' } y puede tener 'warning'
@@ -735,8 +662,8 @@
                      } else {
                           showAlert('success', result.message || 'Colaborador eliminado exitosamente.');
                      }
-
                     fetchEmployees(); // Recargar la lista
+
                  } else { // HTTP status other than 2xx
                      showAlert('error', result.message || `Error ${response.status}: No se pudo eliminar al colaborador.`);
                      console.error('Error response from API:', result);
@@ -744,10 +671,9 @@
 
             } catch (error) {
                 console.error('Error deleting employee:', error);
-                showAlert('error', `Error de conexión: ${error.message}. No se pudo eliminar el colaborador.`);
+                showAlert('error', `Error de conexión: ${error.message}. No se pudo eliminar al colaborador.`);
             }
         }
-
 
     </script>
 </body>

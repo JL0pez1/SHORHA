@@ -1,27 +1,389 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productividad - SORHA</title>
+    <title>Gestión de Productividad - SORHA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/productividad.css">
-    <script src="/js/auth.js"></script>
+    <style>
+        /* Add any specific styles for THIS page that are not in productividad.css */
+        /* or override styles from productividad.css here if necessary */
+
+        /* Specific styles for the sections within the container if needed */
+        .container .section {
+            margin-bottom: 30px;
+            padding: 0; /* Padding handled by container */
+            border: none; /* Border handled by container */
+            border-radius: 0; /* Border-radius handled by container */
+        }
+
+        /* Specific adjustment for input width inside .section */
+        .section label {
+            margin-bottom: 5px; /* Keep some margin below labels */
+        }
+
+         /* The general form-group styles in productividad.css cover most inputs */
+         /* If you need specific adjustments for inputs ONLY in this HTML section, add them here */
+         /* For example: */
+         /* .section input[type="number"],
+         .section input[type="date"],
+         .section select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+         } */
+
+
+         /* Adjust layout for the Consultar section inputs/button */
+         .consultar-section .form-group {
+             margin-bottom: 0; /* Remove bottom margin if input/button are inline */
+             display: flex; /* Arrange input and button horizontally */
+             align-items: flex-end; /* Align items to the bottom */
+             gap: 10px; /* Space between input and button */
+         }
+
+         .consultar-section .form-group input[type="number"] {
+             flex-grow: 1; /* Allow input to take available space */
+             margin-bottom: 0; /* Remove margin below input in flex container */
+         }
+
+        #historialTabla, #metricasFormulario {
+             margin-top: 25px; /* Add space above these sections */
+        }
+
+
+        /* Style for the "No hay registros" message in the table */
+        #tablaHistorial tbody tr td[colspan="4"] {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+        }
+
+
+        /* Specific styles for the message area to align with theme alerts */
+        #mensajeArea .alert {
+             margin-top: 15px; /* Add margin above the message */
+        }
+
+
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Control de Productividad</h1>
-            <button class="btn-logout" onclick="logout()">
-                <span>🔒</span> Cerrar Sesión
-            </button>
+    <div class="admin-background"></div>
+    <div class="admin-overlay"></div>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <div class="header-titles">
+                <h1>Gestión de <span>SORHA</span></h1>
+                <p>Sistema de Organización de Recursos Humanos y Administración</p>
+            </div>
         </div>
-        
-        <div class="content">
-            <h2>Métricas de productividad</h2>
-            <!-- Contenido específico aquí -->
+        <nav>
+             <span class="username-display">Bienvenido(a), [Nombre del Usuario]</span>
+            <a href="/logout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="section">
+                <div class="section-header">
+                     <h2><i class="fas fa-search"></i> Consultar Productividad</h2>
+                </div>
+                <div class="consultar-section">
+                    <div class="form-group">
+                        <label for="id_colaborador_consulta">ID del Colaborador:</label>
+                        <input type="number" id="id_colaborador_consulta" placeholder="Ingrese el ID">
+                        <button id="btnConsultar" class="btn-primary"><i class="fas fa-arrow-right"></i> Consultar</button>
+                    </div>
+                </div>
+
+                <div id="historialTabla" class="table-container" style="display: none;">
+                    <h3>Historial Registrado</h3>
+                    <table id="tablaHistorial">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt"></i> Fecha Registro</th>
+                                <th><i class="fas fa-chart-line"></i> Métrica</th>
+                                <th><i class="fas fa-calculator"></i> Valor</th>
+                                <th><i class="fas fa-balance-scale"></i> Unidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section" id="seccionRegistro" style="display: none;">
+                 <div class="section-header">
+                    <h2><i class="fas fa-edit"></i> Registrar Nueva Productividad Semanal</h2>
+                 </div>
+                <p><strong>Colaborador ID:</strong> <span id="colaboradorIdRegistro"></span></p>
+                <form id="registroForm">
+                     <div class="form-group">
+                        <label for="fecha_inicio_semana"><i class="fas fa-calendar-week"></i> Semana (Selecciona el Lunes):</label>
+                        <input type="date" id="fecha_inicio_semana" required>
+                     </div>
+
+                    <div id="metricasFormulario">
+                        <h3>Métricas a Registrar</h3>
+                        </div>
+
+                    <button type="submit" id="btnCargar" class="btn-primary"><i class="fas fa-upload"></i> Cargar Productividad</button>
+                </form>
+            </div>
+
+            <div id="mensajeArea">
+                </div>
+
         </div>
-    </div>
+    </main>
+
+    <script>
+        const idColaboradorInput = document.getElementById('id_colaborador_consulta');
+        const btnConsultar = document.getElementById('btnConsultar');
+        const historialTablaDiv = document.getElementById('historialTabla');
+        const tablaHistorialBody = document.getElementById('tablaHistorial').querySelector('tbody');
+        const seccionRegistroDiv = document.getElementById('seccionRegistro');
+        const colaboradorIdSpan = document.getElementById('colaboradorIdRegistro');
+        const fechaSemanaInput = document.getElementById('fecha_inicio_semana');
+        const metricasFormularioDiv = document.getElementById('metricasFormulario');
+        const registroForm = document.getElementById('registroForm');
+        const mensajeArea = document.getElementById('mensajeArea'); // Corrected variable name
+
+        let colaboradorActualId = null; // Stores the ID of the collaborator being viewed/edited
+        let metricasDisponibles = []; // Stores metrics obtained from the backend
+
+        // --- FUNCTION TO DISPLAY MESSAGES ---
+        // Updated function to use 'alert' classes from theme CSS
+        function mostrarMensaje(texto, tipo = 'error') {
+            // Map type to theme alert classes (error, success, info)
+            let alertClass = 'alert-error'; // Default to error
+            if (tipo === 'exito') {
+                alertClass = 'alert-success';
+            } else if (tipo === 'info') {
+                 alertClass = 'alert-info'; // Added 'info' type handling
+            }
+
+            mensajeArea.innerHTML = `<div class="alert ${alertClass}">${texto}</div>`;
+            // Optional: hide message after a few seconds
+            setTimeout(() => {
+                // Add a 'hide' class to trigger CSS transition (if implemented) before removing
+                const alertElement = mensajeArea.querySelector('.alert');
+                if (alertElement) {
+                    alertElement.classList.add('hide');
+                    // Remove the element after the transition duration (0.6s from CSS)
+                    setTimeout(() => { mensajeArea.innerHTML = ''; }, 600);
+                } else {
+                     // If no element found, just clear after initial timeout
+                     mensajeArea.innerHTML = '';
+                }
+            }, 5000); // Message visible for 5 seconds
+        }
+
+
+        // --- CONSULT BUTTON CLICK EVENT ---
+        btnConsultar.addEventListener('click', async () => {
+            const idColaborador = idColaboradorInput.value.trim();
+            if (!idColaborador || parseInt(idColaborador) <= 0) { // Basic validation
+                mostrarMensaje('Por favor, ingrese un ID de colaborador válido.', 'error');
+                return;
+            }
+
+            colaboradorActualId = idColaborador; // Store the ID for the registration form
+            historialTablaDiv.style.display = 'none'; // Hide previous history
+            seccionRegistroDiv.style.display = 'none'; // Hide previous form
+            tablaHistorialBody.innerHTML = ''; // Clear history table body
+            metricasFormularioDiv.innerHTML = '<h3>Métricas a Registrar</h3>'; // Clear metrics form section
+            mensajeArea.innerHTML = ''; // Clear previous messages
+
+            try {
+                // 1. Get Collaborator History
+                const resHistorial = await fetch(`/api/productividad/registros/${idColaborador}`);
+                const dataHistorial = await resHistorial.json(); // Always try to parse JSON
+
+                if (!resHistorial.ok) {
+                     // If response status is not OK (e.g., 403, 404, 500)
+                    mostrarMensaje(dataHistorial.message || `Error ${resHistorial.status} al obtener historial.`, 'error');
+                     // Important: Stop execution if fetching history failed
+                    return;
+                }
+
+
+                // Populate history table
+                if (dataHistorial.registros && dataHistorial.registros.length > 0) {
+                    dataHistorial.registros.forEach(reg => {
+                        const fila = `<tr>
+                            <td>${new Date(reg.fecha_registro).toLocaleDateString()}</td>
+                            <td>${reg.nombre_metrica}</td>
+                            <td>${reg.valor_medido}</td>
+                            <td>${reg.unidad_medida || ''}</td>
+                        </tr>`;
+                        tablaHistorialBody.innerHTML += fila;
+                    });
+                    historialTablaDiv.style.display = 'block'; // Show the table
+                } else {
+                     historialTablaDiv.style.display = 'block'; // Show the table (empty or with message)
+                     tablaHistorialBody.innerHTML = '<tr><td colspan="4">No hay registros históricos para este colaborador.</td></tr>';
+                }
+
+                // 2. Get Available Metrics for the form
+                const resMetricas = await fetch('/api/productividad/metricas');
+                const dataMetricas = await resMetricas.json(); // Always try to parse JSON
+
+                 if (!resMetricas.ok) {
+                     // If response status is not OK
+                    mostrarMensaje(dataMetricas.message || `Error ${resMetricas.status} al obtener métricas.`, 'error');
+                     // Important: Stop execution if fetching metrics failed
+                    return;
+                }
+
+                metricasDisponibles = dataMetricas.metricas || []; // Store available metrics
+
+                // 3. Build and show the registration form
+                 if (metricasDisponibles.length > 0) {
+                    colaboradorIdSpan.textContent = colaboradorActualId; // Show the ID in the form
+                    metricasFormularioDiv.innerHTML = '<h3>Métricas a Registrar</h3>'; // Re-clear before adding
+                    metricasDisponibles.forEach(metrica => {
+                        const itemMetrica = `
+                            <div class="metric-item">
+                                <label for="metrica_${metrica.id_metrica}">
+                                    ${metrica.nombre_metrica} ${metrica.unidad_medida ? '('+metrica.unidad_medida+')' : ''}
+                                </label>
+                                <input type="number" step="any" id="metrica_${metrica.id_metrica}" data-idmetrica="${metrica.id_metrica}" placeholder="Ingrese valor">
+                                ${metrica.descripcion ? '<small>'+metrica.descripcion+'</small>' : ''} </div>
+                        `;
+                        metricasFormularioDiv.innerHTML += itemMetrica;
+                    });
+                    seccionRegistroDiv.style.display = 'block'; // Show the registration section
+                 } else {
+                     mostrarMensaje('No hay métricas definidas en el sistema para registrar.', 'info'); // Use 'info' type
+                 }
+
+            } catch (error) {
+                // This catch block handles network errors or errors before response is received
+                console.error('Error general en consulta:', error);
+                mostrarMensaje(`Error general al consultar: ${error.message}`, 'error');
+                // Hide sections if the main load failed
+                historialTablaDiv.style.display = 'none';
+                seccionRegistroDiv.style.display = 'none';
+            }
+        });
+
+        // --- REGISTRATION FORM SUBMIT EVENT ---
+        registroForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent page reload
+
+            const fechaRegistro = fechaSemanaInput.value;
+            if (!fechaRegistro) {
+                mostrarMensaje('Por favor, seleccione la fecha de inicio de semana.', 'error');
+                return;
+            }
+             // Basic date validation (optional but recommended)
+             // Consider adding more robust validation like checking if it's a Monday
+
+
+            const metricasParaEnviar = [];
+            // Select inputs specifically within .metric-item
+            const inputsMetricas = metricasFormularioDiv.querySelectorAll('.metric-item input[type="number"]');
+
+            inputsMetricas.forEach(input => {
+                const valor = input.value.trim();
+                // Only add the metric if a value was entered
+                if (valor !== '') {
+                    metricasParaEnviar.push({
+                        id_metrica: parseInt(input.dataset.idmetrica), // Get id from data-* attribute
+                        valor_medido: parseFloat(valor) // Parse to number for consistency
+                    });
+                }
+            });
+
+            if (metricasParaEnviar.length === 0) {
+                mostrarMensaje('No se ingresó ningún valor válido para registrar.', 'info'); // Use 'info' type
+                return;
+            }
+
+            const datosRegistro = {
+                id_colaborador: colaboradorActualId,
+                fecha_registro: fechaRegistro, // Ensure backend expects this format (YYYY-MM-DD)
+                metricas: metricasParaEnviar
+            };
+
+            try {
+                const response = await fetch('/api/productividad/registrar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Include authentication headers if needed (e.g., CSRF token)
+                    },
+                    body: JSON.stringify(datosRegistro)
+                });
+
+                const resultado = await response.json(); // Always try to parse JSON
+
+                if (response.ok && resultado.success) {
+                    mostrarMensaje(`Éxito: ${resultado.message}`, 'exito');
+                    // Optional: Clear form or reload history
+                    registroForm.reset(); // Clear form fields
+                     // Reload history to see the new record
+                    // Using a small delay before clicking to allow the success message to be seen
+                    setTimeout(() => { btnConsultar.click(); }, 1000);
+                } else {
+                     // Handle API errors where response status is NOT ok (e.g., 400, 500 from backend)
+                    mostrarMensaje(resultado.message || `Error ${response.status} al guardar.`, 'error');
+                }
+
+            } catch (error) {
+                // Handle network errors or errors before response is received
+                console.error('Error al registrar:', error);
+                mostrarMensaje(`Error de conexión o interno al registrar: ${error.message}`, 'error');
+            }
+        });
+
+         // Optional: Function to display the username in the header after login
+         // You would call this after your login process or on page load
+         function displayUsername() {
+             const usernameSpan = document.querySelector('.username-display');
+             // --- Replace this with actual logic to get the username ---
+             // This depends on how you pass user info to the frontend.
+             // Examples:
+             // 1. Server-side rendering: The username is already in the HTML when sent.
+             // 2. Global JS variable set by server: `const loggedInUsername = "{{ user.nombre }}";` (if using a template engine)
+             // 3. Fetching via API:
+             /*
+             fetch('/api/user/me') // Or your user info endpoint
+             .then(res => res.json())
+             .then(user => {
+                 if(user && user.nombre) {
+                     usernameSpan.textContent = `Bienvenido(a), ${user.nombre}`;
+                 } else {
+                     usernameSpan.textContent = `Bienvenido(a), Usuario`; // Default if name not found
+                 }
+             })
+             .catch(err => {
+                 console.error('Could not fetch username:', err);
+                 usernameSpan.textContent = `Bienvenido(a), Usuario`; // Default on error
+             });
+             */
+             // For now, keep a placeholder or set a default
+             // Example if you have a global variable `window.loggedInUser` set on login:
+             if (window.loggedInUser && window.loggedInUser.nombre) {
+                 usernameSpan.textContent = `Bienvenido(a), ${window.loggedInUser.nombre}`;
+             } else {
+                 usernameSpan.textContent = `Bienvenido(a), Usuario`; // Default fallback
+             }
+             // --- End of username logic ---
+         }
+
+         // Call displayUsername on page load (assuming user is already authenticated)
+         // displayUsername(); // Uncomment and implement correctly based on your setup
+
+    </script>
 </body>
 </html>

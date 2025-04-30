@@ -12,6 +12,8 @@ const viewRoutes = require('./routes/viewRoutes');
 const userRoutes = require('./routes/userRoutes');
 const collaboratorRoutes = require('./routes/collaboratorRoutes');
 const contractRoutes = require('./routes/contractRoutes');
+const productividadRoutes = require('./routes/productividadRoutes');
+
 
 const app = express(); // [cite: 4]
 const PORT = process.env.PORT || 3000; // Puerto del servidor [cite: 4]
@@ -52,6 +54,8 @@ app.use('/api', collaboratorRoutes);
 
  console.log('contractRoutes:', contractRoutes);
  app.use('/api/contratos', contractRoutes); // [cite: 273, 318]
+
+ app.use('/api/productividad', productividadRoutes);
 
 // --- Manejo de 404 (Rutas no encontradas) ---
 // Este debe ir DESPUÉS de todas las rutas definidas

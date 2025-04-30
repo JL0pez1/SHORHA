@@ -1,719 +1,87 @@
-/* Estilos generales */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: #f5f5f5;
-    line-height: 1.6;
-    color: #333;
-}
-
-/* Fondo con efecto similar al login */
-.admin-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Asegúrate de que la ruta a tu imagen de fondo sea correcta */
-    background: url('/images/doctor-background.jpg') no-repeat center center;
-    background-size: cover;
-    z-index: -1;
-    filter: brightness(0.7); /* Oscurece la imagen de fondo */
-}
-
-/* Capa de superposición sobre el fondo */
-.admin-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Gradiente azul, ajusta los colores si es necesario */
-    background: linear-gradient(135deg, rgba(41, 128, 185, 0.7) 0%, rgba(109, 213, 250, 0.7) 100%);
-}
-
-/* Header estilo similar al login */
-.admin-header {
-    background: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    z-index: 10; /* Asegura que esté por encima del contenido */
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Espacio entre logo y títulos */
-}
-
-.logo {
-    width: 50px;
-    height: 50px;
-    object-fit: contain; /* Ajusta el tamaño del logo */
-}
-
-.header-titles h1 {
-    color: #2c3e50; /* Color de título oscuro */
-    font-size: 22px;
-    line-height: 1.2;
-    margin: 0;
-}
-
-.header-titles h1 span {
-    color: #2980b9; /* Color de acento para "SORHA" */
-    font-weight: 700;
-}
-
-.header-titles p {
-    color: #7f8c8d; /* Color gris para subtítulo */
-    font-size: 13px;
-    margin: 0;
-}
-
-/* Username display in header */
-.admin-header nav {
-    display: flex;
-    align-items: center;
-    margin-top: 0; /* Reset margin-top */
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 768px) {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: 10px;
-     }
-}
-
-.username-display {
-    margin-right: 20px;
-    font-size: 14px;
-    color: #555;
-    font-weight: 500;
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 768px) {
-        margin-right: auto; /* Empuja el botón de logout a la derecha */
-        margin-left: 10px;
-     }
-}
-
-
-/* Contenido principal */
-.admin-main {
-    flex: 1; /* Permite que ocupe el espacio restante */
-    padding: 30px;
-    display: flex;
-    justify-content: center; /* Centra el contenedor horizontalmente */
-    width: 100%;
-    z-index: 1; /* Asegura que esté por encima del fondo */
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    background: rgba(255, 255, 255, 0.97); /* Fondo blanco casi opaco */
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
-    padding: 25px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave al pasar el ratón */
-    margin-top: 20px; /* Espacio superior */
-    margin-bottom: 20px; /* Espacio inferior */
-}
-
-.container:hover {
-    transform: translateY(-3px); /* Pequeño levantamiento */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Sombra más grande */
-}
-
-/* Section headers within the container */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee; /* Separador */
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
-}
-
-.section-header h2 {
-    color: #2c3e50; /* Color de título */
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Espacio entre icono y texto */
-    margin: 0;
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 768px) {
-        width: 100%;
-        justify-content: center;
-        font-size: 20px;
-     }
-}
-
-/* Required field indicator */
-.required {
-    color: #e74c3c; /* Rojo para indicar campo obligatorio */
-    margin-left: 4px;
-}
-
-
-/* Tabla de colaboradores */
-.table-container {
-    overflow-x: auto; /* Permite scroll horizontal si la tabla es muy ancha */
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra para la tabla */
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse; /* Elimina el espacio entre celdas */
-    background: white;
-    min-width: 900px; /* Asegura que la tabla tenga un ancho mínimo */
-}
-
-th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #eeeeee; /* Línea separadora entre filas */
-}
-
-th {
-    background-color: #2577ae; /* Azul para los encabezados */
-    color: white;
-    font-weight: 500;
-    white-space: nowrap; /* Evita que el texto del encabezado se parta */
-}
-
-th i {
-    margin-right: 8px; /* Espacio entre icono y texto en encabezado */
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9; /* Fondo gris claro para filas pares */
-}
-
-tr:hover {
-    background-color: #f1f1f1; /* Fondo un poco más oscuro al pasar el ratón */
-}
-
-/* Style for inactive rows */
-/* Esto se podría aplicar con JavaScript agregando la clase 'inactive-row' al TR */
-.inactive-row {
-    opacity: 0.6; /* Hace la fila un poco transparente */
-    filter: grayscale(70%); /* Aplica un filtro a blanco y negro parcial */
-    font-style: italic; /* Opcional: pone el texto en cursiva */
-    background-color: #f8f9fa !important; /* Fondo claro forzado */
-}
-
-/* Status badges */
-.status {
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.85em;
-    font-weight: bold;
-    white-space: nowrap;
-    display: inline-block;
-    text-transform: capitalize; /* Capitaliza la primera letra */
-}
-
-.status-activo {
-    background-color: #d5f5e3; /* Verde muy claro */
-    color: #27ae60; /* Verde */
-    border: 1px solid #a3e4d7;
-}
-
-.status-inactivo {
-    background-color: #fadbd8; /* Rojo muy claro */
-    color: #e74c3c; /* Rojo */
-    border: 1px solid #f5b7b1;
-}
-
-.status-vacaciones {
-    background-color: #fef9e7; /* Amarillo muy claro */
-    color: #f39c12; /* Naranja */
-    border: 1px solid #fae5d3;
-}
-
-.status-licencia {
-    background-color: #ebedef; /* Gris muy claro */
-    color: #7f8c8d; /* Gris */
-    border: 1px solid #d7dbdd;
-}
-.status-default { /* Estilo por defecto si no se reconoce el estado */
-     background-color: #eee;
-     color: #555;
-     border: 1px solid #ccc;
-}
-
-
-/* Table action buttons container */
-td.actions {
-    white-space: nowrap; /* Evita que los botones se envuelvan */
-    display: flex; /* Permite usar gap */
-    gap: 5px; /* Espacio entre botones */
-    align-items: center;
-}
-
-
-/* Botones */
-.btn-logout {
-    background: linear-gradient(90deg, #e74c3c, #f39c12); /* Gradiente naranja-rojo */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Espacio entre icono y texto */
-    transition: all 0.3s ease; /* Transición para hover */
-    text-decoration: none; /* Elimina el subrayado del enlace */
-}
-
-.btn-logout:hover {
-    background: linear-gradient(90deg, #c0392b, #d35400); /* Gradiente más oscuro al pasar el ratón */
-    transform: translateY(-2px); /* Pequeño levantamiento */
-    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Sombra con color de acento */
-}
-
-.btn-add {
-    background: linear-gradient(90deg, #27ae60, #2ecc71); /* Gradiente verde */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Espacio entre icono y texto */
-    transition: all 0.3s ease; /* Transición para hover */
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 768px) {
-        width: 100%;
-        justify-content: center;
-     }
-}
-
-.btn-add:hover {
-    background: linear-gradient(90deg, #219955, #27ae60); /* Gradiente más oscuro al pasar el ratón */
-    transform: translateY(-2px); /* Pequeño levantamiento */
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3); /* Sombra con color de acento */
-}
-
-/* Edit and Delete buttons */
-.btn-edit, .btn-delete, .btn-activate, .btn-deactivate { /* Added new button classes */
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.3s ease;
-    display: inline-flex; /* Asegura que estén en línea y permite gap/align */
-    align-items: center;
-    gap: 5px; /* Espacio entre icono y texto */
-}
-
-.btn-edit {
-    background-color: #3498db; /* Azul */
-    color: white;
-}
-
-.btn-edit:hover {
-    background-color: #2980b9; /* Azul oscuro */
-    transform: translateY(-2px);
-}
-
-.btn-delete {
-    background-color: #e74c3c; /* Rojo */
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #c0392b; /* Rojo oscuro */
-    transform: translateY(-2px);
-}
-
-/* New styles for Activate and Deactivate buttons */
-.btn-activate {
-    background-color: #2ecc71; /* Verde */
-    color: white;
-}
-.btn-activate:hover {
-    background-color: #27ae60; /* Verde oscuro */
-    transform: translateY(-2px);
-}
-
-.btn-deactivate {
-    background-color: #f39c12; /* Naranja */
-    color: white;
-}
-.btn-deactivate:hover {
-    background-color: #d35400; /* Naranja oscuro */
-    transform: translateY(-2px);
-}
-
-
-/* Modal */
-.modal {
-    /* display: none;  -- Esto lo maneja JS */
-    position: fixed; /* Fijo en la ventana */
-    z-index: 1000; /* Por encima de todo */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Permite scroll si el contenido es muy grande */
-    background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
-    backdrop-filter: blur(3px); /* Efecto de desenfoque */
-    display: flex; /* Centra el modal horizontal y verticalmente */
-    justify-content: center;
-    align-items: center;
-    padding-top: 60px; /* Espacio superior para asegurar que no toque el borde */
-}
-
-/* Cuando JS set display: block, se sobrepone a display: none */
-.modal-content {
-    background-color: #fff;
-    /* margin: 5% auto; -- Se reemplaza por flexbox centering */
-    padding: 25px;
-    border: none; /* Quitamos el borde gris por defecto */
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px; /* Ancho máximo del modal */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Sombra más pronunciada */
-    position: relative;
-    animation-name: animatetop; /* Aplica la animación */
-    animation-duration: 0.4s;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-title {
-    margin: 0;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #2c3e50;
-}
-
-.close {
-    color: #aaa; /* Color gris */
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s;
-    position: absolute; /* Posiciona el botón de cerrar */
-    top: 15px;
-    right: 20px;
-    float: none; /* Asegura que no flote */
-}
-
-.close:hover {
-    color: #333; /* Color más oscuro al pasar el ratón */
-}
-
-/* Form Groups */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block; /* Cada label en su propia línea */
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #2c3e50;
-    display: flex; /* Permite usar gap con icono */
-    align-items: center;
-    gap: 8px;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s; /* Transición para focus */
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); /* Sombra interna */
-}
-
-.form-group input:focus, .form-group select:focus {
-    border-color: #2980b9; /* Color de borde azul al enfocar */
-    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2), inset 0 1px 3px rgba(0,0,0,0.08); /* Sombra exterior y interior */
-    outline: none; /* Elimina el outline por defecto del navegador */
-}
-
-/* Form grid layout */
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Columnas flexibles */
-    gap: 20px; /* Espacio entre elementos de la cuadrícula */
-}
-
-.form-group.full-width {
-    grid-column: 1 / -1; /* Ocupa todas las columnas */
-}
-
-
-/* Form Actions */
-.form-actions {
-    display: flex;
-    justify-content: flex-end; /* Alinea botones a la derecha */
-    gap: 10px; /* Espacio entre botones */
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 480px) {
-        flex-direction: column;
-        gap: 10px;
-     }
-}
-
-/* Save and Cancel buttons in form actions */
-.btn-cancel, .btn-save {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-     /* Ajuste para pantallas pequeñas */
-     @media (max-width: 480px) {
-        width: 100%;
-        justify-content: center;
-     }
-}
-
-.btn-cancel {
-    background-color: #e74c3c; /* Rojo */
-    color: white;
-}
-
-.btn-cancel:hover {
-    background-color: #c0392b; /* Rojo oscuro */
-    transform: translateY(-2px);
-}
-
-.btn-save {
-    background-color: #2ecc71; /* Verde */
-    color: white;
-}
-
-.btn-save:hover {
-    background-color: #27ae60; /* Verde oscuro */
-    transform: translateY(-2px);
-}
-
-/* Alertas */
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    display: none; /* Oculto por defecto, JS lo muestra */
-    opacity: 1;
-    transition: opacity 0.6s ease; /* Transición para ocultar/mostrar con animación */
-}
-
-.alert.hide {
-    opacity: 0; /* Clase para iniciar la animación de ocultar */
-}
-
-
-.alert-success {
-    background-color: #d5f5e3; /* Verde claro */
-    color: #27ae60; /* Verde */
-    border: 1px solid #a3e4d7;
-}
-
-.alert-error {
-    background-color: #fadbd8; /* Rojo claro */
-    color: #e74c3c; /* Rojo */
-    border: 1px solid #f5b7b1;
-}
-
-.alert i {
-    margin-right: 8px; /* Espacio entre icono y texto de la alerta */
-}
-
-
-/* Responsive */
-@media (max-width: 992px) { /* Adjusted breakpoint for wider table */
-     table {
-         min-width: 768px; /* Ensure table is still readable */
-     }
-}
-
-
+/* Estilos básicos de fallback si administrativo.css no carga */
+body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; line-height: 1.6;}
+.admin-header { background-color: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;} /* Added flex-wrap */
+.admin-header .logo { height: 40px; margin-right: 15px; }
+.header-content { display: flex; align-items: center; }
+.header-titles h1 { margin: 0; font-size: 1.5em; }
+.header-titles h1 span { color: #ffc107; } /* Color amarillo SORHA */
+.header-titles p { margin: 0; font-size: 0.9em; color: #ccc; }
+.admin-header nav { display: flex; align-items: center; margin-top: 5px;} /* Added margin-top for wrap */
+.username-display { margin-right: 15px; font-size: 0.9em; }
+.btn-logout { color: white; text-decoration: none; padding: 8px 12px; background-color: #dc3545; border-radius: 4px; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
+.btn-logout:hover { background-color: #c82333;}
+.btn-logout i { margin-right: 5px; }
+.admin-main { padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; flex-wrap: wrap;} /* Added flex-wrap */
+.section-header h2 { margin: 0; color: #333; font-size: 1.3em;}
+.btn-add { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; display: inline-flex; align-items: center; transition: background-color 0.3s ease;}
+.btn-add:hover { background-color: #218838;}
+.btn-add i { margin-right: 5px; }
+.alert { display: none; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; opacity: 1; transition: opacity 0.6s ease;}
+.alert.hide { opacity: 0;}
+.alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+.alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px;} /* Added padding-top */
+.modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 700px; border-radius: 5px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); animation-name: animatetop; animation-duration: 0.4s; }
+.modal-header { padding: 10px 20px; background-color: #5cb85c; color: white; border-top-left-radius: 5px; border-top-right-radius: 5px; display: flex; justify-content: space-between; align-items: center;}
+.modal-title { margin: 0; font-size: 1.2em; }
+.close { color: white; font-size: 28px; font-weight: bold; opacity: 0.8; transition: opacity 0.3s ease;}
+.close:hover, .close:focus { color: #000; text-decoration: none; cursor: pointer; opacity: 1;}
+#employeeForm { padding: 20px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+.form-group { margin-bottom: 10px; display: flex; flex-direction: column;}
+.form-group label { margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #555; }
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group input[type="password"], /* Aplicar estilo a contraseña */
+.form-group select {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;
+}
+.full-width { grid-column: 1 / -1; } /* Hacer que el elemento ocupe todas las columnas */
+.required { color: red; margin-left: 3px;}
+.form-actions { margin-top: 20px; text-align: right; padding-top: 15px; border-top: 1px solid #eee; }
+.form-actions button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 1em; transition: background-color 0.3s ease;}
+.btn-save { background-color: #5cb85c; color: white; }
+.btn-save:hover { background-color: #4cae4c;}
+.btn-cancel { background-color: #f0ad4e; color: white; }
+.btn-cancel:hover { background-color: #ec971f;}
+.table-container { overflow-x: auto; margin-top: 20px;} /* Permitir scroll horizontal en pantallas pequeñas */
+#employeeTable { width: 100%; border-collapse: collapse; font-size: 0.9em;}
+#employeeTable th, #employeeTable td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+#employeeTable th { background-color: #f2f2f2; font-weight: bold; color: #333; }
+#employeeTable tr:nth-child(even){ background-color: #f9f9f9; }
+#employeeTable tr:hover { background-color: #f1f1f1; }
+.actions button { margin-right: 5px; padding: 5px 8px; cursor: pointer; border: none; border-radius: 3px; color: white; font-size: 0.8em; transition: background-color 0.3s ease; }
+/* Ajuste iconos dentro botones */
+.actions button i { pointer-events: none; } /* Evita que el icono intercepte el clic */
+.btn-edit { background-color: #ffc107; }
+.btn-edit:hover { background-color: #e0a800;}
+.btn-delete { background-color: #dc3545; }
+.btn-delete:hover { background-color: #c82333;}
+.status { padding: 3px 8px; border-radius: 10px; font-size: 0.85em; color: white; text-align: center; display: inline-block; min-width: 60px;}
+.status-activo { background-color: #28a745;}
+.status-inactivo { background-color: #6c757d;}
+.status-vacaciones { background-color: #ffc107; color: #333;}
+.status-licencia { background-color: #17a2b8;}
+.status-default { background-color: #adb5bd; } /* Fallback */
+small { font-size: 0.8em; color: #6c757d; margin-top: 3px; display: block;} /* Changed to block */
+
+/* Animación para Modal */
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 5%; opacity: 1}
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .admin-header {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
-        align-items: flex-start;
-    }
-
-    .header-content {
-        width: 100%;
-        justify-content: center;
-    }
-
-
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .section-header h2 {
-        width: 100%;
-        justify-content: center;
-        font-size: 20px;
-    }
-
-    .btn-add {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-group.full-width {
-         grid-column: 1 / 1; /* En una sola columna, full-width ya no ocupa 1 / -1 */
-     }
-
-    .modal-content {
-        width: 95%;
-        margin: 10% auto; /* Ajuste el margen superior */
-        max-width: none; /* Elimina el max-width */
-    }
-
-    th, td {
-        padding: 10px;
-    }
-
-    .btn-edit, .btn-delete, .btn-activate, .btn-deactivate {
-        padding: 6px 10px;
-        font-size: 12px;
-        gap: 3px;
-    }
-
-     td.actions {
-        flex-direction: column; /* Botones en columna */
-        gap: 8px;
-        align-items: flex-start;
-     }
-
-     .status {
-        font-size: 0.8em;
-     }
-}
-
-/* Extra small screens */
-@media (max-width: 480px) {
-    .admin-header {
-        padding: 10px 15px;
-    }
-
-    .logo {
-        width: 40px;
-        height: 40px;
-    }
-
-    .header-titles h1 {
-        font-size: 18px;
-    }
-
-    .header-titles p {
-        font-size: 12px;
-    }
-
-    .btn-logout {
-        padding: 8px 15px;
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .admin-main {
-        padding: 15px;
-    }
-
-    .container {
-        padding: 15px;
-    }
-
-    .section-header {
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-    }
-
-    .section-header h2 {
-         font-size: 18px;
-         gap: 5px;
-    }
-
-    .btn-add {
-        padding: 8px 15px;
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .form-group label {
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .form-group input, .form-group select {
-        padding: 10px;
-        font-size: 13px;
-    }
-
-    .form-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .btn-cancel, .btn-save {
-        width: 100%;
-        justify-content: center;
-        padding: 10px 15px;
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .modal-content {
-        padding: 20px;
-    }
-
-     .modal-title {
-         font-size: 18px;
-         gap: 5px;
-     }
+     .admin-header, .section-header { flex-direction: column; align-items: flex-start; }
+     .admin-header nav { margin-top: 10px; }
+     .form-grid { grid-template-columns: 1fr; }
+     .full-width { grid-column: 1 / 1; }
+     .form-actions { text-align: center; }
+     .form-actions button { margin: 5px; }
 }

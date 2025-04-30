@@ -1,0 +1,538 @@
+/* public/css/productividad.css */
+
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Fondo con efecto similar al login */
+.admin-background { /* Kept name from reference, but you could rename if preferred */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Asegúrate de que la ruta a tu imagen de fondo sea correcta */
+    /* background: url('/images/doctor-background.jpg') no-repeat center center; */ /* Update image path */
+    /* Example background if you don't have an image or want something simpler */
+    background: linear-gradient(135deg, #6dd5fa, #2980b9); /* Simple blue gradient */
+    background-size: cover;
+    z-index: -1;
+    filter: brightness(0.9); /* Adjust brightness as needed */
+}
+
+/* Capa de superposición sobre el fondo */
+.admin-overlay { /* Kept name from reference */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradiente azul, ajusta los colores si es necesario */
+    /* background: linear-gradient(135deg, rgba(41, 128, 185, 0.7) 0%, rgba(109, 213, 250, 0.7) 100%); */
+    /* Maybe remove or reduce overlay opacity if using a simpler background */
+    background: rgba(41, 128, 185, 0.2); /* Less opaque overlay */
+    z-index: -1;
+}
+
+/* Header estilo similar al login */
+.admin-header { /* Kept name from reference */
+    background: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    z-index: 10; /* Asegura que esté por encima del contenido */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacio entre logo y títulos */
+}
+
+.logo {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    object-fit: contain; /* Adjust the size of the logo */
+}
+
+.header-titles h1 {
+    color: #2c3e50; /* Color de título oscuro */
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.header-titles h1 span {
+    color: #2980b9; /* Color de acento para "SORHA" */
+    font-weight: 700;
+}
+
+.header-titles p {
+    color: #7f8c8d; /* Color gris para subtítulo */
+    font-size: 13px;
+    margin: 0;
+}
+
+/* Username display in header */
+.admin-header nav {
+    display: flex;
+    align-items: center;
+    margin-top: 0; /* Reset margin-top */
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+     }
+}
+
+.username-display {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+     /* Ajuste para pantallas pequeñas */
+     @media (max-width: 768px) {
+        margin-right: auto; /* Empuja el botón de logout a la derecha */
+        margin-left: 10px;
+     }
+}
+
+
+/* Contenido principal */
+.admin-main { /* Kept name from reference */
+    flex: 1; /* Permite que ocupe el espacio restante */
+    padding: 30px;
+    display: flex;
+    justify-content: center; /* Centra el contenedor horizontalmente */
+    width: 100%;
+    z-index: 1; /* Asegura que esté por encima del fondo */
+}
+
+.container { /* Styles apply to the main content container */
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.97); /* Fondo blanco casi opaco */
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    padding: 25px;
+    margin-top: 0px; /* Adjusted for fitting below the header */
+    margin-bottom: 20px; /* Bottom space */
+}
+
+
+/* Section headers within the container */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Separator */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.section-header h2 {
+    color: #2c3e50; /* Title color */
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+    margin: 0;
+     /* Adjustment for small screens */
+     @media (max-width: 768px) {
+        width: 100%;
+        justify-content: center;
+        font-size: 20px;
+     }
+}
+
+/* Required field indicator (if used) */
+.required {
+    color: #e74c3c; /* Red for required indicator */
+    margin-left: 4px;
+}
+
+
+/* Table (for historical data) */
+.table-container {
+    overflow-x: auto; /* Allows horizontal scroll if table is too wide */
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Shadow for the table */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Removes space between cells */
+    background: white;
+    min-width: 700px; /* Ensures minimum width for readability */
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eeeeee; /* Separator line between rows */
+}
+
+th {
+    background-color: #2577ae; /* Azul para los encabezados */
+    color: white;
+    font-weight: 500;
+    white-space: nowrap; /* Prevents header text from wrapping */
+}
+
+th i {
+    margin-right: 8px; /* Space between icon and text in header */
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light grey background for even rows */
+}
+
+tr:hover {
+    background-color: #f1f1f1; /* Slightly darker background on hover */
+}
+
+/* Style for inactive rows (from theme reference, kept for completeness) */
+/* .inactive-row { opacity: 0.6; filter: grayscale(70%); font-style: italic; background-color: #f8f9fa !important; } */
+
+/* Status badges (from theme reference, not used on this specific page) */
+/* .status { ... } .status-activo { ... } ... */
+
+
+/* Table action buttons container (from theme reference, not used on this specific page) */
+/* td.actions { ... } */
+
+
+/* Buttons */
+.btn-logout { /* Style for the logout button */
+    background: linear-gradient(90deg, #e74c3c, #f39c12); /* Orange-red gradient */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex; /* Allows flex properties and stays inline */
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    transition: all 0.3s ease; /* Smooth transition for hover */
+    text-decoration: none; /* Remove link underline */
+    justify-content: center; /* Center content if it's just text */
+}
+
+.btn-logout:hover {
+    background: linear-gradient(90deg, #c0392b, #d35400); /* Darker gradient on hover */
+    transform: translateY(-2px); /* Small lift effect */
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Accent colored shadow */
+}
+
+/* Reused button style for Consultar and Cargar buttons */
+button { /* Apply this to all buttons by default */
+    padding: 10px 15px; /* Default padding */
+    background-color: #007bff; /* Default blue */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px; /* Default font size */
+}
+
+button:hover {
+     background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Apply theme's btn-add style to specific buttons if needed, or use the general button style above */
+/* .btn-add { ... } .btn-add:hover { ... } */
+/* Let's use a specific class for consistency with theme reference */
+.btn-primary { /* Example: Use this class for primary actions */
+    background: linear-gradient(90deg, #27ae60, #2ecc71); /* Green gradient */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex; /* Allows flex properties */
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    transition: all 0.3s ease; /* Smooth transition */
+    text-decoration: none;
+    justify-content: center;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #219955, #27ae60); /* Darker green */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+}
+
+
+/* Edit and Delete buttons (from theme reference, not used on this specific page) */
+/* .btn-edit, .btn-delete, .btn-activate, .btn-deactivate { ... } */
+
+
+/* Modal (from theme reference, not used on this specific page) */
+/* .modal { ... } .modal-content { ... } ... */
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block; /* Each label on its own line */
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+    display: flex; /* Allows gap with icon */
+    align-items: center;
+    gap: 8px;
+}
+
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea { /* Added textarea */
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s; /* Transition for focus */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); /* Inner shadow */
+}
+
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus,
+.form-group textarea:focus { /* Added textarea */
+    border-color: #2980b9; /* Blue border on focus */
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2), inset 0 1px 3px rgba(0,0,0,0.08); /* Outer and inner shadow */
+    outline: none; /* Remove default browser outline */
+}
+
+/* Form grid layout (from theme reference, not used on this specific page) */
+/* .form-grid { ... } .form-group.full-width { ... } */
+
+
+/* Form Actions (from theme reference, not used on this specific page's main form) */
+/* .form-actions { ... } .btn-cancel, .btn-save { ... } */
+
+/* Alerts */
+/* Renamed from .mensaje to .alert to match theme CSS */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    /* display: none;  -- Controlled by JS */
+    opacity: 1;
+    transition: opacity 0.6s ease; /* Transition for showing/hiding with animation */
+}
+
+.alert.hide { /* Class to start hiding animation */
+    opacity: 0;
+}
+
+.alert-success { /* Renamed from .mensaje.exito */
+    background-color: #d5f5e3; /* Light green */
+    color: #27ae60; /* Green */
+    border: 1px solid #a3e4d7;
+}
+
+.alert-error { /* Renamed from .mensaje.error */
+    background-color: #fadbd8; /* Light red */
+    color: #e74c3c; /* Red */
+    border: 1px solid #f5b7b1;
+}
+
+.alert-info { /* Added info style based on previous usage */
+    background-color: #d6ecf2; /* Light blue */
+    color: #2980b9; /* Blue */
+    border: 1px solid #b3daeb;
+}
+
+
+.alert i {
+    margin-right: 8px; /* Space between icon and text in alert */
+}
+
+/* Specific style for metric input items */
+.metric-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px; /* Added border-radius */
+    background-color: #f9f9f9; /* Slightly grey background */
+}
+
+.metric-item label {
+    font-weight: normal; /* Override bold from form-group label */
+    color: #555;
+    display: block; /* Ensure label is block for spacing */
+    margin-bottom: 5px;
+}
+
+.metric-item input[type="number"] {
+    width: 100%; /* Full width within its container */
+    margin-top: 5px;
+    margin-bottom: 0; /* Reduced margin-bottom as label has margin */
+}
+
+.metric-item small { /* Style for the description */
+    display: block; /* Ensure description is on a new line */
+    color: #777;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+
+/* Responsive */
+@media (max-width: 992px) {
+     table {
+         min-width: 600px; /* Adjusted min-width */
+     }
+}
+
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    .header-content {
+        width: 100%;
+        justify-content: center;
+    }
+
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .section-header h2 {
+        width: 100%;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    /* Adjust button width in small screens */
+    button, .btn-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 15px; /* Adjust padding */
+        font-size: 13px; /* Adjust font size */
+        gap: 5px;
+    }
+
+
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+        padding: 10px; /* Adjust padding */
+        font-size: 13px; /* Adjust font size */
+    }
+
+
+    th, td {
+        padding: 10px;
+    }
+
+     /* Not used here but part of theme */
+     /* td.actions { flex-direction: column; gap: 8px; align-items: flex-start; } */
+     /* .status { font-size: 0.8em; } */
+
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .admin-header {
+        padding: 10px 15px;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-titles h1 {
+        font-size: 18px;
+    }
+
+    .header-titles p {
+        font-size: 12px;
+    }
+
+    .btn-logout {
+        padding: 8px 15px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .admin-main {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .section-header {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+
+    .section-header h2 {
+         font-size: 18px;
+         gap: 5px;
+    }
+
+    /* Button adjustments for extra small screens */
+    button, .btn-primary {
+        padding: 10px 15px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+
+    .form-group label {
+        font-size: 13px;
+        gap: 5px;
+    }
+
+
+    /* Not used here but part of theme */
+    /* .form-actions { flex-direction: column; gap: 10px; } */
+    /* .btn-cancel, .btn-save { width: 100%; justify-content: center; padding: 10px 15px; font-size: 13px; gap: 5px; } */
+
+     /* Modal styles are included but not used by this page's current JS */
+     /* .modal-content { padding: 20px; } */
+     /* .modal-title { font-size: 18px; gap: 5px; } */
+}
+
+/* Animation for modal (from theme reference, not used here) */
+/* @keyframes animatetop { from {top: -300px; opacity: 0} to {top: 0; opacity: 1} } */
