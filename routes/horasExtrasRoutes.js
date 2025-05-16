@@ -1,11 +1,11 @@
 // routes/horasExtrasRoutes.js
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db'); // Ajusta la ruta a tu archivo de conexión a BD
-const { checkAccessRrhhFeatures } = require('../middleware/authMiddleware'); // Middleware de autorización
+const db = require('../config/db');
+const { checkAccessRrhhFeatures } = require('../middleware/authMiddleware'); // Usamos el middleware actualizado
 
 // GET /api/horasextras/empleado/:id_empleado?fecha_inicio=YYYY-MM-DD&fecha_fin=YYYY-MM-DD
-// Protegido para que solo roles de RRHH/Nóminas/Admin puedan consultar horas extra.
+// Protegido para que roles como 'productividad', 'recursos', 'nominas', 'admin', 'administrativo' puedan consultar
 router.get('/empleado/:id_empleado', checkAccessRrhhFeatures, async (req, res) => {
     const { id_empleado } = req.params;
     const { fecha_inicio, fecha_fin } = req.query;
@@ -17,7 +17,6 @@ router.get('/empleado/:id_empleado', checkAccessRrhhFeatures, async (req, res) =
     let sql = 'SELECT id_extra, fecha, horas, tipo FROM horas_extras WHERE id_empleado = ?';
     const params = [parseInt(id_empleado)];
 
-    // Validar y añadir filtros de fecha si se proporcionan
     if (fecha_inicio && !/^\d{4}-\d{2}-\d{2}$/.test(fecha_inicio)) {
         return res.status(400).json({ success: false, message: 'Formato de fecha_inicio inválido. Use YYYY-MM-DD.' });
     }
@@ -35,7 +34,6 @@ router.get('/empleado/:id_empleado', checkAccessRrhhFeatures, async (req, res) =
         sql += ' AND fecha <= ?';
         params.push(fecha_fin);
     }
-
     sql += ' ORDER BY fecha DESC';
 
     try {
@@ -52,7 +50,7 @@ router.get('/empleado/:id_empleado', checkAccessRrhhFeatures, async (req, res) =
 });
 
 // POST /api/horasextras
-// Protegido para que solo roles de RRHH/Nóminas/Admin puedan agregar horas extra.
+// Protegido para que roles como 'productividad', 'recursos', 'nominas', 'admin', 'administrativo' puedan agregar
 router.post('/', checkAccessRrhhFeatures, async (req, res) => {
     const { id_empleado, fecha, horas, tipo = 'normal' } = req.body;
 
@@ -63,7 +61,7 @@ router.post('/', checkAccessRrhhFeatures, async (req, res) => {
         return res.status(400).json({ success: false, message: 'ID de empleado debe ser un número.' });
     }
     if (isNaN(parseFloat(horas)) || parseFloat(horas) <= 0) {
-        return res.status(400).json({ success: false, message: 'Las horas deben ser un número positivo.' });
+        return res.status(400).json({ success: false, message: 'Las horas deben ser un número positivo y mayor a cero.' });
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
         return res.status(400).json({ success: false, message: 'Formato de fecha inválido. Use YYYY-MM-DD.' });

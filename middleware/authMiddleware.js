@@ -29,11 +29,10 @@ const checkAdmin = (req, res, next) => {
 };
 
 // Middleware: Verifica si el usuario es 'administrativo' O 'admin'
-// Este podría seguir usándose para funciones que SÓLO ellos deben hacer.
 const checkAdministrativoOrAdmin = (req, res, next) => {
     checkAuthenticated(req, res, () => {
         const userRole = req.session.user.rol;
-        if (userRole !== 'administrativo' && userRole !== 'admin') {
+        if (userRole !== 'administrativo' && userRole !== 'admin' && userRole !== 'recursos') {
             if (req.accepts('json')) {
                 return res.status(403).json({ success: false, message: 'Acceso no autorizado. Se requiere rol Administrativo o Administrador.' });
             } else {
@@ -44,19 +43,20 @@ const checkAdministrativoOrAdmin = (req, res, next) => {
     });
 };
 
-// NUEVO Middleware: Verifica roles para funcionalidades de Recursos Humanos/Nóminas
-// Esto permitirá a 'admin', 'administrativo', 'recursos', y 'nominas' acceder.
+// Middleware: Verifica roles para funcionalidades de RRHH, Nóminas Y PRODUCTIVIDAD
+// (para horas extra y ver info de colaborador si es necesario desde productividad.html)
 const checkAccessRrhhFeatures = (req, res, next) => {
-    checkAuthenticated(req, res, () => { // Primero autenticado
+    checkAuthenticated(req, res, () => { 
         const userRole = req.session.user.rol;
-        const allowedRoles = ['admin', 'administrativo', 'recursos', 'nominas']; // Roles permitidos
+        // Asegúrate de que 'productividad' esté en esta lista
+        const allowedRoles = ['admin', 'administrativo', 'recursos', 'nominas', 'productividad']; 
 
         if (!allowedRoles.includes(userRole)) {
+            // Este es el mensaje que probablemente estabas viendo
             if (req.accepts('json')) {
                 return res.status(403).json({ success: false, message: `Acceso no autorizado. Se requiere uno de los siguientes roles: ${allowedRoles.join(', ')}.` });
             } else {
-                // Para peticiones no-API, podrías redirigir o mostrar una página de error HTML más amigable
-                return res.status(403).send(`Acceso denegado. Tu rol ('${userRole}') no tiene los permisos necesarios.`);
+                return res.status(403).send(`Acceso denegado. Tu rol ('${userRole}') no tiene los permisos necesarios para esta acción.`);
             }
         }
         next(); // Rol permitido, continuar
@@ -66,6 +66,6 @@ const checkAccessRrhhFeatures = (req, res, next) => {
 module.exports = {
     checkAuthenticated,
     checkAdmin,
-    checkAdministrativoOrAdmin, // Lo dejamos por si se usa en otras partes de tu app
-    checkAccessRrhhFeatures     // Exportamos el nuevo middleware
+    checkAdministrativoOrAdmin,
+    checkAccessRrhhFeatures 
 };

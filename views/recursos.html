@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="/css/recursos.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="admin-background"> <div class="admin-overlay"></div>
+    <div class="admin-background">
+        <div class="admin-overlay"></div>
     </div>
 
     <header class="admin-header">
         <div class="header-content">
-            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
-            <div class="header-titles">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo"> <div class="header-titles">
                 <h1>Sistema <span>SORHA</span></h1>
                 <p>Módulo de Recursos y Nóminas</p>
             </div>
@@ -43,8 +43,7 @@
 
             <div id="empleadoInfoSection" class="info-section section-box hidden">
                 <div class="section-header">
-                    <h3 id="nombreEmpleado"></h3>
-                </div>
+                    <h3 id="nombreEmpleado" style="font-size: 1.5em;"></h3> </div>
                 <p><strong>ID:</strong> <span id="infoEmpleadoId"></span></p>
                 <p><strong>Puesto:</strong> <span id="puestoEmpleado"></span></p>
 
@@ -117,19 +116,13 @@
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button id="btnGuardarHE" type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar Horas</button>
-                    <button id="btnCancelarHE" type="button" class="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar Horas</button> <button id="btnCancelarHE" type="button" class="btn-cancel">Cancelar</button>
                 </div>
             </form>
         </div>
     </div>
 
 <script>
-    // Tu JavaScript (el que te proporcioné y depuramos antes) va aquí.
-    // Solo asegúrate de que los IDs de los elementos coincidan.
-    // Por ejemplo, el botón para cerrar el modal ahora es 'btnCerrarModalHE'.
-    // Y el formulario del modal es 'formAgregarHE'.
-
     const apiBaseUrl = '/api';
     let empleadoSeleccionadoId = null;
 
@@ -149,18 +142,15 @@
     const usernameDisplaySpan = document.getElementById('usernameDisplay');
 
 
-    // Modal HE
     const modalAgregarHE = document.getElementById('modalAgregarHE');
     const modalHENombreEmpleadoSpan = document.getElementById('modalHENombreEmpleado');
     const modalHEEmpleadoIdInput = document.getElementById('modalHEEmpleadoId');
     const modalHEFechaInput = document.getElementById('modalHEFecha');
     const modalHEHorasInput = document.getElementById('modalHEHoras');
     const modalHETipoSelect = document.getElementById('modalHETipo');
-    const btnGuardarHE = document.getElementById('btnGuardarHE'); // Este ahora es el submit del form
     const btnCancelarHE = document.getElementById('btnCancelarHE');
-    const btnCerrarModalHE = document.getElementById('btnCerrarModalHE'); // Botón X para cerrar
+    const btnCerrarModalHE = document.getElementById('btnCerrarModalHE');
     const formAgregarHE = document.getElementById('formAgregarHE');
-
 
     // Formulario de Pago
     const fechaInicioPagoInput = document.getElementById('fechaInicioPago');
@@ -169,36 +159,48 @@
 
     // --- Funciones ---
     function showAlert(message, type = 'error') {
-        console.log(`[ALERT-${type.toUpperCase()}]: ${message}`);
-        alertMessageDiv.textContent = message;
+        console.log(`[SHOW ALERT - ${type.toUpperCase()}]: ${message}`);
+        alertMessageDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-exclamation-triangle')}"></i> ${message}`;
         alertMessageDiv.className = `alert alert-${type}`;
         alertMessageDiv.classList.remove('hidden');
+        void alertMessageDiv.offsetWidth; // Forzar reflujo para reinicio de animación
+        alertMessageDiv.style.opacity = 1;
+
         setTimeout(() => {
-            alertMessageDiv.classList.add('hidden');
-        }, 5000);
+            alertMessageDiv.style.opacity = 0;
+            setTimeout(() => {
+                alertMessageDiv.classList.add('hidden');
+            }, 500); // Duración de la transición de opacidad
+        }, 4500);
     }
 
     async function fetchCurrentUserInfo() {
+        console.log("fetchCurrentUserInfo() llamado");
         try {
-            const response = await fetch('/api/session/user'); // Endpoint para obtener datos del usuario logueado
+            const response = await fetch('/api/session/user');
             if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status}`);
+                if (response.status === 401) {
+                    console.warn('Sesión no válida o expirada. Redirigiendo al login...');
+                    window.location.href = '/?error=Sesion+expirada';
+                }
+                throw new Error(`Error HTTP ${response.status} al obtener datos de sesión.`);
             }
             const result = await response.json();
             if (result.success && result.user) {
                 usernameDisplaySpan.textContent = `Usuario: ${result.user.usuario} (${result.user.rol})`;
             } else {
                 usernameDisplaySpan.textContent = 'Usuario no identificado';
+                console.warn(result.message || 'No se pudo obtener información del usuario desde la sesión.');
             }
         } catch (error) {
-            console.error("Error fetching user session info:", error);
+            console.error("Error en fetchCurrentUserInfo:", error);
             usernameDisplaySpan.textContent = 'Error cargando usuario';
         }
     }
 
-
     async function buscarEmpleado() {
         console.log("buscarEmpleado() llamado");
+        // ... (resto de la función buscarEmpleado como te la di antes, sin cambios aquí) ...
         const empleadoId = searchEmpleadoIdInput.value;
         if (!empleadoId) {
             showAlert('Por favor, ingrese un ID de empleado.');
@@ -207,12 +209,12 @@
         empleadoSeleccionadoId = null;
         empleadoInfoSectionDiv.classList.add('hidden');
         pagarNominaSectionDiv.classList.add('hidden');
-        btnCalcularIndemnizacion.disabled = true;
+        if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
+        horasExtrasTableBody.innerHTML = '';
 
         try {
             showAlert('Buscando empleado...', 'info');
-            // Usar la ruta base /api/ que ahora apunta a collaboratorRoutes
-            const response = await fetch(`${apiBaseUrl}/${empleadoId}`); // GET /api/:id
+            const response = await fetch(`${apiBaseUrl}/${empleadoId}`); 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({message: `Empleado con ID ${empleadoId} no encontrado o error de servidor.`}));
                 throw new Error(errData.message);
@@ -228,10 +230,9 @@
 
                 empleadoInfoSectionDiv.classList.remove('hidden');
                 pagarNominaSectionDiv.classList.remove('hidden');
-                btnCalcularIndemnizacion.disabled = false;
+                if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = false;
                 
                 cargarHorasExtra(empleado.id_empleado);
-                alertMessageDiv.classList.add('hidden');
             } else {
                 showAlert(result.message || 'Empleado no encontrado.');
             }
@@ -242,10 +243,15 @@
     }
 
     async function cargarHorasExtra(empleadoId) {
-        horasExtrasTableBody.innerHTML = '<tr><td colspan="4">Cargando horas extra...</td></tr>';
+        console.log(`cargarHorasExtra() llamado para empleado ID: ${empleadoId}`);
+        // ... (resto de la función cargarHorasExtra como te la di antes, sin cambios aquí) ...
+        horasExtrasTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando horas extra... <i class="fas fa-spinner fa-spin"></i></td></tr>';
         try {
             const response = await fetch(`${apiBaseUrl}/horasextras/empleado/${empleadoId}`);
-            if (!response.ok) throw new Error('Error al cargar horas extra del empleado.');
+            if (!response.ok) {
+                 const errData = await response.json().catch(() => ({ message: 'Error al cargar horas extra del empleado.'}));
+                throw new Error(errData.message);
+            }
             const result = await response.json();
             
             horasExtrasTableBody.innerHTML = ''; 
@@ -253,39 +259,46 @@
                 result.data.forEach(he => {
                     const row = horasExtrasTableBody.insertRow();
                     row.insertCell().textContent = he.id_extra;
-                    row.insertCell().textContent = he.fecha;
+                    row.insertCell().textContent = he.fecha; 
                     row.insertCell().textContent = parseFloat(he.horas).toFixed(2);
                     row.insertCell().textContent = he.tipo;
                 });
             } else {
-                horasExtrasTableBody.innerHTML = '<tr><td colspan="4">No hay horas extra registradas para este empleado.</td></tr>';
+                horasExtrasTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay horas extra registradas para este empleado.</td></tr>';
             }
         } catch (error) {
-            horasExtrasTableBody.innerHTML = `<tr><td colspan="4" style="color:red;">${error.message}</td></tr>`;
+            horasExtrasTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">${error.message}</td></tr>`;
             console.error("Error en cargarHorasExtra:", error);
         }
     }
 
     function abrirModalHorasExtra() {
+        console.log("abrirModalHorasExtra() llamado");
         if (!empleadoSeleccionadoId) {
             showAlert('Primero busque y seleccione un empleado.');
             return;
         }
+        formAgregarHE.reset();
         modalHENombreEmpleadoSpan.textContent = nombreEmpleadoSpan.textContent;
         modalHEEmpleadoIdInput.value = empleadoSeleccionadoId;
-        modalHEFechaInput.valueAsDate = new Date(); 
-        modalHEHorasInput.value = '';
+        modalHEFechaInput.valueAsDate = new Date();
         modalHETipoSelect.value = 'normal';
         modalAgregarHE.classList.remove('hidden');
+        modalAgregarHE.style.opacity = 1;
+        modalHEHorasInput.focus();
     }
 
     function cerrarModalHorasExtra() {
-        modalAgregarHE.classList.add('hidden');
-        formAgregarHE.reset(); // Limpiar el formulario del modal
+        console.log("cerrarModalHorasExtra() llamado");
+        modalAgregarHE.style.opacity = 0;
+        setTimeout(() => {
+            modalAgregarHE.classList.add('hidden');
+        }, 300); // Debe coincidir con la transición de CSS
+        formAgregarHE.reset();
     }
 
     async function guardarHorasExtra(event) {
-        event.preventDefault(); // Prevenir el envío tradicional del formulario
+        if(event) event.preventDefault();
         console.log("guardarHorasExtra() llamado");
 
         const data = {
@@ -294,9 +307,10 @@
             horas: modalHEHorasInput.value,
             tipo: modalHETipoSelect.value
         };
+        console.log("Datos para guardar horas extra:", data);
 
         if (!data.fecha || !data.horas || parseFloat(data.horas) <= 0) {
-            showAlert('Fecha y cantidad de horas (positiva) son obligatorias.');
+            showAlert('Fecha y cantidad de horas (positiva y mayor a 0) son obligatorias.');
             return;
         }
 
@@ -307,23 +321,26 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+            console.log("Respuesta de Guardar HE - Status:", response.status);
             const result = await response.json();
+            console.log("Respuesta de Guardar HE - Body:", result);
+
             if (response.ok && result.success) {
                 showAlert('Horas extra agregadas exitosamente.', 'success');
                 cerrarModalHorasExtra();
-                cargarHorasExtra(data.id_empleado); 
+                cargarHorasExtra(data.id_empleado);
             } else {
-                showAlert(result.message || 'Error al guardar horas extra.');
+                showAlert(result.message || 'Error al guardar horas extra desde el backend.');
             }
         } catch (error) {
-            showAlert(`Error de conexión: ${error.message}`);
-            console.error("Error en guardarHorasExtra:", error);
+            showAlert(`Error de conexión al guardar horas extra: ${error.message}`);
+            console.error("Error en fetch para guardarHorasExtra:", error);
         }
     }
 
     async function procesarPagoNomina() {
         console.log("procesarPagoNomina() llamado");
-
+        // ... (resto de la función procesarPagoNomina como te la di antes, con sus console.log) ...
         const data = {
             id_empleado: pagoEmpleadoIdInput.value,
             fecha_inicio: fechaInicioPagoInput.value,
@@ -332,8 +349,7 @@
         console.log("Datos para pago:", data);
 
         if (!data.id_empleado || !data.fecha_inicio || !data.fecha_fin) {
-            showAlert('Todos los campos son requeridos para el pago de nómina.');
-            console.log("Faltan campos para pago.");
+            showAlert('Todos los campos (ID Empleado, Fecha Inicio, Fecha Fin) son requeridos para el pago de nómina.');
             return;
         }
         
@@ -341,53 +357,45 @@
         const fin = new Date(data.fecha_fin + 'T00:00:00Z');
         if (fin < inicio) {
             showAlert('La fecha de fin no puede ser anterior a la fecha de inicio.');
-            console.log("Fecha fin anterior a fecha inicio.");
             return;
         }
 
         const diffTime = fin.getTime() - inicio.getTime();
         const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        console.log("Días de diferencia calculados:", diffDays);
+        console.log("Días de diferencia calculados para pago:", diffDays);
         
         let esPeriodoValido = false;
         if (diffDays === 7) {
             esPeriodoValido = true;
-            console.log("Periodo es semanal (7 días)");
         } else if (diffDays === 15) {
             esPeriodoValido = true;
-            console.log("Periodo es quincenal (15 días)");
         } else if (inicio.getUTCDate() === 1) {
             const ultimoDiaMesCalculado = new Date(inicio.getUTCFullYear(), inicio.getUTCMonth() + 1, 0).getUTCDate();
-            console.log(`Verificando mensual: Inicio día ${inicio.getUTCDate()}, Fin día ${fin.getUTCDate()}, Último día del mes de inicio: ${ultimoDiaMesCalculado}`);
             if (fin.getUTCDate() === ultimoDiaMesCalculado && inicio.getUTCMonth() === fin.getUTCMonth() && inicio.getUTCFullYear() === fin.getUTCFullYear()) {
                  esPeriodoValido = true;
-                 console.log("Periodo es mensual completo");
             }
         }
 
         if (!esPeriodoValido) {
-             showAlert('El rango de fechas debe ser exactamente de 7 días (semanal), 15 días (quincenal) o un mes calendario completo. Días calculados: ' + diffDays);
-             console.log("Periodo no válido según reglas estrictas.");
+             showAlert(`El rango de fechas debe ser exactamente de 7 días (semanal), 15 días (quincenal) o un mes calendario completo. Días calculados: ${diffDays}`);
              return;
         }
 
         try {
             showAlert('Procesando pago...', 'info');
-            console.log("Enviando petición a /api/nomina/pagar...");
             const response = await fetch(`${apiBaseUrl}/nomina/pagar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            console.log("Respuesta recibida, status:", response.status);
-
+            
             const result = await response.json();
-            console.log("Resultado del backend:", result);
+            console.log("Respuesta del backend (pago nomina):", result);
 
-            if (response.ok && result.success) { // response.ok verifica status 200-299
+            if (response.ok && result.success) { 
                 showAlert(result.message || 'Pago procesado y registrado exitosamente.', 'success');
             } else {
-                showAlert(result.message || 'Error al procesar el pago desde el backend.');
+                showAlert(result.message || `Error ${response.status} al procesar el pago desde el backend.`);
             }
         } catch (error) {
             showAlert(`Error de conexión al procesar pago: ${error.message}`);
@@ -398,7 +406,7 @@
     // --- Asignación de Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
         console.log("DOM completamente cargado. Asignando listeners...");
-        fetchCurrentUserInfo(); // Cargar info del usuario en el header
+        fetchCurrentUserInfo();
 
         if (btnBuscarEmpleado) btnBuscarEmpleado.addEventListener('click', buscarEmpleado);
         else console.error("Botón btnBuscarEmpleado no encontrado.");
@@ -406,7 +414,7 @@
         if (btnAbrirModalHE) btnAbrirModalHE.addEventListener('click', abrirModalHorasExtra);
         else console.error("Botón btnAbrirModalHE no encontrado.");
         
-        if (formAgregarHE) formAgregarHE.addEventListener('submit', guardarHorasExtra); // Listener al submit del form
+        if (formAgregarHE) formAgregarHE.addEventListener('submit', guardarHorasExtra); // CLAVE: Listener al SUBMIT del FORMULARIO
         else console.error("Formulario formAgregarHE no encontrado.");
 
         if (btnCancelarHE) btnCancelarHE.addEventListener('click', cerrarModalHorasExtra);
@@ -424,16 +432,17 @@
 
         if (modalAgregarHE) {
             modalAgregarHE.addEventListener('click', (event) => {
-                if (event.target === modalAgregarHE) cerrarModalHorasExtra();
+                if (event.target === modalAgregarHE) cerrarModalHorasExtra(); // Cierra si se hace clic en el fondo del modal
             });
         } else {
             console.error("Modal modalAgregarHE no encontrado.");
         }
 
-        empleadoInfoSectionDiv.classList.add('hidden');
-        pagarNominaSectionDiv.classList.add('hidden');
+        // Estado inicial
+        if(empleadoInfoSectionDiv) empleadoInfoSectionDiv.classList.add('hidden');
+        if(pagarNominaSectionDiv) pagarNominaSectionDiv.classList.add('hidden');
         if (modalAgregarHE) modalAgregarHE.classList.add('hidden');
-        btnCalcularIndemnizacion.disabled = true;
+        if (btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
         console.log("Estado inicial de la página configurado.");
     });
 </script>
