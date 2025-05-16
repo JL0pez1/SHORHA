@@ -1,450 +1,876 @@
+
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Nóminas y Horas Extra - SORHA</title>
-    <link rel="stylesheet" href="/css/recursos.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gestión de Nóminas - SORHA</title>
+
+<link rel="stylesheet" href="/css/recursos.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
+
 <body>
-    <div class="admin-background">
-        <div class="admin-overlay"></div>
-    </div>
 
-    <header class="admin-header">
-        <div class="header-content">
-            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo"> <div class="header-titles">
-                <h1>Sistema <span>SORHA</span></h1>
-                <p>Módulo de Recursos y Nóminas</p>
-            </div>
-        </div>
-        <nav>
-            <span id="usernameDisplay" class="username-display">Cargando...</span>
-            <a href="/logout" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </a>
-        </nav>
-    </header>
+<div class="admin-background">
 
-    <main class="admin-main">
-        <div class="container">
-            <h1>Gestión de Nóminas y Horas Extra</h1>
+<div class="admin-overlay"></div>
 
-            <div id="alertMessage" class="alert hidden"></div>
+</div>
 
-            <div class="form-section section-box">
-                <div class="section-header">
-                    <h2><i class="fas fa-search"></i> Buscar Empleado</h2>
-                </div>
-                <label for="searchEmpleadoId">ID del Empleado:</label>
-                <input type="number" id="searchEmpleadoId" placeholder="Ingrese ID del empleado">
-                <button id="btnBuscarEmpleado" class="btn-primary"><i class="fas fa-search"></i> Buscar</button>
-            </div>
 
-            <div id="empleadoInfoSection" class="info-section section-box hidden">
-                <div class="section-header">
-                    <h3 id="nombreEmpleado" style="font-size: 1.5em;"></h3> </div>
-                <p><strong>ID:</strong> <span id="infoEmpleadoId"></span></p>
-                <p><strong>Puesto:</strong> <span id="puestoEmpleado"></span></p>
 
-                <h4>Horas Extra Registradas</h4>
-                <div class="table-container">
-                    <table id="horasExtrasTable">
-                        <thead>
-                            <tr>
-                                <th>ID Extra</th>
-                                <th>Fecha</th>
-                                <th>Horas</th>
-                                <th>Tipo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="horasExtrasTableBody">
-                            </tbody>
-                    </table>
-                </div>
-                <button id="btnAbrirModalHE" class="btn-add"><i class="fas fa-plus-circle"></i> Agregar Horas Extra</button>
-            </div>
+<header class="admin-header">
 
-            <div id="pagarNominaSection" class="form-section section-box hidden">
-                <div class="section-header">
-                    <h2><i class="fas fa-file-invoice-dollar"></i> Pagar Nómina</h2>
-                </div>
-                <input type="hidden" id="pagoEmpleadoId">
-                <div class="form-group">
-                    <label for="fechaInicioPago">Fecha Inicio Periodo:</label>
-                    <input type="date" id="fechaInicioPago" required>
-                </div>
-                <div class="form-group">
-                    <label for="fechaFinPago">Fecha Fin Periodo:</label>
-                    <input type="date" id="fechaFinPago" required>
-                    <small>Debe ser 7 días (semanal), 15 días (quincenal) o un mes calendario completo.</small>
-                </div>
-                <button id="btnProcesarPago" class="btn-save"><i class="fas fa-money-check-alt"></i> Pagar Nómina</button>
-            </div>
-            
-            <div class="form-section section-box">
-                <div class="section-header">
-                    <h2><i class="fas fa-cogs"></i> Otras Acciones</h2>
-                </div>
-                <button id="btnCalcularIndemnizacion" class="btn-secondary" disabled><i class="fas fa-calculator"></i> Calcular Indemnización (Próximamente)</button>
-            </div>
-        </div>
-    </main>
+<div class="header-content">
 
-    <div id="modalAgregarHE" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title-text">Agregar Horas Extra para <span id="modalHENombreEmpleado"></span></h3>
-                <span class="close-btn" id="btnCerrarModalHE">&times;</span>
-            </div>
-            <form id="formAgregarHE">
-                <input type="hidden" id="modalHEEmpleadoId">
-                <div class="form-group">
-                    <label for="modalHEFecha">Fecha:</label>
-                    <input type="date" id="modalHEFecha" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalHEHoras">Cantidad de Horas:</label>
-                    <input type="number" id="modalHEHoras" step="0.01" min="0.25" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalHETipo">Tipo:</label>
-                    <select id="modalHETipo">
-                        <option value="normal">Normal</option>
-                        <option value="doble">Doble</option>
-                        <option value="feriado">Feriado</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar Horas</button> <button id="btnCancelarHE" type="button" class="btn-cancel">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+
+<div class="header-titles">
+
+<h1>Sistema <span>SORHA</span></h1>
+
+<p>Módulo de Recursos y Nóminas</p>
+
+</div>
+
+</div>
+
+<nav>
+
+<span id="usernameDisplay" class="username-display">Cargando...</span>
+
+<a href="/logout" class="btn-logout">
+
+<i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+
+</a>
+
+</nav>
+
+</header>
+
+
+
+<main class="admin-main">
+
+<div class="container">
+
+<div id="alertMessageContainer" style="position: sticky; top: 10px; z-index: 1055; padding-bottom:10px; background-color: #fff;">
+
+<div id="alertMessage" class="alert hidden"></div>
+
+</div>
+
+<h1>Gestión de Nóminas</h1>
+
+
+
+<div id="pagarNominaGeneralSection" class="form-section section-box">
+
+<div class="section-header">
+
+<h2><i class="fas fa-users-cog"></i> Pagar Nómina General</h2>
+
+</div>
+
+<div class="filtros-nomina-general" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: flex-end; margin-bottom:20px;">
+
+<div class="form-group">
+
+<label for="selectMesNominaGeneral">Mes:</label>
+
+<select id="selectMesNominaGeneral" class="form-control"></select>
+
+</div>
+
+<div class="form-group">
+
+<label for="selectAnioNominaGeneral">Año:</label>
+
+<select id="selectAnioNominaGeneral" class="form-control"></select>
+
+</div>
+
+<div class="form-group">
+
+<label for="selectTipoPagoGeneral">Tipo de Pago a Generar:</label>
+
+<select id="selectTipoPagoGeneral" class="form-control">
+
+<option value="semanal">Semanal</option>
+
+<option value="quincenal">Quincenal</option>
+
+<option value="mensual">Mensual</option>
+
+</select>
+
+</div>
+
+</div>
+
+<button id="btnProcesarNominaGeneral" class="btn-save" style="width:100%;"><i class="fas fa-users"></i> Procesar Nómina General para Empleados Activos</button>
+
+<div id="nominaGeneralResultados" style="margin-top:15px; max-height: 200px; overflow-y:auto; border:1px solid #eee; padding:10px; display:none; background-color: #f9f9f9; font-size:0.9em; line-height:1.4;">
+
+</div>
+
+</div>
+
+<hr style="margin: 30px 0;">
+
+
+
+<div class="form-section section-box">
+
+<div class="section-header">
+
+<h2><i class="fas fa-user-search"></i> Gestión de Nómina Individual</h2>
+
+</div>
+
+<label for="searchEmpleadoIdIndividual">ID del Empleado:</label>
+
+<input type="number" id="searchEmpleadoIdIndividual" placeholder="Ingrese ID del empleado">
+
+<button id="btnBuscarEmpleadoIndividual" class="btn-primary"><i class="fas fa-search"></i> Buscar Empleado</button>
+
+</div>
+
+
+
+<div id="empleadoDataContainer" class="hidden">
+
+<div id="empleadoInfoSection" class="info-section section-box">
+
+<div class="section-header">
+
+<h3 id="nombreEmpleado" style="font-size: 1.5em;"></h3>
+
+</div>
+
+<p><strong>ID:</strong> <span id="infoEmpleadoId"></span></p>
+
+<p><strong>Puesto:</strong> <span id="puestoEmpleado"></span></p>
+
+</div>
+
+
+
+<div id="pagarNominaIndividualSection" class="form-section section-box">
+
+<div class="section-header">
+
+<h2><i class="fas fa-file-invoice-dollar"></i> Pagar Nómina (Individual)</h2>
+
+</div>
+
+<input type="hidden" id="pagoEmpleadoIdIndividual">
+
+<div class="form-group"><label for="fechaInicioPagoIndividual">Fecha Inicio Periodo:</label><input type="date" id="fechaInicioPagoIndividual" required></div>
+
+<div class="form-group"><label for="fechaFinPagoIndividual">Fecha Fin Periodo:</label><input type="date" id="fechaFinPagoIndividual" required><small>El SP calculará el pago según el rango de fechas ingresado.</small></div>
+
+<button id="btnProcesarPagoIndividual" class="btn-save"><i class="fas fa-money-check-alt"></i> Pagar Nómina Individual</button>
+
+</div>
+
+
+
+<div id="historialPagosIndividualSection" class="form-section section-box">
+
+<div class="section-header">
+
+<h2><i class="fas fa-history"></i> Historial de Pagos del Empleado</h2>
+
+</div>
+
+<div class="filtros-historial" style="display: flex; gap: 15px; align-items: flex-end; margin-bottom:20px; flex-wrap: wrap;">
+
+<div class="form-group" style="flex: 1; min-width: 150px;"><label for="selectMesHistorialIndividual">Mes:</label><select id="selectMesHistorialIndividual" class="form-control"></select></div>
+
+<div class="form-group" style="flex: 1; min-width: 120px;"><label for="selectAnioHistorialIndividual">Año:</label><select id="selectAnioHistorialIndividual" class="form-control"></select></div>
+
+<button id="btnVerHistorialPagosIndividual" class="btn-primary" style="padding: 10px 15px; height: 46px; margin-bottom:0;"><i class="fas fa-eye"></i> Ver Historial</button>
+
+</div>
+
+<div class="table-container">
+
+<table id="tablaHistorialPagosIndividual">
+
+<thead><tr><th>ID Nómina</th><th>Periodo</th><th>Tipo Pago</th><th>Sueldo Base</th><th>Pago HE</th><th>Bonificaciones</th><th>Descuentos</th><th>Total Pagado</th><th>Fecha de Pago (Registro)</th></tr></thead>
+
+<tbody id="tablaHistorialPagosBodyIndividual"><tr><td colspan="9" style="text-align:center;">Seleccione mes y año para ver el historial.</td></tr></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="form-section section-box">
+
+<div class="section-header"><h2><i class="fas fa-cogs"></i> Otras Acciones</h2></div>
+
+<button id="btnCalcularIndemnizacion" class="btn-secondary" disabled><i class="fas fa-calculator"></i> Calcular Indemnización (Próximamente)</button>
+
+</div>
+
+</div>
+
+</main>
+
+
 
 <script>
-    const apiBaseUrl = '/api';
-    let empleadoSeleccionadoId = null;
 
-    // --- Selección de Elementos del DOM ---
-    const searchEmpleadoIdInput = document.getElementById('searchEmpleadoId');
-    const btnBuscarEmpleado = document.getElementById('btnBuscarEmpleado');
-    const empleadoInfoSectionDiv = document.getElementById('empleadoInfoSection');
-    const pagarNominaSectionDiv = document.getElementById('pagarNominaSection');
-    const nombreEmpleadoSpan = document.getElementById('nombreEmpleado');
-    const infoEmpleadoIdSpan = document.getElementById('infoEmpleadoId');
-    const puestoEmpleadoSpan = document.getElementById('puestoEmpleado');
-    const pagoEmpleadoIdInput = document.getElementById('pagoEmpleadoId');
-    const btnCalcularIndemnizacion = document.getElementById('btnCalcularIndemnizacion');
-    const horasExtrasTableBody = document.getElementById('horasExtrasTableBody');
-    const btnAbrirModalHE = document.getElementById('btnAbrirModalHE');
-    const alertMessageDiv = document.getElementById('alertMessage');
-    const usernameDisplaySpan = document.getElementById('usernameDisplay');
+const apiBaseUrl = '/api';
+
+let empleadoSeleccionadoIdIndividual = null;
 
 
-    const modalAgregarHE = document.getElementById('modalAgregarHE');
-    const modalHENombreEmpleadoSpan = document.getElementById('modalHENombreEmpleado');
-    const modalHEEmpleadoIdInput = document.getElementById('modalHEEmpleadoId');
-    const modalHEFechaInput = document.getElementById('modalHEFecha');
-    const modalHEHorasInput = document.getElementById('modalHEHoras');
-    const modalHETipoSelect = document.getElementById('modalHETipo');
-    const btnCancelarHE = document.getElementById('btnCancelarHE');
-    const btnCerrarModalHE = document.getElementById('btnCerrarModalHE');
-    const formAgregarHE = document.getElementById('formAgregarHE');
 
-    // Formulario de Pago
-    const fechaInicioPagoInput = document.getElementById('fechaInicioPago');
-    const fechaFinPagoInput = document.getElementById('fechaFinPago');
-    const btnProcesarPago = document.getElementById('btnProcesarPago');
+// Selectores Generales
 
-    // --- Funciones ---
-    function showAlert(message, type = 'error') {
-        console.log(`[SHOW ALERT - ${type.toUpperCase()}]: ${message}`);
-        alertMessageDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-exclamation-triangle')}"></i> ${message}`;
-        alertMessageDiv.className = `alert alert-${type}`;
-        alertMessageDiv.classList.remove('hidden');
-        void alertMessageDiv.offsetWidth; // Forzar reflujo para reinicio de animación
-        alertMessageDiv.style.opacity = 1;
+const alertMessageDiv = document.getElementById('alertMessage');
 
-        setTimeout(() => {
-            alertMessageDiv.style.opacity = 0;
-            setTimeout(() => {
-                alertMessageDiv.classList.add('hidden');
-            }, 500); // Duración de la transición de opacidad
-        }, 4500);
-    }
+const alertMessageContainerDiv = document.getElementById('alertMessageContainer');
 
-    async function fetchCurrentUserInfo() {
-        console.log("fetchCurrentUserInfo() llamado");
-        try {
-            const response = await fetch('/api/session/user');
-            if (!response.ok) {
-                if (response.status === 401) {
-                    console.warn('Sesión no válida o expirada. Redirigiendo al login...');
-                    window.location.href = '/?error=Sesion+expirada';
-                }
-                throw new Error(`Error HTTP ${response.status} al obtener datos de sesión.`);
-            }
-            const result = await response.json();
-            if (result.success && result.user) {
-                usernameDisplaySpan.textContent = `Usuario: ${result.user.usuario} (${result.user.rol})`;
-            } else {
-                usernameDisplaySpan.textContent = 'Usuario no identificado';
-                console.warn(result.message || 'No se pudo obtener información del usuario desde la sesión.');
-            }
-        } catch (error) {
-            console.error("Error en fetchCurrentUserInfo:", error);
-            usernameDisplaySpan.textContent = 'Error cargando usuario';
-        }
-    }
+const usernameDisplaySpan = document.getElementById('usernameDisplay');
 
-    async function buscarEmpleado() {
-        console.log("buscarEmpleado() llamado");
-        // ... (resto de la función buscarEmpleado como te la di antes, sin cambios aquí) ...
-        const empleadoId = searchEmpleadoIdInput.value;
-        if (!empleadoId) {
-            showAlert('Por favor, ingrese un ID de empleado.');
-            return;
-        }
-        empleadoSeleccionadoId = null;
-        empleadoInfoSectionDiv.classList.add('hidden');
-        pagarNominaSectionDiv.classList.add('hidden');
-        if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
-        horasExtrasTableBody.innerHTML = '';
+const btnCalcularIndemnizacion = document.getElementById('btnCalcularIndemnizacion');
 
-        try {
-            showAlert('Buscando empleado...', 'info');
-            const response = await fetch(`${apiBaseUrl}/${empleadoId}`); 
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({message: `Empleado con ID ${empleadoId} no encontrado o error de servidor.`}));
-                throw new Error(errData.message);
-            }
-            const result = await response.json();
-            if (result.success && result.data) {
-                const empleado = result.data;
-                nombreEmpleadoSpan.textContent = `${empleado.primer_nombre || ''} ${empleado.segundo_nombre || ''} ${empleado.primer_apellido || ''} ${empleado.segundo_apellido || ''}`.replace(/\s+/g, ' ').trim();
-                infoEmpleadoIdSpan.textContent = empleado.id_empleado;
-                puestoEmpleadoSpan.textContent = empleado.puesto || 'N/A';
-                pagoEmpleadoIdInput.value = empleado.id_empleado;
-                empleadoSeleccionadoId = empleado.id_empleado;
 
-                empleadoInfoSectionDiv.classList.remove('hidden');
-                pagarNominaSectionDiv.classList.remove('hidden');
-                if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = false;
-                
-                cargarHorasExtra(empleado.id_empleado);
-            } else {
-                showAlert(result.message || 'Empleado no encontrado.');
-            }
-        } catch (error) {
-            showAlert(`Error al buscar empleado: ${error.message}`);
-            console.error("Error en buscarEmpleado:", error);
-        }
-    }
 
-    async function cargarHorasExtra(empleadoId) {
-        console.log(`cargarHorasExtra() llamado para empleado ID: ${empleadoId}`);
-        // ... (resto de la función cargarHorasExtra como te la di antes, sin cambios aquí) ...
-        horasExtrasTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando horas extra... <i class="fas fa-spinner fa-spin"></i></td></tr>';
-        try {
-            const response = await fetch(`${apiBaseUrl}/horasextras/empleado/${empleadoId}`);
-            if (!response.ok) {
-                 const errData = await response.json().catch(() => ({ message: 'Error al cargar horas extra del empleado.'}));
-                throw new Error(errData.message);
-            }
-            const result = await response.json();
-            
-            horasExtrasTableBody.innerHTML = ''; 
-            if (result.success && result.data.length > 0) {
-                result.data.forEach(he => {
-                    const row = horasExtrasTableBody.insertRow();
-                    row.insertCell().textContent = he.id_extra;
-                    row.insertCell().textContent = he.fecha; 
-                    row.insertCell().textContent = parseFloat(he.horas).toFixed(2);
-                    row.insertCell().textContent = he.tipo;
-                });
-            } else {
-                horasExtrasTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay horas extra registradas para este empleado.</td></tr>';
-            }
-        } catch (error) {
-            horasExtrasTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">${error.message}</td></tr>`;
-            console.error("Error en cargarHorasExtra:", error);
-        }
-    }
+// Selectores Nómina General
 
-    function abrirModalHorasExtra() {
-        console.log("abrirModalHorasExtra() llamado");
-        if (!empleadoSeleccionadoId) {
-            showAlert('Primero busque y seleccione un empleado.');
-            return;
-        }
-        formAgregarHE.reset();
-        modalHENombreEmpleadoSpan.textContent = nombreEmpleadoSpan.textContent;
-        modalHEEmpleadoIdInput.value = empleadoSeleccionadoId;
-        modalHEFechaInput.valueAsDate = new Date();
-        modalHETipoSelect.value = 'normal';
-        modalAgregarHE.classList.remove('hidden');
-        modalAgregarHE.style.opacity = 1;
-        modalHEHorasInput.focus();
-    }
+const selectMesNominaGeneral = document.getElementById('selectMesNominaGeneral');
 
-    function cerrarModalHorasExtra() {
-        console.log("cerrarModalHorasExtra() llamado");
-        modalAgregarHE.style.opacity = 0;
-        setTimeout(() => {
-            modalAgregarHE.classList.add('hidden');
-        }, 300); // Debe coincidir con la transición de CSS
-        formAgregarHE.reset();
-    }
+const selectAnioNominaGeneral = document.getElementById('selectAnioNominaGeneral');
 
-    async function guardarHorasExtra(event) {
-        if(event) event.preventDefault();
-        console.log("guardarHorasExtra() llamado");
+const selectTipoPagoGeneral = document.getElementById('selectTipoPagoGeneral');
 
-        const data = {
-            id_empleado: modalHEEmpleadoIdInput.value,
-            fecha: modalHEFechaInput.value,
-            horas: modalHEHorasInput.value,
-            tipo: modalHETipoSelect.value
-        };
-        console.log("Datos para guardar horas extra:", data);
+const btnProcesarNominaGeneral = document.getElementById('btnProcesarNominaGeneral');
 
-        if (!data.fecha || !data.horas || parseFloat(data.horas) <= 0) {
-            showAlert('Fecha y cantidad de horas (positiva y mayor a 0) son obligatorias.');
-            return;
-        }
+const nominaGeneralResultadosDiv = document.getElementById('nominaGeneralResultados');
 
-        try {
-            showAlert('Guardando horas extra...', 'info');
-            const response = await fetch(`${apiBaseUrl}/horasextras`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            console.log("Respuesta de Guardar HE - Status:", response.status);
-            const result = await response.json();
-            console.log("Respuesta de Guardar HE - Body:", result);
 
-            if (response.ok && result.success) {
-                showAlert('Horas extra agregadas exitosamente.', 'success');
-                cerrarModalHorasExtra();
-                cargarHorasExtra(data.id_empleado);
-            } else {
-                showAlert(result.message || 'Error al guardar horas extra desde el backend.');
-            }
-        } catch (error) {
-            showAlert(`Error de conexión al guardar horas extra: ${error.message}`);
-            console.error("Error en fetch para guardarHorasExtra:", error);
-        }
-    }
 
-    async function procesarPagoNomina() {
-        console.log("procesarPagoNomina() llamado");
-        // ... (resto de la función procesarPagoNomina como te la di antes, con sus console.log) ...
-        const data = {
-            id_empleado: pagoEmpleadoIdInput.value,
-            fecha_inicio: fechaInicioPagoInput.value,
-            fecha_fin: fechaFinPagoInput.value
-        };
-        console.log("Datos para pago:", data);
+// Selectores Gestión Individual
 
-        if (!data.id_empleado || !data.fecha_inicio || !data.fecha_fin) {
-            showAlert('Todos los campos (ID Empleado, Fecha Inicio, Fecha Fin) son requeridos para el pago de nómina.');
-            return;
-        }
-        
-        const inicio = new Date(data.fecha_inicio + 'T00:00:00Z');
-        const fin = new Date(data.fecha_fin + 'T00:00:00Z');
-        if (fin < inicio) {
-            showAlert('La fecha de fin no puede ser anterior a la fecha de inicio.');
-            return;
-        }
+const searchEmpleadoIdIndividualInput = document.getElementById('searchEmpleadoIdIndividual');
 
-        const diffTime = fin.getTime() - inicio.getTime();
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        console.log("Días de diferencia calculados para pago:", diffDays);
-        
-        let esPeriodoValido = false;
-        if (diffDays === 7) {
-            esPeriodoValido = true;
-        } else if (diffDays === 15) {
-            esPeriodoValido = true;
-        } else if (inicio.getUTCDate() === 1) {
-            const ultimoDiaMesCalculado = new Date(inicio.getUTCFullYear(), inicio.getUTCMonth() + 1, 0).getUTCDate();
-            if (fin.getUTCDate() === ultimoDiaMesCalculado && inicio.getUTCMonth() === fin.getUTCMonth() && inicio.getUTCFullYear() === fin.getUTCFullYear()) {
-                 esPeriodoValido = true;
-            }
-        }
+const btnBuscarEmpleadoIndividual = document.getElementById('btnBuscarEmpleadoIndividual');
 
-        if (!esPeriodoValido) {
-             showAlert(`El rango de fechas debe ser exactamente de 7 días (semanal), 15 días (quincenal) o un mes calendario completo. Días calculados: ${diffDays}`);
-             return;
-        }
+const empleadoDataContainerDiv = document.getElementById('empleadoDataContainer');
 
-        try {
-            showAlert('Procesando pago...', 'info');
-            const response = await fetch(`${apiBaseUrl}/nomina/pagar`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            
-            const result = await response.json();
-            console.log("Respuesta del backend (pago nomina):", result);
+const nombreEmpleadoSpan = document.getElementById('nombreEmpleado');
 
-            if (response.ok && result.success) { 
-                showAlert(result.message || 'Pago procesado y registrado exitosamente.', 'success');
-            } else {
-                showAlert(result.message || `Error ${response.status} al procesar el pago desde el backend.`);
-            }
-        } catch (error) {
-            showAlert(`Error de conexión al procesar pago: ${error.message}`);
-            console.error("Error en fetch para procesarPagoNomina:", error);
-        }
-    }
+const infoEmpleadoIdSpan = document.getElementById('infoEmpleadoId');
 
-    // --- Asignación de Event Listeners ---
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log("DOM completamente cargado. Asignando listeners...");
-        fetchCurrentUserInfo();
+const puestoEmpleadoSpan = document.getElementById('puestoEmpleado');
 
-        if (btnBuscarEmpleado) btnBuscarEmpleado.addEventListener('click', buscarEmpleado);
-        else console.error("Botón btnBuscarEmpleado no encontrado.");
 
-        if (btnAbrirModalHE) btnAbrirModalHE.addEventListener('click', abrirModalHorasExtra);
-        else console.error("Botón btnAbrirModalHE no encontrado.");
-        
-        if (formAgregarHE) formAgregarHE.addEventListener('submit', guardarHorasExtra); // CLAVE: Listener al SUBMIT del FORMULARIO
-        else console.error("Formulario formAgregarHE no encontrado.");
+// Pago Individual
 
-        if (btnCancelarHE) btnCancelarHE.addEventListener('click', cerrarModalHorasExtra);
-        else console.error("Botón btnCancelarHE no encontrado.");
-        
-        if (btnCerrarModalHE) btnCerrarModalHE.addEventListener('click', cerrarModalHorasExtra);
-        else console.error("Botón btnCerrarModalHE no encontrado.");
+const pagoEmpleadoIdIndividualInput = document.getElementById('pagoEmpleadoIdIndividual');
 
-        if (btnProcesarPago) {
-            btnProcesarPago.addEventListener('click', procesarPagoNomina);
-            console.log("Listener para btnProcesarPago asignado.");
-        } else {
-            console.error("Botón btnProcesarPago no encontrado.");
-        }
+const fechaInicioPagoIndividualInput = document.getElementById('fechaInicioPagoIndividual');
 
-        if (modalAgregarHE) {
-            modalAgregarHE.addEventListener('click', (event) => {
-                if (event.target === modalAgregarHE) cerrarModalHorasExtra(); // Cierra si se hace clic en el fondo del modal
-            });
-        } else {
-            console.error("Modal modalAgregarHE no encontrado.");
-        }
+const fechaFinPagoIndividualInput = document.getElementById('fechaFinPagoIndividual');
 
-        // Estado inicial
-        if(empleadoInfoSectionDiv) empleadoInfoSectionDiv.classList.add('hidden');
-        if(pagarNominaSectionDiv) pagarNominaSectionDiv.classList.add('hidden');
-        if (modalAgregarHE) modalAgregarHE.classList.add('hidden');
-        if (btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
-        console.log("Estado inicial de la página configurado.");
-    });
+const btnProcesarPagoIndividual = document.getElementById('btnProcesarPagoIndividual');
+
+
+
+// Historial Pagos Individual
+
+const selectMesHistorialIndividual = document.getElementById('selectMesHistorialIndividual');
+
+const selectAnioHistorialIndividual = document.getElementById('selectAnioHistorialIndividual');
+
+const btnVerHistorialPagosIndividual = document.getElementById('btnVerHistorialPagosIndividual');
+
+const tablaHistorialPagosBodyIndividual = document.getElementById('tablaHistorialPagosBodyIndividual');
+
+
+
+
+
+function showAlert(message, type = 'error') {
+
+console.log(`[RECURSOS ALERT - ${type.toUpperCase()}]: ${message}`);
+
+if (!alertMessageDiv || !alertMessageContainerDiv) {
+
+console.error("showAlert: Elemento alertMessageDiv o alertMessageContainerDiv no encontrado.");
+
+window.alert(`[${type.toUpperCase()}] ${message}`);
+
+return;
+
+}
+
+alertMessageDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-exclamation-triangle')}"></i> ${message}`;
+
+alertMessageDiv.className = `alert alert-${type}`;
+
+alertMessageDiv.classList.remove('hidden');
+
+void alertMessageDiv.offsetWidth;
+
+alertMessageDiv.style.opacity = 1;
+
+alertMessageContainerDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+setTimeout(() => {
+
+alertMessageDiv.style.opacity = 0;
+
+setTimeout(() => {
+
+alertMessageDiv.classList.add('hidden');
+
+}, 500);
+
+}, 4500);
+
+}
+
+
+
+async function fetchCurrentUserInfo() {
+
+console.log("fetchCurrentUserInfo() llamado en recursos.html");
+
+if (!usernameDisplaySpan) { console.warn("usernameDisplaySpan no encontrado"); return; }
+
+try {
+
+const response = await fetch('/api/session/user');
+
+if (!response.ok) {
+
+if (response.status === 401) window.location.href = '/?error=Sesion+expirada';
+
+throw new Error(`Error HTTP ${response.status}`);
+
+}
+
+const result = await response.json();
+
+if (result.success && result.user) {
+
+usernameDisplaySpan.textContent = `Usuario: ${result.user.usuario} (${result.user.rol})`;
+
+} else { usernameDisplaySpan.textContent = 'Usuario no identificado'; }
+
+} catch (error) {
+
+console.error("Error en fetchCurrentUserInfo:", error);
+
+usernameDisplaySpan.textContent = 'Error cargando usuario';
+
+}
+
+}
+
+
+
+async function buscarEmpleadoIndividual() {
+
+console.log("buscarEmpleadoIndividual() llamado");
+
+if (!searchEmpleadoIdIndividualInput) { showAlert('Error: Campo búsqueda ID no hallado.'); return; }
+
+const empleadoId = searchEmpleadoIdIndividualInput.value;
+
+if (!empleadoId) { showAlert('Por favor, ingrese un ID de empleado.'); return; }
+
+
+empleadoSeleccionadoIdIndividual = null;
+
+if(empleadoDataContainerDiv) empleadoDataContainerDiv.classList.add('hidden');
+
+if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
+
+if(tablaHistorialPagosBodyIndividual) tablaHistorialPagosBodyIndividual.innerHTML = '<tr><td colspan="9" style="text-align:center;">Busque un empleado y seleccione mes/año.</td></tr>';
+
+
+
+try {
+
+showAlert('Buscando empleado...', 'info');
+
+const response = await fetch(`${apiBaseUrl}/${empleadoId}`);
+
+if (!response.ok) {
+
+const errData = await response.json().catch(() => ({message: `Empleado ID ${empleadoId} no encontrado o error.`}));
+
+throw new Error(errData.message);
+
+}
+
+const result = await response.json();
+
+if (result.success && result.data) {
+
+const empleado = result.data;
+
+if(nombreEmpleadoSpan) nombreEmpleadoSpan.textContent = `${empleado.primer_nombre || ''} ${empleado.segundo_nombre || ''} ${empleado.primer_apellido || ''} ${empleado.segundo_apellido || ''}`.replace(/\s+/g, ' ').trim();
+
+if(infoEmpleadoIdSpan) infoEmpleadoIdSpan.textContent = empleado.id_empleado;
+
+if(puestoEmpleadoSpan) puestoEmpleadoSpan.textContent = empleado.puesto || 'N/A';
+
+if(pagoEmpleadoIdIndividualInput) pagoEmpleadoIdIndividualInput.value = empleado.id_empleado;
+
+empleadoSeleccionadoIdIndividual = empleado.id_empleado;
+
+
+
+if(empleadoDataContainerDiv) empleadoDataContainerDiv.classList.remove('hidden');
+
+if(btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = false;
+
+if(selectMesHistorialIndividual && selectAnioHistorialIndividual) poblarSelectoresFechaHistorialIndividual();
+
+} else {
+
+showAlert(result.message || 'Empleado no encontrado.');
+
+if(empleadoDataContainerDiv) empleadoDataContainerDiv.classList.add('hidden');
+
+}
+
+} catch (error) {
+
+showAlert(`Error al buscar empleado: ${error.message}`);
+
+console.error("Error en buscarEmpleadoIndividual:", error);
+
+if(empleadoDataContainerDiv) empleadoDataContainerDiv.classList.add('hidden');
+
+}
+
+}
+
+
+
+async function procesarPagoNominaIndividual() {
+
+console.log("procesarPagoNominaIndividual() llamado");
+
+if (!pagoEmpleadoIdIndividualInput || !fechaInicioPagoIndividualInput || !fechaFinPagoIndividualInput) {
+
+showAlert('Error: Elementos del formulario de pago individual no hallados.', 'error'); return;
+
+}
+
+const data = {
+
+id_empleado: pagoEmpleadoIdIndividualInput.value,
+
+fecha_inicio: fechaInicioPagoIndividualInput.value,
+
+fecha_fin: fechaFinPagoIndividualInput.value
+
+};
+
+if (!data.id_empleado || !data.fecha_inicio || !data.fecha_fin) {
+
+showAlert('ID Empleado, Fecha Inicio y Fecha Fin son requeridos para el pago individual.'); return;
+
+}
+
+const inicio = new Date(data.fecha_inicio + 'T00:00:00Z');
+
+const fin = new Date(data.fecha_fin + 'T00:00:00Z');
+
+if (fin < inicio) { showAlert('La fecha de fin no puede ser anterior a la fecha de inicio.'); return; }
+
+
+console.log("Datos para /api/nomina/pagar (Individual):", data);
+
+try {
+
+showAlert('Procesando pago individual...', 'info');
+
+const response = await fetch(`${apiBaseUrl}/nomina/pagar`, {
+
+method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+
+});
+
+const result = await response.json();
+
+if (response.ok && result.success) {
+
+showAlert(result.message || 'Pago individual procesado.', 'success');
+
+if (selectMesHistorialIndividual && selectAnioHistorialIndividual && empleadoSeleccionadoIdIndividual) {
+
+const mesActualHistorial = parseInt(selectMesHistorialIndividual.value);
+
+const anioActualHistorial = parseInt(selectAnioHistorialIndividual.value);
+
+const mesPago = inicio.getMonth() + 1;
+
+const anioPago = inicio.getFullYear();
+
+if (mesActualHistorial === mesPago && anioActualHistorial === anioPago) {
+
+cargarHistorialPagosIndividual();
+
+}
+
+}
+
+} else { showAlert(result.message || `Error ${response.status} al procesar pago individual.`); }
+
+} catch (error) {
+
+showAlert(`Error de conexión al procesar pago individual: ${error.message}`);
+
+console.error("Error en fetch para procesarPagoNomina (Individual):", error);
+
+}
+
+}
+
+
+
+function poblarSelectoresFechaHistorialIndividual() {
+
+console.log("Poblando selectores de fecha para historial INDIVIDUAL...");
+
+if (!selectMesHistorialIndividual || !selectAnioHistorialIndividual) { console.error("Selectores mes/año historial individual no hallados."); return; }
+
+const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+selectMesHistorialIndividual.innerHTML = '';
+
+meses.forEach((mes, index) => {
+
+const option = document.createElement('option');
+
+option.value = index + 1; option.textContent = mes;
+
+selectMesHistorialIndividual.appendChild(option);
+
+});
+
+const anioActual = new Date().getFullYear();
+
+selectAnioHistorialIndividual.innerHTML = '';
+
+for (let i = 0; i < 5; i++) {
+
+const anio = anioActual - i;
+
+const option = document.createElement('option');
+
+option.value = anio; option.textContent = anio;
+
+selectAnioHistorialIndividual.appendChild(option);
+
+}
+
+selectMesHistorialIndividual.value = new Date().getMonth() + 1;
+
+selectAnioHistorialIndividual.value = anioActual;
+
+}
+
+
+
+async function cargarHistorialPagosIndividual() {
+
+console.log("cargarHistorialPagosIndividual() llamado");
+
+if (!empleadoSeleccionadoIdIndividual) { showAlert('Busque un empleado primero.', 'info'); return; }
+
+if (!selectMesHistorialIndividual || !selectAnioHistorialIndividual || !tablaHistorialPagosBodyIndividual) {
+
+console.error("Elementos para historial de pagos individual no hallados."); return;
+
+}
+
+const mes = selectMesHistorialIndividual.value;
+
+const anio = selectAnioHistorialIndividual.value;
+
+if (!mes || !anio) { showAlert('Seleccione mes y año para el historial individual.', 'error'); return; }
+
+
+
+tablaHistorialPagosBodyIndividual.innerHTML = `<tr><td colspan="9" style="text-align:center;">Cargando... <i class="fas fa-spinner fa-spin"></i></td></tr>`;
+
+try {
+
+const response = await fetch(`${apiBaseUrl}/nomina/historial/${empleadoSeleccionadoIdIndividual}?mes=${mes}&anio=${anio}`);
+
+if (!response.ok) {
+
+const errData = await response.json().catch(() => ({ message: `Error ${response.status}` }));
+
+throw new Error(errData.message);
+
+}
+
+const result = await response.json();
+
+tablaHistorialPagosBodyIndividual.innerHTML = '';
+
+if (result.success && result.data && result.data.length > 0) {
+
+result.data.forEach(pago => {
+
+const row = tablaHistorialPagosBodyIndividual.insertRow();
+
+row.insertCell().textContent = pago.id_nomina;
+
+row.insertCell().textContent = `${pago.fecha_inicio} al ${pago.fecha_fin}`;
+
+row.insertCell().textContent = pago.tipo_pago;
+
+row.insertCell().textContent = parseFloat(pago.sueldo_base || 0).toFixed(2);
+
+row.insertCell().textContent = parseFloat(pago.horas_extra || 0).toFixed(2);
+
+row.insertCell().textContent = parseFloat(pago.bonificaciones || 0).toFixed(2);
+
+row.insertCell().textContent = parseFloat(pago.descuentos || 0).toFixed(2);
+
+row.insertCell().textContent = parseFloat(pago.total_pagado || 0).toFixed(2);
+
+row.insertCell().textContent = pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleString('es-GT', {dateStyle:'short', timeStyle:'short'}) : 'N/A';
+
+});
+
+} else {
+
+const nombreEmp = nombreEmpleadoSpan && nombreEmpleadoSpan.textContent ? nombreEmpleadoSpan.textContent : `ID ${empleadoSeleccionadoIdIndividual}`;
+
+tablaHistorialPagosBodyIndividual.innerHTML = `<tr><td colspan="9" style="text-align:center;">No hay pagos para ${nombreEmp} en ${selectMesHistorialIndividual.options[selectMesHistorialIndividual.selectedIndex].text}/${anio}.</td></tr>`;
+
+}
+
+} catch (error) {
+
+console.error("Error en cargarHistorialPagosIndividual:", error);
+
+tablaHistorialPagosBodyIndividual.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Error: ${error.message}</td></tr>`;
+
+showAlert(`Error al cargar historial individual: ${error.message}`, 'error');
+
+}
+
+}
+
+
+
+// --- Funciones para Nómina General ---
+
+function poblarSelectoresNominaGeneral() {
+
+console.log("Poblando selectores para nómina general...");
+
+if (!selectMesNominaGeneral || !selectAnioNominaGeneral) { console.error("Selectores mes/año nómina gral. no hallados."); return; }
+
+const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+selectMesNominaGeneral.innerHTML = '';
+
+meses.forEach((mes, index) => {
+
+const option = document.createElement('option'); option.value = index + 1; option.textContent = mes;
+
+selectMesNominaGeneral.appendChild(option);
+
+});
+
+const anioActual = new Date().getFullYear();
+
+selectAnioNominaGeneral.innerHTML = '';
+
+for (let i = 0; i < 3; i++) {
+
+const anio = anioActual - i;
+
+const option = document.createElement('option'); option.value = anio; option.textContent = anio;
+
+selectAnioNominaGeneral.appendChild(option);
+
+}
+
+selectMesNominaGeneral.value = new Date().getMonth() + 1;
+
+selectAnioNominaGeneral.value = anioActual;
+
+}
+
+
+
+async function procesarNominaGeneral() {
+
+console.log("procesarNominaGeneral() llamado");
+
+if (!selectMesNominaGeneral || !selectAnioNominaGeneral || !selectTipoPagoGeneral || !nominaGeneralResultadosDiv) {
+
+showAlert('Error: Elementos del formulario de nómina general no encontrados.', 'error'); return;
+
+}
+
+const data = { mes: selectMesNominaGeneral.value, anio: selectAnioNominaGeneral.value, tipo_pago_general: selectTipoPagoGeneral.value };
+
+if (!data.mes || !data.anio || !data.tipo_pago_general) { showAlert('Mes, Año y Tipo de Pago son requeridos para la nómina general.', 'error'); return; }
+
+
+
+// Corrección en la obtención del texto del mes para el mensaje de confirmación
+
+const mesTexto = selectMesNominaGeneral.options[selectMesNominaGeneral.selectedIndex].text;
+
+
+
+if (!confirm(`¿Está seguro de procesar la nómina ${data.tipo_pago_general} para ${mesTexto} de ${data.anio} para TODOS los empleados activos? Esta acción puede tardar y no se puede deshacer fácilmente.`)) {
+
+return;
+
+}
+
+
+nominaGeneralResultadosDiv.style.display = 'block';
+
+nominaGeneralResultadosDiv.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Procesando nómina general, esto puede tardar varios minutos...</p>';
+
+showAlert('Iniciando procesamiento de nómina general...', 'info');
+
+try {
+
+const response = await fetch(`${apiBaseUrl}/nomina/pagar-general`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+
+const result = await response.json();
+
+console.log("Respuesta del backend (nómina general):", result);
+
+let htmlResultados = `<p><strong>${result.message || 'Proceso finalizado.'}</strong></p>`;
+
+if (result.details) {
+
+if (result.details.successes && result.details.successes.length > 0) {
+
+htmlResultados += '<h4><i class="fas fa-check-circle" style="color:green;"></i> Éxitos:</h4><ul>';
+
+result.details.successes.forEach(s => htmlResultados += `<li>${s}</li>`);
+
+htmlResultados += '</ul>';
+
+}
+
+if (result.details.errors && result.details.errors.length > 0) {
+
+htmlResultados += '<h4 style="color:red;"><i class="fas fa-exclamation-triangle" style="color:red;"></i> Errores/Omitidos:</h4><ul>';
+
+result.details.errors.forEach(e => htmlResultados += `<li style="color:red;">${e}</li>`);
+
+htmlResultados += '</ul>';
+
+}
+
+}
+
+nominaGeneralResultadosDiv.innerHTML = htmlResultados;
+
+if (response.status === 207 || (response.ok && result.success)) {
+
+showAlert(result.message || 'Proceso de nómina general completado.', (result.details && result.details.errors && result.details.errors.length > 0) ? 'info' : 'success');
+
+} else { showAlert(result.message || `Error ${response.status} al procesar la nómina general.`); }
+
+} catch (error) {
+
+console.error("Error en fetch para procesarNominaGeneral:", error);
+
+if(nominaGeneralResultadosDiv) nominaGeneralResultadosDiv.innerHTML = `<p style="color:red;">Error de conexión: ${error.message}</p>`;
+
+showAlert(`Error de conexión al procesar la nómina general: ${error.message}`, 'error');
+
+}
+
+}
+
+
+
+// --- Event Listeners ---
+
+document.addEventListener('DOMContentLoaded', () => {
+
+console.log("DOM [recursos.html] cargado. Asignando listeners...");
+
+fetchCurrentUserInfo();
+
+
+
+// Nómina General
+
+if (selectMesNominaGeneral && selectAnioNominaGeneral) poblarSelectoresNominaGeneral();
+
+else console.error("Selectores para Nómina General (Mes/Año) no encontrados en DOMContentLoaded.");
+
+if (btnProcesarNominaGeneral) btnProcesarNominaGeneral.addEventListener('click', procesarNominaGeneral);
+
+else console.error("Botón btnProcesarNominaGeneral no encontrado en DOMContentLoaded.");
+
+
+
+// Gestión Individual
+
+if (btnBuscarEmpleadoIndividual) btnBuscarEmpleadoIndividual.addEventListener('click', buscarEmpleadoIndividual);
+
+else console.error("Botón btnBuscarEmpleadoIndividual no encontrado en DOMContentLoaded.");
+
+
+if (btnProcesarPagoIndividual) btnProcesarPagoIndividual.addEventListener('click', procesarPagoNominaIndividual);
+
+else console.error("Botón btnProcesarPagoIndividual no encontrado en DOMContentLoaded.");
+
+
+
+if (btnVerHistorialPagosIndividual) btnVerHistorialPagosIndividual.addEventListener('click', cargarHistorialPagosIndividual);
+
+else console.error("Botón btnVerHistorialPagosIndividual no encontrado en DOMContentLoaded.");
+
+
+// Estado inicial
+
+if(empleadoDataContainerDiv) empleadoDataContainerDiv.classList.add('hidden');
+
+if (btnCalcularIndemnizacion) btnCalcularIndemnizacion.disabled = true;
+
+if (nominaGeneralResultadosDiv) nominaGeneralResultadosDiv.style.display = 'none';
+
+console.log("Estado inicial de la página [recursos.html] configurado.");
+
+});
+
 </script>
+
 </body>
+
 </html>
+
