@@ -6,4 +6,451 @@
 
 body {
     background: linear-gradient(135deg, #f5f7fa 0%, #e4f1fe 100%);
+}/* public/css/recursos.css */
+
+/* --- Estilos Generales (Inspirados en SORHA) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f9; /* Un gris un poco más claro */
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Fondo con efecto similar al login/admin */
+.admin-background { /* Reutilizando clase si quieres el mismo fondo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/images/doctor-background.jpg') no-repeat center center; /* Asegúrate que esta imagen exista */
+    background-size: cover;
+    z-index: -1;
+    filter: brightness(0.7);
+}
+
+.admin-overlay { /* Reutilizando clase */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(41, 128, 185, 0.75) 0%, rgba(109, 213, 250, 0.75) 100%); /* Un poco más de opacidad */
+}
+
+/* Header */
+.admin-header {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100; /* Sobre el overlay */
+    flex-wrap: wrap;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.header-titles h1 {
+    color: #2c3e50;
+    font-size: 22px;
+    line-height: 1.2;
+    margin:0;
+}
+
+.header-titles h1 span {
+    color: #2980b9;
+    font-weight: 700;
+}
+
+.header-titles p {
+    color: #7f8c8d;
+    font-size: 13px;
+    margin:0;
+}
+
+.admin-header nav {
+    display: flex;
+    align-items: center;
+}
+
+.username-display {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+.btn-logout {
+    background: linear-gradient(90deg, #e74c3c, #f39c12);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-logout:hover {
+    background: linear-gradient(90deg, #c0392b, #d35400);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+/* Contenido Principal */
+.admin-main {
+    flex: 1;
+    padding: 20px; /* Reducido un poco para más espacio en pantallas pequeñas */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    z-index: 1; /* Encima del fondo */
+}
+
+.container {
+    width: 100%;
+    max-width: 960px; /* Un poco más ancho para el contenido */
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    padding: 20px 25px; /* Ajustado padding */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container h1 { /* Título principal de la página */
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 28px;
+    border-bottom: 2px solid #2980b9;
+    padding-bottom: 10px;
+}
+
+/* Estilos para las secciones de formulario e información */
+.section-box { /* Nueva clase para dar un marco a cada sección */
+    background-color: #fdfdfd;
+    padding: 20px;
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.section-header h2, .section-header h3 {
+    color: #2c3e50;
+    font-size: 20px;
+    margin:0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.section-box h4 { /* Para el título de "Horas Extra Registradas" */
+    font-size: 18px;
+    color: #34495e;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #34495e;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccd1d9; /* Borde más suave */
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+    outline: none;
+}
+
+small {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    display: block;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+/* Botones Estilo SORHA */
+button, .btn { /* Clase genérica .btn para consistencia */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Para enlaces estilizados como botones */
+    margin-top: 5px; /* Pequeño margen superior para separar de inputs */
+}
+button i, .btn i {
+    margin-right: 6px; /* Espacio entre icono y texto del botón */
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #3498db, #5dade2); /* Azul SORHA */
+    color: white;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #2980b9, #52a8d9);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(41, 128, 185, 0.3);
+}
+
+.btn-add { /* Verde SORHA */
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    color: white;
+}
+.btn-add:hover {
+    background: linear-gradient(90deg, #219955, #27ae60);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+.btn-save { /* Similar a btn-add o un verde diferente */
+    background-color: #28a745; /* Verde sólido */
+    color: white;
+}
+.btn-save:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background-color: #e74c3c; /* Rojo para cancelar/peligro */
+    color: white;
+}
+.btn-cancel:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+.btn-secondary {
+    background-color: #7f8c8d; /* Gris para acciones secundarias */
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #6c757d;
+    transform: translateY(-1px);
+}
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* Tablas */
+.table-container {
+    overflow-x: auto;
+    margin-top: 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+}
+th {    
+    background-color: #34495e; /* Azul oscuro para cabeceras de tabla */
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Alertas */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: none; /* Manejado por JS */
+    opacity: 0; /* Para animación */
+    transition: opacity 0.5s ease-in-out;
+    font-size: 14px;
+}
+.alert:not(.hidden) { /* Cuando se muestra */
+    display: flex; /* Para alinear icono y texto */
+    align-items: center;
+    opacity: 1;
+}
+.alert i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+.alert-success { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc;}
+.alert-error   { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7;}
+.alert-info    { background-color: #cff4fc; color: #055160; border: 1px solid #b6effb;}
+.hidden { display: none !important; }
+
+
+/* Modal */
+.modal {
+    display: none; /* Oculto por defecto, JS lo maneja */
+    position: fixed;
+    z-index: 1050; /* Encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Evitar scroll del body cuando el modal está activo */
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.modal.show { /* Clase para mostrar el modal con animación */
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px; /* Ancho máximo del modal */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    transform: translateY(-50px); /* Estado inicial para animación */
+    transition: transform 0.3s ease-in-out;
+}
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+.modal-header .modal-title-text { /* Nombre de clase diferente para el título del modal */
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+.close-btn { /* Clase para el botón X de cerrar */
+    color: #6c757d;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+}
+.close-btn:hover {
+    color: #343a40;
+}
+.modal .form-actions { /* Estilos para los botones dentro del modal */
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+        align-items: stretch; /* Para que nav ocupe el ancho */
+    }
+    .admin-header nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .username-display { margin-right: 10px;}
+
+    .container { padding: 15px; }
+    .container h1 { font-size: 24px; margin-bottom: 20px;}
+    .section-header h2, .section-header h3 { font-size: 18px; }
+    
+    input[type="text"],input[type="number"],input[type="date"], select, button, .btn {
+        font-size: 15px; /* Ligeramente más grande para móviles */
+        padding: 12px;
+    }
+    .modal-content { width: 95%; padding: 20px;}
+    .modal-header .modal-title-text { font-size: 18px;}
 }

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Nóminas y Horas Extra - SORHA</title>
+    <link rel="stylesheet" href="/css/recursos.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-background"> <div class="admin-overlay"></div>
+    </div>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <img src="/images/sorha-logo.png" alt="SORHA Logo" class="logo">
+            <div class="header-titles">
+                <h1>Sistema <span>SORHA</span></h1>
+                <p>Módulo de Recursos y Nóminas</p>
+            </div>
+        </div>
+        <nav>
+            <span id="usernameDisplay" class="username-display">Cargando...</span>
+            <a href="/logout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <h1>Gestión de Nóminas y Horas Extra</h1>
+
+            <div id="alertMessage" class="alert hidden"></div>
+
+            <div class="form-section section-box">
+                <div class="section-header">
+                    <h2><i class="fas fa-search"></i> Buscar Empleado</h2>
+                </div>
+                <label for="searchEmpleadoId">ID del Empleado:</label>
+                <input type="number" id="searchEmpleadoId" placeholder="Ingrese ID del empleado">
+                <button id="btnBuscarEmpleado" class="btn-primary"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+
+            <div id="empleadoInfoSection" class="info-section section-box hidden">
+                <div class="section-header">
+                    <h3 id="nombreEmpleado"></h3>
+                </div>
+                <p><strong>ID:</strong> <span id="infoEmpleadoId"></span></p>
+                <p><strong>Puesto:</strong> <span id="puestoEmpleado"></span></p>
+
+                <h4>Horas Extra Registradas</h4>
+                <div class="table-container">
+                    <table id="horasExtrasTable">
+                        <thead>
+                            <tr>
+                                <th>ID Extra</th>
+                                <th>Fecha</th>
+                                <th>Horas</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="horasExtrasTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <button id="btnAbrirModalHE" class="btn-add"><i class="fas fa-plus-circle"></i> Agregar Horas Extra</button>
+            </div>
+
+            <div id="pagarNominaSection" class="form-section section-box hidden">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Pagar Nómina</h2>
+                </div>
+                <input type="hidden" id="pagoEmpleadoId">
+                <div class="form-group">
+                    <label for="fechaInicioPago">Fecha Inicio Periodo:</label>
+                    <input type="date" id="fechaInicioPago" required>
+                </div>
+                <div class="form-group">
+                    <label for="fechaFinPago">Fecha Fin Periodo:</label>
+                    <input type="date" id="fechaFinPago" required>
+                    <small>Debe ser 7 días (semanal), 15 días (quincenal) o un mes calendario completo.</small>
+                </div>
+                <button id="btnProcesarPago" class="btn-save"><i class="fas fa-money-check-alt"></i> Pagar Nómina</button>
+            </div>
+            
+            <div class="form-section section-box">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Otras Acciones</h2>
+                </div>
+                <button id="btnCalcularIndemnizacion" class="btn-secondary" disabled><i class="fas fa-calculator"></i> Calcular Indemnización (Próximamente)</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalAgregarHE" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title-text">Agregar Horas Extra para <span id="modalHENombreEmpleado"></span></h3>
+                <span class="close-btn" id="btnCerrarModalHE">&times;</span>
+            </div>
+            <form id="formAgregarHE">
+                <input type="hidden" id="modalHEEmpleadoId">
+                <div class="form-group">
+                    <label for="modalHEFecha">Fecha:</label>
+                    <input type="date" id="modalHEFecha" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalHEHoras">Cantidad de Horas:</label>
+                    <input type="number" id="modalHEHoras" step="0.01" min="0.25" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalHETipo">Tipo:</label>
+                    <select id="modalHETipo">
+                        <option value="normal">Normal</option>
+                        <option value="doble">Doble</option>
+                        <option value="feriado">Feriado</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button id="btnGuardarHE" type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar Horas</button>
+                    <button id="btnCancelarHE" type="button" class="btn-cancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Tu JavaScript (el que te proporcioné y depuramos antes) va aquí.
+    // Solo asegúrate de que los IDs de los elementos coincidan.
+    // Por ejemplo, el botón para cerrar el modal ahora es 'btnCerrarModalHE'.
+    // Y el formulario del modal es 'formAgregarHE'.
+
+    const apiBaseUrl = '/api';
+    let empleadoSeleccionadoId = null;
+
+    // --- Selección de Elementos del DOM ---
+    const searchEmpleadoIdInput = document.getElementById('searchEmpleadoId');
+    const btnBuscarEmpleado = document.getElementById('btnBuscarEmpleado');
+    const empleadoInfoSectionDiv = document.getElementById('empleadoInfoSection');
+    const pagarNominaSectionDiv = document.getElementById('pagarNominaSection');
+    const nombreEmpleadoSpan = document.getElementById('nombreEmpleado');
+    const infoEmpleadoIdSpan = document.getElementById('infoEmpleadoId');
+    const puestoEmpleadoSpan = document.getElementById('puestoEmpleado');
+    const pagoEmpleadoIdInput = document.getElementById('pagoEmpleadoId');
+    const btnCalcularIndemnizacion = document.getElementById('btnCalcularIndemnizacion');
+    const horasExtrasTableBody = document.getElementById('horasExtrasTableBody');
+    const btnAbrirModalHE = document.getElementById('btnAbrirModalHE');
+    const alertMessageDiv = document.getElementById('alertMessage');
+    const usernameDisplaySpan = document.getElementById('usernameDisplay');
+
+
+    // Modal HE
+    const modalAgregarHE = document.getElementById('modalAgregarHE');
+    const modalHENombreEmpleadoSpan = document.getElementById('modalHENombreEmpleado');
+    const modalHEEmpleadoIdInput = document.getElementById('modalHEEmpleadoId');
+    const modalHEFechaInput = document.getElementById('modalHEFecha');
+    const modalHEHorasInput = document.getElementById('modalHEHoras');
+    const modalHETipoSelect = document.getElementById('modalHETipo');
+    const btnGuardarHE = document.getElementById('btnGuardarHE'); // Este ahora es el submit del form
+    const btnCancelarHE = document.getElementById('btnCancelarHE');
+    const btnCerrarModalHE = document.getElementById('btnCerrarModalHE'); // Botón X para cerrar
+    const formAgregarHE = document.getElementById('formAgregarHE');
+
+
+    // Formulario de Pago
+    const fechaInicioPagoInput = document.getElementById('fechaInicioPago');
+    const fechaFinPagoInput = document.getElementById('fechaFinPago');
+    const btnProcesarPago = document.getElementById('btnProcesarPago');
+
+    // --- Funciones ---
+    function showAlert(message, type = 'error') {
+        console.log(`[ALERT-${type.toUpperCase()}]: ${message}`);
+        alertMessageDiv.textContent = message;
+        alertMessageDiv.className = `alert alert-${type}`;
+        alertMessageDiv.classList.remove('hidden');
+        setTimeout(() => {
+            alertMessageDiv.classList.add('hidden');
+        }, 5000);
+    }
+
+    async function fetchCurrentUserInfo() {
+        try {
+            const response = await fetch('/api/session/user'); // Endpoint para obtener datos del usuario logueado
+            if (!response.ok) {
+                throw new Error(`Error HTTP ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.success && result.user) {
+                usernameDisplaySpan.textContent = `Usuario: ${result.user.usuario} (${result.user.rol})`;
+            } else {
+                usernameDisplaySpan.textContent = 'Usuario no identificado';
+            }
+        } catch (error) {
+            console.error("Error fetching user session info:", error);
+            usernameDisplaySpan.textContent = 'Error cargando usuario';
+        }
+    }
+
+
+    async function buscarEmpleado() {
+        console.log("buscarEmpleado() llamado");
+        const empleadoId = searchEmpleadoIdInput.value;
+        if (!empleadoId) {
+            showAlert('Por favor, ingrese un ID de empleado.');
+            return;
+        }
+        empleadoSeleccionadoId = null;
+        empleadoInfoSectionDiv.classList.add('hidden');
+        pagarNominaSectionDiv.classList.add('hidden');
+        btnCalcularIndemnizacion.disabled = true;
+
+        try {
+            showAlert('Buscando empleado...', 'info');
+            // Usar la ruta base /api/ que ahora apunta a collaboratorRoutes
+            const response = await fetch(`${apiBaseUrl}/${empleadoId}`); // GET /api/:id
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({message: `Empleado con ID ${empleadoId} no encontrado o error de servidor.`}));
+                throw new Error(errData.message);
+            }
+            const result = await response.json();
+            if (result.success && result.data) {
+                const empleado = result.data;
+                nombreEmpleadoSpan.textContent = `${empleado.primer_nombre || ''} ${empleado.segundo_nombre || ''} ${empleado.primer_apellido || ''} ${empleado.segundo_apellido || ''}`.replace(/\s+/g, ' ').trim();
+                infoEmpleadoIdSpan.textContent = empleado.id_empleado;
+                puestoEmpleadoSpan.textContent = empleado.puesto || 'N/A';
+                pagoEmpleadoIdInput.value = empleado.id_empleado;
+                empleadoSeleccionadoId = empleado.id_empleado;
+
+                empleadoInfoSectionDiv.classList.remove('hidden');
+                pagarNominaSectionDiv.classList.remove('hidden');
+                btnCalcularIndemnizacion.disabled = false;
+                
+                cargarHorasExtra(empleado.id_empleado);
+                alertMessageDiv.classList.add('hidden');
+            } else {
+                showAlert(result.message || 'Empleado no encontrado.');
+            }
+        } catch (error) {
+            showAlert(`Error al buscar empleado: ${error.message}`);
+            console.error("Error en buscarEmpleado:", error);
+        }
+    }
+
+    async function cargarHorasExtra(empleadoId) {
+        horasExtrasTableBody.innerHTML = '<tr><td colspan="4">Cargando horas extra...</td></tr>';
+        try {
+            const response = await fetch(`${apiBaseUrl}/horasextras/empleado/${empleadoId}`);
+            if (!response.ok) throw new Error('Error al cargar horas extra del empleado.');
+            const result = await response.json();
+            
+            horasExtrasTableBody.innerHTML = ''; 
+            if (result.success && result.data.length > 0) {
+                result.data.forEach(he => {
+                    const row = horasExtrasTableBody.insertRow();
+                    row.insertCell().textContent = he.id_extra;
+                    row.insertCell().textContent = he.fecha;
+                    row.insertCell().textContent = parseFloat(he.horas).toFixed(2);
+                    row.insertCell().textContent = he.tipo;
+                });
+            } else {
+                horasExtrasTableBody.innerHTML = '<tr><td colspan="4">No hay horas extra registradas para este empleado.</td></tr>';
+            }
+        } catch (error) {
+            horasExtrasTableBody.innerHTML = `<tr><td colspan="4" style="color:red;">${error.message}</td></tr>`;
+            console.error("Error en cargarHorasExtra:", error);
+        }
+    }
+
+    function abrirModalHorasExtra() {
+        if (!empleadoSeleccionadoId) {
+            showAlert('Primero busque y seleccione un empleado.');
+            return;
+        }
+        modalHENombreEmpleadoSpan.textContent = nombreEmpleadoSpan.textContent;
+        modalHEEmpleadoIdInput.value = empleadoSeleccionadoId;
+        modalHEFechaInput.valueAsDate = new Date(); 
+        modalHEHorasInput.value = '';
+        modalHETipoSelect.value = 'normal';
+        modalAgregarHE.classList.remove('hidden');
+    }
+
+    function cerrarModalHorasExtra() {
+        modalAgregarHE.classList.add('hidden');
+        formAgregarHE.reset(); // Limpiar el formulario del modal
+    }
+
+    async function guardarHorasExtra(event) {
+        event.preventDefault(); // Prevenir el envío tradicional del formulario
+        console.log("guardarHorasExtra() llamado");
+
+        const data = {
+            id_empleado: modalHEEmpleadoIdInput.value,
+            fecha: modalHEFechaInput.value,
+            horas: modalHEHorasInput.value,
+            tipo: modalHETipoSelect.value
+        };
+
+        if (!data.fecha || !data.horas || parseFloat(data.horas) <= 0) {
+            showAlert('Fecha y cantidad de horas (positiva) son obligatorias.');
+            return;
+        }
+
+        try {
+            showAlert('Guardando horas extra...', 'info');
+            const response = await fetch(`${apiBaseUrl}/horasextras`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (response.ok && result.success) {
+                showAlert('Horas extra agregadas exitosamente.', 'success');
+                cerrarModalHorasExtra();
+                cargarHorasExtra(data.id_empleado); 
+            } else {
+                showAlert(result.message || 'Error al guardar horas extra.');
+            }
+        } catch (error) {
+            showAlert(`Error de conexión: ${error.message}`);
+            console.error("Error en guardarHorasExtra:", error);
+        }
+    }
+
+    async function procesarPagoNomina() {
+        console.log("procesarPagoNomina() llamado");
+
+        const data = {
+            id_empleado: pagoEmpleadoIdInput.value,
+            fecha_inicio: fechaInicioPagoInput.value,
+            fecha_fin: fechaFinPagoInput.value
+        };
+        console.log("Datos para pago:", data);
+
+        if (!data.id_empleado || !data.fecha_inicio || !data.fecha_fin) {
+            showAlert('Todos los campos son requeridos para el pago de nómina.');
+            console.log("Faltan campos para pago.");
+            return;
+        }
+        
+        const inicio = new Date(data.fecha_inicio + 'T00:00:00Z');
+        const fin = new Date(data.fecha_fin + 'T00:00:00Z');
+        if (fin < inicio) {
+            showAlert('La fecha de fin no puede ser anterior a la fecha de inicio.');
+            console.log("Fecha fin anterior a fecha inicio.");
+            return;
+        }
+
+        const diffTime = fin.getTime() - inicio.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        console.log("Días de diferencia calculados:", diffDays);
+        
+        let esPeriodoValido = false;
+        if (diffDays === 7) {
+            esPeriodoValido = true;
+            console.log("Periodo es semanal (7 días)");
+        } else if (diffDays === 15) {
+            esPeriodoValido = true;
+            console.log("Periodo es quincenal (15 días)");
+        } else if (inicio.getUTCDate() === 1) {
+            const ultimoDiaMesCalculado = new Date(inicio.getUTCFullYear(), inicio.getUTCMonth() + 1, 0).getUTCDate();
+            console.log(`Verificando mensual: Inicio día ${inicio.getUTCDate()}, Fin día ${fin.getUTCDate()}, Último día del mes de inicio: ${ultimoDiaMesCalculado}`);
+            if (fin.getUTCDate() === ultimoDiaMesCalculado && inicio.getUTCMonth() === fin.getUTCMonth() && inicio.getUTCFullYear() === fin.getUTCFullYear()) {
+                 esPeriodoValido = true;
+                 console.log("Periodo es mensual completo");
+            }
+        }
+
+        if (!esPeriodoValido) {
+             showAlert('El rango de fechas debe ser exactamente de 7 días (semanal), 15 días (quincenal) o un mes calendario completo. Días calculados: ' + diffDays);
+             console.log("Periodo no válido según reglas estrictas.");
+             return;
+        }
+
+        try {
+            showAlert('Procesando pago...', 'info');
+            console.log("Enviando petición a /api/nomina/pagar...");
+            const response = await fetch(`${apiBaseUrl}/nomina/pagar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            console.log("Respuesta recibida, status:", response.status);
+
+            const result = await response.json();
+            console.log("Resultado del backend:", result);
+
+            if (response.ok && result.success) { // response.ok verifica status 200-299
+                showAlert(result.message || 'Pago procesado y registrado exitosamente.', 'success');
+            } else {
+                showAlert(result.message || 'Error al procesar el pago desde el backend.');
+            }
+        } catch (error) {
+            showAlert(`Error de conexión al procesar pago: ${error.message}`);
+            console.error("Error en fetch para procesarPagoNomina:", error);
+        }
+    }
+
+    // --- Asignación de Event Listeners ---
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM completamente cargado. Asignando listeners...");
+        fetchCurrentUserInfo(); // Cargar info del usuario en el header
+
+        if (btnBuscarEmpleado) btnBuscarEmpleado.addEventListener('click', buscarEmpleado);
+        else console.error("Botón btnBuscarEmpleado no encontrado.");
+
+        if (btnAbrirModalHE) btnAbrirModalHE.addEventListener('click', abrirModalHorasExtra);
+        else console.error("Botón btnAbrirModalHE no encontrado.");
+        
+        if (formAgregarHE) formAgregarHE.addEventListener('submit', guardarHorasExtra); // Listener al submit del form
+        else console.error("Formulario formAgregarHE no encontrado.");
+
+        if (btnCancelarHE) btnCancelarHE.addEventListener('click', cerrarModalHorasExtra);
+        else console.error("Botón btnCancelarHE no encontrado.");
+        
+        if (btnCerrarModalHE) btnCerrarModalHE.addEventListener('click', cerrarModalHorasExtra);
+        else console.error("Botón btnCerrarModalHE no encontrado.");
+
+        if (btnProcesarPago) {
+            btnProcesarPago.addEventListener('click', procesarPagoNomina);
+            console.log("Listener para btnProcesarPago asignado.");
+        } else {
+            console.error("Botón btnProcesarPago no encontrado.");
+        }
+
+        if (modalAgregarHE) {
+            modalAgregarHE.addEventListener('click', (event) => {
+                if (event.target === modalAgregarHE) cerrarModalHorasExtra();
+            });
+        } else {
+            console.error("Modal modalAgregarHE no encontrado.");
+        }
+
+        empleadoInfoSectionDiv.classList.add('hidden');
+        pagarNominaSectionDiv.classList.add('hidden');
+        if (modalAgregarHE) modalAgregarHE.classList.add('hidden');
+        btnCalcularIndemnizacion.disabled = true;
+        console.log("Estado inicial de la página configurado.");
+    });
+</script>
+</body>
+</html>
